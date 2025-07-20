@@ -1,0 +1,51 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+threshold = threshold@yan_sold3
+on_death = death
+
+
+[walker@start]
+path_walk = yan_sold_comander_walk1
+path_look = yan_sold_comander_look1
+on_timer = 1 | kamp@1 %=make_invulnerable%
+
+[kamp@1]
+center_point = yan_solds_bunker_koster_point
+radius = 2 
+def_state_moving = walk
+danger = danger_condition
+combat_ignore_cond = always
+on_info = {+yan_bunker_atack_start} walker@defense
+
+[walker@defense]
+path_walk = yan_sold3_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_info = {-yan_bunker_atack_start} kamp@1
+
+
+
+
+
+[threshold@yan_sold3]
+max_ignore_distance = 15
+ignore_monster = 0
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+yan_sold3_dead%

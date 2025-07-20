@@ -1,0 +1,202 @@
+
+[wpn_mosin]:identity_immunities
+weapon_class				= sniper_rifle
+$spawn                   	= "weapons\m189130"
+$npc                     	= off
+$prefetch 		         	= 8
+scheduled                	= on
+cform                    	= skeleton
+class                    	= WP_SVD
+min_radius               	= 5
+max_radius               	= 150
+
+inv_name	        		= inv_name_wpn_mosin
+inv_name_short				= inv_name_wpn_mosin
+description					= mosinka_descr
+
+cost						= 50000
+inv_weight					= 4.0
+
+visual                   	= weapons\mosin\wpn_mosin.ogf
+
+ef_main_weapon_type			= 3
+ef_weapon_type				= 8
+
+holder_range_modifier		= 1
+holder_fov_modifier			= 1
+
+hand_dependence		     	= 1
+single_handed				= 0
+
+sprint_allowed				= true
+
+slot 			         	= 2
+animation_slot			 	= 2
+
+inv_grid_width				= 6
+inv_grid_height				= 2
+inv_grid_x					= 0
+inv_grid_y					= 18
+
+kill_msg_x					= 0
+kill_msg_y					= 0
+kill_msg_width				= 98
+kill_msg_height				= 23
+
+ammo_limit		         	= 100
+ammo_current		     	= 50
+ammo_elapsed		     	= 10
+
+ph_mass						= 5
+
+
+;-----Ballistics, Handling & Accuracy-----;
+hit_power                	= 0.05
+hit_impulse	= 150
+hit_type 		= fire_wound
+
+fire_distance       = 250
+bullet_speed		= 330
+rpm                      	= 29
+
+ammo_mag_size				= 5
+ammo_class					= ammo_7.62x54_7h1, ammo_7.62x54_ap
+fire_modes					= 1
+	
+tri_state_reload			= off
+
+control_inertion_factor		= 1.05f
+
+handling_factor				= 1.00
+use_aim_bullet				= true
+time_to_aim					= 0.50
+
+PDM_disp_base 			= 7.00
+PDM_disp_vel_factor 		= 1.00
+PDM_disp_accel_factor 		= 1.00
+PDM_crouch	 		= 0.75
+PDM_crouch_no_acc 		= 0.75
+
+
+;-----------------------------------------------------------------------------------
+;базовая дисперсия
+fire_dispersion_base			= 0.03		;угол (в градусах) базовой дисперсии оружия (оружия зажатого в тисках)
+cam_relax_speed			= 16		;скорость возврата в исходное положение
+cam_relax_speed_ai			= 120.78
+cam_dispersion			= 5.0		;увеличения угла (в градусах) с каждым выстрелом
+cam_dispersion_inc			= 3.0		;увеличениe cam_dispersion с каждым выстрелом
+cam_dispertion_frac			= 2.0		;ствол будет подыматься на cam_dispersion*cam_dispertion_frac +- cam_dispersion*(1-cam_dispertion_frac)
+cam_max_angle			= 10.0		;максимальный угол отдачи
+cam_max_angle_horz		= 8.0		;(degree) maximum shot horizontal degree 
+cam_step_angle_horz		= 3.0		;(degree) size of step camera moved in horizontal position while shooting
+fire_dispersion_condition_factor	= 5		;увеличение дисперсии в процентах при максимальном износе 
+misfire_probability			= 0.003		;вероятность осечки при максимальном износе 
+misfire_condition_k			= 0.005
+condition_shot_dec			= 0.0005	;увеличение износа при каждом выстреле
+;-----------------------------------------------------------------------------------
+
+
+;-----Sights & Attachments-----;
+;--Scope & Sight--
+zoom_enabled				= true
+
+scope_status				= 2
+scope_name 				= wpn_scope_mosin
+scope_x 					= 45
+scope_y 					= -5
+scope_zoom_factor	    	= 70.0
+
+;--Silencer--
+silencer_status				= 0
+
+silencer_name  			= wpn_addon_silencer
+silencer_x 				= 37
+silencer_y 				= -15
+
+;--Grenade Launcher--
+grenade_launcher_status		= 0
+
+grenade_launcher_name 		= wpn_addon_grenade_launcher_m203
+grenade_launcher_x 			= 130
+grenade_launcher_y 			= 31
+
+
+;-----Sounds, Particles, Muzzleflash & Miscellaneous-----;
+
+snd_draw				= weapons\mosin\mosin_draw
+snd_holster				= weapons\mosin\mosin_holster
+snd_reload				= weapons\mosin\mosin_reload
+snd_shoot_duplet		      	= weapons\mosin\mosin_shoot
+snd_open_weapon				= weapons\mosin\mosin_open
+snd_add_cartridge		      	= weapons\mosin\mosin_load
+snd_close_weapon		      	= weapons\mosin\mosin_close
+snd_empty			= weapons\generic_ak_empty, 0.5
+snd_shoot				= weapons\mosin\mosin_shoot
+snd_silncer_shot		      	= weapons\mosin\mosin_shoot_sil
+
+rpm_empty_click 	 		= 200
+
+light_disabled				= false
+
+light_color		 	= 0.6,0.5,0.3
+light_range		 	= 4.0
+light_var_color		 	= 0.05
+light_var_range		 	= 0.5
+light_time 		 	= 0.2
+
+silencer_light_color		= 0.0,0.0,0.0
+silencer_light_range		= 0.00
+silencer_light_var_color	= 0.00
+silencer_light_var_range	= 0.0
+silencer_light_time 		= 0.0
+
+flame_particles				= weapons\generic_weapon05
+smoke_particles				= weapons\generic_shoot_00
+
+shell_point		 			= 0.0, 0.129, 0.192	
+shell_dir		 			= 0.0, 0.0, 0.4
+shell_particles	 			= weapons\arsenal_shells1
+
+normal                   	= 0, 1, 0
+position         	= -0.026, -0.077, 0.00
+orientation              	= 0, 0, 0
+
+direction                	= 0, 0, 1
+
+fire_point               	= 0.0, 0.129, 0.942
+
+weapon_remove_time	= 1000
+
+strap_position         		= -0.23,-0.13,0.1 ;-0.15,-0.15,0.45			; position (offset) and orientation of the weapon when it is strapped
+strap_orientation      		= -15,-9,110 ;-25,-189,65				; (3rd person view in degrees)
+strap_bone0					= bip01_spine2
+strap_bone1					= bip01_spine1
+
+hud                      	= wpn_mosin_hud
+
+
+[wpn_mosin_hud]
+shell_point          		= 0.0, 0.0, -0.7
+shell_dir		 	= 0.0, 1.0, 0.0
+
+fire_point				= 0.010000,0.080000,0.111000
+fire_bone               = wpn_body
+orientation             		= 0, 0, 0
+position                		= -0.020000,-0.170000,0.130000
+visual                  = weapons\mosin\wpn_mosin_hud.ogf
+
+anim_holster				= holster
+anim_idle				= idle
+anim_idle_aim				= aim
+anim_draw				= draw
+anim_shoot				= shoot
+anim_reload				= reload
+anim_idle_sprint			= sprint
+anim_shoot_both 			= shoot
+anim_idle_moving			= moving
+
+zoom_offset				= -0.134000,0.067300,-0.034100
+zoom_rotate_x				= -0.001500
+zoom_rotate_y				= -0.000300
+
+

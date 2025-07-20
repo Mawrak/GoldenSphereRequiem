@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<garb_grave_cross_intrface>
+
+<ramka x="220" y="170" width="900" height="700" stretch="1">
+	<texture x="0" y="0" width="1020" height="626">ui\bowler_intrface</texture>
+</ramka>
+
+<name x="280" y="185" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="graffiti22">Надпись на кресте:</text>
+</name>
+
+<text1 x="280" y="280" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="graffiti22">Желтый проклят четырьмя душами;</text>
+</text1>
+<text2 x="280" y="320" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="graffiti22">Хозяин Красного прячется между двух башен;</text>
+</text2>
+<text3 x="280" y="360" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="graffiti22">Зеленый растет на дереве;</text>
+</text3>
+<text4 x="280" y="400" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="graffiti22">Кто сложит из них ключ?</text>
+</text4>
+
+
+	<btn_quit x="310" y="550" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">Выход</text>
+	</btn_quit>
+
+</garb_grave_cross_intrface>
+

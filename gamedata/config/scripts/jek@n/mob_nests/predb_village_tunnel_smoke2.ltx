@@ -1,0 +1,20 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@norm
+
+[mob_walker@norm]
+path_walk = predb_village_tunnel_smoke_point1
+path_look = predb_village_tunnel_smoke_point1
+braindead = true
+on_actor_in_zone = predb_village_tunnel_entry_zone|mob_home@agress %=play_snd_from_obj(8237:ambient\random\rnd_wolfhowl01)%
+
+[mob_home@agress]
+path_home = predb_village_tunnel_smoke_point2
+home_min_radius = 1
+home_max_radius = 8
+on_actor_dist_le_nvis = 2 | %=hit_obj(37:bip01_spine:0.05:10) =run_cam_effector(head_shot) =predb_flies1steal_artefacts%
+on_actor_dist_ge_nvis = 50|mob_walker@norm
+
+

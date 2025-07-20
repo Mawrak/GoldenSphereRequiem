@@ -1,0 +1,732 @@
+-- ПОЛЕВАЯ МЕДИЦИНА --
+-- Автоматическая система ввода антирада
+-- автор Atrocious 2008 , отладка ошибок KamikaZze 2009 
+
+local autoinjector = system_ini():r_s32("options","autoinjector")
+
+local max_rad_percentage = 90
+--[[radiation level, at which the system kicks in		]]--
+
+local monitor_long_exposure = true
+--[[the system will also activate, if the user was exposed to radiation over a longer time		]]--
+
+local min_rad_percentage = 10
+--[[minmum radiation dose, before the system counts the time (unused if monitor_long_exposure is 'false')		]]--
+
+local max_radiated_seconds = 20
+--[[maximum time of low radiation, before anti-rads are administered (unused if monitor_long_exposure is 'false')		]]--
+
+local reminder = true
+--[[get reminding messages, if you are out of anti-rad supplies		]]--
+
+local mins_till_next_remind = 60
+--[[time in minutes until you get the next reminder message (unused if reminder is 'false')		]]--
+
+local use_text = true
+--[[show text if the system has something to tell?		]]--
+
+local use_sounds = true
+--[[play sounds if the system has something to tell?		]]--
+
+local use_custom_sounds = true
+--[[use Half Life 1 HEV sounds? (unused if use_sounds is 'false')		]]--
+
+local use_scientific_kit = true
+--[[disassemble scientific medkits for anti-rad usage?		]]--
+
+local suit_radiation = 70
+local suit_bullet_proof = 50
+--[[selection parameters: suits with radiation protection or bullet protection equal to 
+	or higher than those two percentage values, will provide the injection system. 		]]--
+
+local additional_suits={
+
+}	
+--[[List of suits that use the injection system, even though they don't meet the radiation or bullet protection requirements. 
+Currently on the list are Ghost's suit and a Stalker suit that can be found in the Dark Valley. 
+Put new suits on top of the list. Don't forget to put " " and ,
+HINT: DON'T put a comma behind the last suit name!							]]--
+
+	
+----------------------------------------------------------------------------
+-------------------------     End of options     ---------------------------
+----------------------------------------------------------------------------
+
+function system_enabled()
+	if autoinjector == 1 then return true else return false end
+end
+
+function get_max_percentage()
+	if max_rad_percentage > 100 then
+		max_rad_percentage = 100
+	elseif max_rad_percentage < 10 then
+		max_rad_percentage = 10
+	end
+	return max_rad_percentage/100
+end
+
+function get_min_percentage()
+	if min_rad_percentage > 90 then
+		min_rad_percentage = 90
+	elseif min_rad_percentage < 1 then
+		min_rad_percentage = 1
+	end
+	return min_rad_percentage/100
+end
+
+function get_suit_rad()
+	if suit_radiation > 100 then
+		suit_radiation = 100
+	elseif suit_radiation < 0 then
+		suit_radiation = 0
+	end
+	return suit_radiation/100
+end
+
+function get_suit_bproof()
+	if suit_bullet_proof > 100 then
+		suit_bullet_proof = 100
+	elseif suit_bullet_proof < 0 then
+		suit_bullet_proof = 0
+	end
+	return suit_bullet_proof/100
+end
+
+function get_rad_time()
+	if max_radiated_seconds > 300 then
+		max_radiated_seconds = 300
+	elseif max_radiated_seconds < 0 then
+		max_radiated_seconds = 0
+	end
+	return math.floor(max_radiated_seconds/3)
+end
+
+local last_section = " "
+local last_result = false
+
+function is_auto_injection_suit()
+	local checker = 0
+	local rini = system_ini()
+	local suit = db.actor:item_in_slot(6)
+	local section = nil
+	local injection_suit_found = false
+	if suit then 
+		section = suit:section()
+	end
+	
+	--
+	if section and last_section == section then
+		return last_result
+	elseif section and rini:section_exist(section) then
+		local is_hev = 0
+		if rini:line_exist(section, "is_hev") then
+			is_hev = rini:r_u32(section, "is_hev")
+		end
+		if is_hev == 1 then
+       		injection_suit_found = true
+		else
+    		for k,v in pairs(additional_suits) do
+      			if section == v then
+					checker = 1
+					break
+--					injection_suit_found = true
+--					Так как это происходит тут, делать нельзя. Автор скрипта неверно обращается с локальной переменной
+--					Чтобы избежать вылета, я вынес переменную ниже, а тут воткнул промежуточную переменную
+      			end
+      		end
+			--  а вот тут оно уже и отрабатывает как надо
+			if checker == 1 then
+				injection_suit_found = true
+			end
+			-- 14/02/2009 KamikaZze
+    	end
+		last_section = section
+		last_result = injection_suit_found
+    end
+	--
+	return injection_suit_found
+end
+
+local auto_injection_active = is_auto_injection_suit()
+local radiation_warning = true
+local reminder_count = 0 --инициализировал по умолчанию на 0 чтобы избежать вылета функции check_antirad_supplies() при загрузке сохранения
+local exposure_count = 0
+
+function check_radiation()
+	if auto_injection_active and radiation_warning and (db.actor.radiation >= get_max_percentage() or long_time_exposure) then
+		if medication_delay == nil or medication_delay < time_global() then
+			if db.actor:object("antirad") and not antirad_spawned then
+				db.actor:eat(db.actor:object("antirad"))
+				if use_text then
+					local news_text
+					if long_time_exposure then
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Долгое нахождение в зоне повышенной радиации! %c[255,0,230,0]Применяется противорадиационный препарат."
+					else
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Получена высокая доза радиации! %c[255,0,230,0]Применяется противорадиационный препарат."
+					end
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+  				end
+				if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+					else
+  				  		snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+			elseif use_scientific_kit and db.actor:object("medkit_scientic") and not antirad_spawned then
+				local s_obj = alife():object(db.actor:object("medkit_scientic"):id())
+				if s_obj then
+					alife():release(s_obj, true)
+				end				
+				alife():create("antirad", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+				alife():create("medkit", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+				antirad_spawned = true
+				return
+			elseif antirad_spawned then
+				db.actor:eat(db.actor:object("antirad"))
+				antirad_spawned = false
+				if use_text then
+					local news_text
+					if long_time_exposure then
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Долгое нахождение в зоне повышенной радиации! \\nПротиворадиационый препарат отсутствует! %c[255,230,230,0]Использеутся препарат из научной аптечки!"
+					else
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Получена высокая доза радиации! \\nПротивоадиационый препарат отсутствует! %c[255,230,230,0]Использеутся препарат из научной аптечки!"
+					end
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 5000)
+				end
+				if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+					else
+  				  		snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+			else
+				if use_text then
+					local news_text
+					if long_time_exposure then
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[255,230,0,0]ОПАСНОСТЬ! Долгое нахождение в зоне повышенной радиации! Противорадиационные препараты отстутствуют!"
+					else
+						news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[255,230,0,0]ОПАСНОСТЬ! Получена высокая доза радиации! Противорадиационные препараты отстутствуют!"
+					end
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 5000)
+				end
+				if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\hi-rad-no-anti-rad]] )
+					else
+  				  		snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+				radiation_warning = false
+			end
+			exposure_count = 0
+			long_time_exposure = false
+			medication_delay = time_global() + 3000
+		end
+	elseif auto_injection_active and radiation_warning and monitor_long_exposure and (medication_delay == nil or medication_delay < time_global()) then
+		if db.actor.radiation >= get_min_percentage() then
+			exposure_count = exposure_count + 1
+			if exposure_count > get_rad_time() then
+				long_time_exposure = true
+			else
+				medication_delay = time_global() + 3000
+			end
+		else
+			exposure_count = 0
+			long_time_exposure = false
+			medication_delay = time_global() + 3000
+		end
+	end
+end
+
+
+function check_antirad_supplies()
+
+	if auto_injection_active then
+	
+		if antirad_check_delay == nil or game.get_game_time():diffSec(antirad_check_delay) > 60 then
+		
+			if not db.actor:object("antirad") and not (use_scientific_kit and db.actor:object("medkit_scientic")) then
+			
+			--ошибка срабатывает в этой проверке, если reminder_count не инициализирована
+				if reminder and reminder_count and reminder_count == 0 or reminder_count >= mins_till_next_remind then
+			--ошибка срабатывает в этой проверке, если reminder_count не инициализирована
+					if use_text then
+						local news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Напоминаю: %c[255,230,0,0]Противорадиационные препараты отстутствуют! %c[default]Автоматический ввод препаратов невозможен."
+  						db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+  					end	
+	  				if use_sounds then
+				 		local snd_obj
+						if use_custom_sounds then 
+							snd_obj = xr_sound.get_safe_sound_object( [[HEV\no-anti-rad]] )
+						else
+	  						snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+						end
+						if snd_obj then
+							snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+						end
+					end
+					reminder_count = 1
+				elseif reminder then
+					reminder_count = reminder_count + 1
+				end
+
+			else
+				radiation_warning = true
+				reminder_count = 0
+			end
+			antirad_check_delay = game.get_game_time() 
+		end
+	end
+end
+
+
+function check_auto_injection_suit()
+
+	if antirad_suit_delay == nil or antirad_suit_delay < time_global() then
+		
+		auto_injection_active = is_auto_injection_suit()
+		
+		if db.actor and auto_injection_active and db.actor:dont_has_info("auto_injection_system_startup") then
+			if db.actor:object("antirad") then
+				if use_text then
+					local news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Запуск системы. %c[255,0,230,0]Противорадиационные препараты доступны."
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 5000)
+  				end
+			 	if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\automedic-on]] )
+					else
+  					  	snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+				reminder_count = 0
+			elseif not db.actor:object("antirad") and use_scientific_kit and db.actor:object("medkit_scientic") then
+				if use_text then
+					local news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Запуск системы. \\n".."%c[255,230,230,0]Противорадиационные препараты отстутствуют! Используются препараты из научной аптечки."
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 5000)
+  				end
+			 	if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\automedic-on]] )
+					else
+  					  	snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+				reminder_count = 0
+			else
+				if use_text then
+					local news_text = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default]Запуск системы. %c[255,230,0,0]Противорадиационные препараты отстутствуют!"
+  					db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 5000)
+  				end
+				if use_sounds then
+			 		local snd_obj
+					if use_custom_sounds then 
+						snd_obj = xr_sound.get_safe_sound_object( [[HEV\automedic-on-no-anti-rad]] )
+					else
+  					  	snd_obj = xr_sound.get_safe_sound_object( [[device\pda\pda_tip]] )
+					end
+					if snd_obj then
+						snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+					end
+				end
+				reminder_count = 1
+			end
+			antirad_check_delay =  game.get_game_time() 
+			db.actor:give_info_portion("auto_injection_system_startup")
+		elseif not auto_injection_active then
+			db.actor:disable_info_portion("auto_injection_system_startup")
+		end
+		antirad_suit_delay = time_global() + 3000
+	end
+end
+
+-- Ухудшение аптечек
+-- Автор - Mixser
+
+local med_cnt = 0	--счётчик для аптечек
+local cur_med_cnt = 0 
+local text_h5 = "%c[255,225,225,0]Эффективность аптечек понизилась..."
+local text_h10 = "%c[255,225,225,0]Эффективность аптечек понизилась до среднего уровня..."
+local text_h15 = "%c[255,225,225,0]Эффективность аптечек упала до критического уровня..."
+local text_too_much = "%c[255,255,0,0]Крайне высока вероятность умереть от передозировки лекартств!"
+
+local red_medkit = 0.4
+local blue_medkit = 0.7
+local yellow_medkit = 0.95
+local no_medkit = 0
+start_add = 0
+local new_health = 0
+local cur_medkit = ""
+local use_cnt = 0
+local cur_cnt = 0
+
+local check_slow = system_ini():r_s32("options","slow_drugs") -- активирована возможность медленных аптечек.
+local check_poison = system_ini():r_s32("options","poison_drugs") -- активирована возможость отравленных аптечек.
+
+function med_count()
+	if check_poison == 0 then med_cnt = 0 
+	else
+	if no_medkit == 0 then 
+		med_cnt = med_cnt+1 
+			if med_cnt == 3 then news_manager.send_tip(db.actor,text_h5, nil, nil, 10000) 
+			elseif med_cnt == 7 then news_manager.send_tip(db.actor,text_h10, nil, nil, 10000)
+			elseif med_cnt == 11 then news_manager.send_tip(db.actor,text_h15, nil, nil, 10000)
+			elseif med_cnt == 15 then news_manager.send_tip(db.actor,text_too_much, nil, nil, 10000)
+			end
+	end
+	end
+    --amk.logf(med_cnt)
+	return med_cnt
+end
+
+function use_medkit(pid)
+end
+
+function use_medkit_army(pid)
+end
+
+function use_medkit_scientic()
+end
+
+
+function use_voda()
+	if check_poison == 1 then
+		if db.actor.health ~= 1 then news_manager.send_tip(db.actor,"%c[255,0,230,0]Эффективность аптечки восстановлена...", nil, nil, 10000) end
+		med_cnt = 0
+	end
+end
+
+function check_medkit(p_obj) 
+	--[[if p_obj then
+		if p_obj:section() == "yod" then use_yod(-1) --amk.start_timer("yod", 0.3, p_obj:id()) 
+		elseif p_obj:section() == "dix" then use_dix(-1) --amk.start_timer("dix", 0.3, p_obj:id())
+		elseif p_obj:section() == "vint" then use_vint(-1) --amk.start_timer("vint", 0.3, p_obj:id())
+		elseif p_obj:section() == "bipsizon" then use_bipsizon(-1) --amk.start_timer("bpz", 0.3, p_obj:id())
+		end
+	end
+	]]
+	local f = p_obj and healing["use_"..p_obj:section()]
+	if f then f() end
+end
+
+function startup(medkit_section,adh)
+end
+
+function add_health()
+ if start_add == 1 and not inventory.belt["autodoctor"] then
+	if db.actor.health < new_health then
+	    if cur_cnt <= use_cnt then
+		 cur_cnt = cur_cnt + 1
+			if cur_medkit == "medkit" then db.actor.health = 0.0125
+			elseif cur_medkit == "medkit_army" then db.actor.health = 0.03
+			elseif cur_medkit == "medkit_scientic" then db.actor.health = 0.045
+			end
+		else
+		 
+		 start_add = 0
+		 no_medkit = 0
+		 cur_cnt = 0
+		 use_cnt = 0
+		end
+	else
+	 
+	 start_add = 0
+	 no_medkit = 0
+	 cur_cnt = 0
+	 use_cnt = 0
+	end
+ end
+end
+
+-- Девайс "Автодоктор"
+-- Автор - Mixser
+
+local count = false
+local flag_start = true
+--start
+local start_check = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default] Старт. Проверка..."
+local start_normal = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[255,0,230,0]Все компоненты присуствуют!"
+--use items
+local scientic_use = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default] %c[255,0,230,0]Применяются препараты из научной аптечки."
+local army_use = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default] %c[255,0,230,0]Применяются препараты из армейской аптечки."
+local dix_use = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default] %c[255,0,230,0]Снижение выносливости! Применяется стимулятор."
+local power_army = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n".."%c[default] Снижение выносливости! \\n Стимулятор отсутствует! %c[255,230,230,0]Используется препарат из армейской аптечки!"
+
+
+function check_autodoctor()
+local bio_belt=inventory.belt["autodoctor"] 
+
+ if bio_belt then
+	count = true
+	if count == true then autohealing()	end
+  return count
+ else 
+ 
+	flag_start = false
+	count = false
+  return count,flag_start
+ end
+end
+
+
+function start_up()
+local bio_belt=inventory.belt["autodoctor"] 
+	if flag_start == false then
+		if count == true then
+			if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+			db.actor:give_game_news(start_check, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+			local need_med = ""
+			if not db.actor:object("medkit_army") then need_med = "%c[255,225,0,0]Не хватает препаратов из армейской аптечки! Ограничение функционала!\\n" end
+			if not db.actor:object("medkit_scientic") then 
+				if need_med ~= "" then need_med = need_med.."%c[255,225,0,0]Не хватает препаратов из научной аптечки! Ограничение функционала!\\n"
+				else need_med = "%c[255,225,0,0]Не хватает препаратов из научной аптечки! Ограничение функционала!\\n"
+				end
+			end
+			if not db.actor:object("dix") then
+				if need_med ~= "" then need_med = need_med.."%c[255,225,0,0]Не хватает препарата 'DIX'! Восстановление выносливости невозможно!\\n"
+				else need_med = "%c[255,225,0,0]Не хватает препарата 'DIX'! Восстановление выносливости невозможно!\\n"
+				end
+			end
+			if need_med == "" then
+				snd_obj = xr_sound.get_safe_sound_object( [[HEV\automedic-on]]) -- всё ок
+				if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+				db.actor:give_game_news(start_normal, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+			else
+				snd_obj = xr_sound.get_safe_sound_object( [[HEV\automedic-on-no-anti-rad]]) -- чего то не хватает
+				if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+				need_med = "%c[255,160,160,160]Автоматическая система ввода медицинских препаратов\\n"..need_med
+				db.actor:give_game_news(need_med, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+			end
+			flag_start = true
+			return flag_start
+		end
+	end
+end
+
+function autohealing()
+local obt = nil
+local snd_obj = nil
+ 	if db.actor.health<=0.5 and db.actor.health>=0.25     then 
+	    if db.actor:object("medkit_army") then
+			snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+			if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+			db.actor:give_game_news(army_use, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+	        db.actor.health=0.6
+			amk.remove_item_from_inventory_by_name("medkit_army",db.actor)
+		end	   
+	end
+	if db.actor.health<0.25 then
+	    if db.actor:object("medkit_scientic") then
+			snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+			if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+			db.actor:give_game_news(scientic_use, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+	        db.actor.health=0.9
+			amk.remove_item_from_inventory_by_name("medkit_scientic",db.actor)
+		else
+			if db.actor:object("medkit_army") then
+				snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+				if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+				db.actor:give_game_news(army_use, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+				db.actor.health=0.6
+				amk.remove_item_from_inventory_by_name("medkit_army",db.actor)
+			end	   
+		end
+		
+	end
+	if db.actor.power<=0.15  then
+	    if db.actor:object("dix") then
+			obt = db.actor:object("dix") 
+			snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+			if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+			db.actor:give_game_news(dix_use, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+	        db.actor:eat(obt)
+		elseif not db.actor:object("dix") and db.actor:object("medkit_army") then
+		    snd_obj = xr_sound.get_safe_sound_object( [[HEV\administering-anti-rad]] )
+			if snd_obj then	snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0) end
+			db.actor:give_game_news(power_army, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+			db.actor.health=0.6
+			amk.remove_item_from_inventory_by_name("medkit_army",db.actor)
+		end
+	end
+end
+
+-- Эффекты от препаратов, Mixser
+
+function use_yod()
+	if db.actor.radiation == 0 then
+		if not has_alife_info("using_yod") then
+			local rad_time = game.time()
+			grug_time["yod_end"] = rad_time +300*1000*amk.game_time_factor
+			amk.save_variable("yod_end",rad_time +300*1000*amk.game_time_factor)
+			db.actor:give_info_portion("using_yod")
+		end
+	else
+		amk.spawn_item_in_inv("yod")
+		local text = "Вы не можете использовать препарат, ввиду наличия радиации в Вашем организме..."
+		db.actor:give_game_news(text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+	end
+end
+
+function use_vodka(pid)
+	ogsm_quests.use_vodka(-1)
+	if db.actor.radiation == 0 then
+		local tmp = amk.load_variable("vodka_end",0)
+		if tmp == 0 then
+			local rad_time = game.time()
+			grug_time["vodka_end"] = rad_time +150*1000*amk.game_time_factor
+			amk.save_variable("vodka_end",rad_time +150*1000*amk.game_time_factor)
+			db.actor:give_info_portion("using_vodka")
+		else
+			local rad_time = game.time()
+			amk.del_variable("vodka_end")
+			amk.save_variable("vodka_end",rad_time +150*1000*amk.game_time_factor)
+			db.actor:give_info_portion("using_vodka")			
+		end
+	else
+		-- amk.logf("Нафиг спавн раз ГГ пьёт водку по радиацией...")
+	end
+end
+
+
+function use_dix()
+	if not has_alife_info("using_dix") then
+		local rad_time = game.time()
+		grug_time["dix_end"] = rad_time +60*1000*amk.game_time_factor
+		amk.save_variable("dix_end",rad_time +60*1000*amk.game_time_factor)
+		db.actor:give_info_portion("using_dix")
+	else
+		local text = "Ваш организм не вынес повторного применения препарата через небольшой промежуток времени..."
+		db.actor:give_game_news(text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+		db.actor:kill(db.actor)
+	end
+end
+
+function use_bipsizon()
+	if not has_alife_info("using_bipsizon") then
+		local rad_time = game.time()
+		grug_time["bipsizon_end"] = rad_time +60*1000*amk.game_time_factor
+		amk.save_variable("bipsizon_end",rad_time +60*1000*amk.game_time_factor)
+		db.actor:give_info_portion("using_bipsizon")
+	else
+		local text = "Ваш организм не вынес повторного применения препарата через небольшой промежуток времени..."
+		db.actor:give_game_news(text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+		db.actor:kill(db.actor)
+	end
+end
+
+function use_vint()
+	if not has_alife_info("using_vint") then
+		local rad_time = game.time()
+		grug_time["vint_end"] = rad_time +60*1000*amk.game_time_factor
+		amk.save_variable("vint_end",rad_time +60*1000*amk.game_time_factor)
+		db.actor:give_info_portion("using_vint")
+	else
+		local text = "Вы погибли от передозировки морфием."
+		db.actor:give_game_news(text, "ui\\ui_iconsTotal", Frect():set(0,188,83,47), 0, 3000)
+		db.actor:kill(db.actor)
+	end
+end
+
+grug_time = {
+["yod_end"] 		= 0,
+["vodka_end"] 		= 0,
+["dix_end"] 		= 0,
+["bipsizon_end"]	= 0,
+["vint_end"]	= 0
+}
+
+function check_var(what, default)
+	if grug_time[what] and grug_time[what] > 0 then
+		return grug_time[what]
+	else	
+		return default or 0
+	end
+end
+
+function check_using(what,infpor)
+	local check = check_var(what,0)
+	if game.time() > check then -- закончилось действие или нет?
+		db.actor:disable_info_portion(infpor)
+		amk.del_variable(what)
+	end
+end
+
+function check_all_preparation()
+	check_using("yod_end","using_yod")
+	check_using("vodka_end","using_vodka")
+	check_using("dix_end","using_dix")
+	check_using("bipsizon_end","using_bipsizon")
+	check_using("vint_end","using_vint")
+end
+
+function achieve_all_preparation()
+	achieve_effect_radiation("using_yod",-0.00075)
+	achieve_effect_radiation("using_vodka",-0.000375)
+	achieve_effect_power("using_dix",0.05)
+	achieve_effect_psi("using_bipsizon",0.003)
+	achieve_effect_health("using_vint",0.3)
+end
+
+-- Предмет проверки, предемет изменения, на сколько изменяем
+function achieve_effect_radiation(what,change_count) 
+	if what and change_count then
+		 if has_alife_info(what) and db.actor.radiation > 0 then db.actor.radiation = change_count end
+	end
+end
+
+function achieve_effect_power(what,change_count)
+	if what and change_count then
+		 if has_alife_info(what) and db.actor.power < 1 then 
+			--amk.logf("выносливость до: "..tostring(db.actor.power))
+			db.actor.power = change_count 
+			--amk.logf("выносливость после: "..tostring(db.actor.power))
+		end
+	end
+end
+
+function achieve_effect_psi(what,change_count)
+	if what and change_count then
+		if has_alife_info(what) and db.actor.psy_health < 1 then
+			db.actor.psy_health = change_count
+		end
+	end
+end
+
+function achieve_effect_health(what,change_count)
+	if what and change_count then
+		if has_alife_info(what) and db.actor.health < 1 then
+			db.actor.health = change_count
+		end
+	end
+end
+
+function clear_time_var(time_array)
+	if time_array then
+		for k,v in pairs(time_array) do
+			local tmp = amk.load_variable(v,0)
+			if tmp ~= 0 then amk.del_variable(v) end
+		end
+	end
+end

@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+yan_bunker_mob1dead +yan_bunker_mob2dead +yan_bunker_mob3dead +yan_bunker_mob4dead +yan_bunker_mob5dead +yan_bunker_mob6dead +yan_bunker_mob7dead +yan_bunker_mob8dead +yan_bunker_mob9dead +yan_bunker_mob10dead} sr_idle@2 %-yan_bunker_atack_start%
+
+[sr_idle@2]
+on_actor_inside = {+yan_bunker_scout_hunt !is_day} nil %+yan_burer_scout_spawn%
+
+
+

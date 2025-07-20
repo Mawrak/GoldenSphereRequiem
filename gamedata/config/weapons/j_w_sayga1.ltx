@@ -1,0 +1,243 @@
+; —айга обычна€
+;--------------------------------------
+[wpn_sayga1]:identity_immunities
+GroupControlSection		= spawn_group
+discovery_dependency 	= 
+$spawn                  = "weapons\sayga12k_sk1"					; option for Level Editor
+$npc			 		= on				; option for Level Editor
+$prefetch 		 		= 8
+scheduled               = off              ; option for ALife Simulator
+cform                   = skeleton
+class                   = WP_AK74
+min_radius              = 0
+max_radius              = 60
+description				= sayga12c_descr
+
+ef_main_weapon_type		= 1
+ef_weapon_type			= 7
+
+;-----------------------------------------------------------------------------------
+holder_range_modifier	= 0.9
+holder_fov_modifier		= 1.3
+;-----------------------------------------------------------------------------------
+
+weapon_class			= assault_rifle
+
+cost					= 60000
+
+ammo_elapsed			= 9
+ammo_mag_size		 	= 9
+ammo_class		 		= ammo_12x70_buck, ammo_12x76_zhekan, ammo_12x70_salt
+grenade_class					= ammo_vog-25, ammo_vog-25p			
+launch_speed					= 0
+fire_modes				= 1, -1
+
+hand_dependence		 	= 1
+single_handed			= 0
+
+inv_name				= sayga12c_name
+inv_name_short			= sayga12c_name
+inv_weight				= 4.0
+
+inv_grid_width			= 5
+inv_grid_height			= 2
+inv_grid_x				= 30
+inv_grid_y				= 29
+
+kill_msg_x			= 72
+kill_msg_y			= 82
+kill_msg_width		= 56
+kill_msg_height		= 23
+
+slot 					= 2		; // secondary
+animation_slot			= 2		; type of the animation that will be used
+
+;-----------------------------------------------------------------------------------
+;params of weapon recoil
+fire_dispersion_base		= 0.12  ;угол (в градусах) базовой дисперсии оружи€ (оружи€ зажатого в тисках)
+control_inertion_factor		= 1.3f
+disp_rate = 1.8
+
+;отдача
+cam_relax_speed         	= 1.0	;скорость возврата в исходное положение
+cam_dispersion          	= 2.5	;увеличени€ угла (в градусах) с каждым выстрелом
+cam_dispersion_inc			= 0.0	;увеличениe cam_dispersion с каждым выстрелом
+cam_dispertion_frac			= 1.0   
+cam_max_angle				= 11	;максимальный угол отдачи
+cam_max_angle_horz	= 9.0	;(degree) maximum shot horizontal degree 
+cam_step_angle_horz	= 1.5	;(degree) size of step camera moved in horizontal position while shooting
+
+fire_dispersion_condition_factor = 5	;увеличение дисперсии в процентах при максимальном износе 
+misfire_probability 		= 0.005	    ;веро€тность осечки при максимальном износе 
+misfire_condition_k			= 0.005
+condition_shot_dec 			= 0.0005	;увеличение износа при каждом выстреле
+;-----------------------------------------------------------------------------------
+
+direction               = 0, 0, 1
+
+fire_point             	=  0,0.216,0.615
+flame_particles			= weapons\generic_weapon05
+shell_particles	 		= weapons\generic_shells_right_2
+
+shell_point		 		= 0,0.216,0.174
+shell_dir		 		= 0.0, 1.0, 0.0
+
+rpm_empty_click 	 	= 200
+
+PDM_disp_base 			= 4.0
+PDM_disp_vel_factor 		= 1.8
+PDM_disp_accel_factor 		= 1.8
+PDM_crouch	 		= 1.8
+PDM_crouch_no_acc 		= 1.8
+
+hit_power                	= 0.05		; size of damage by bullet
+hit_impulse		 			= 125		; size of physic impulse by bullet	
+hit_type 					= fire_wound 	; [] type of the wound
+fire_distance            	= 80		; maximum fire distance that bullet can fly
+bullet_speed				= 320		; starting bullet speed
+rpm                      	= 340		; max round per minute
+
+use_aim_bullet			= false		;ѕоддерживаетс€ ли перва€ суппер пул€
+time_to_aim					= 1.0
+
+silencer_hit_power       	= 0.05
+silencer_hit_impulse	 	= 25
+silencer_fire_distance   	= 80
+silencer_bullet_speed	 	= 220
+
+hud                     = wpn_sayga1_hud
+normal                   			= 0, 1, 0
+position         	    		= -0.026,-0.172,0
+orientation              			= 0, 0, 0      
+
+;--STRAP PARAMETERS-----------------------------------------------------------------
+strap_position         				= -0.16,-0.36,0.15			
+strap_orientation      				= -10,-5,10
+strap_bone0					= bip01_spine2
+strap_bone1					= bip01_spine1
+
+visual                  = weapons\saiga\wpn_saiga12c.ogf
+
+light_color		 		= 0.6,0.5,0.3
+light_range		 		= 5
+light_var_color		 	= 0.05
+light_var_range		 	= 0.1
+light_time 		 		= 0.2
+
+;addons
+scope_status			= 2
+silencer_status			= 2
+grenade_launcher_status	= 2
+
+scope_name 				= wpn_addon_scope_aksu			; section name for the attachable scope
+scope_x 					= 50						; offset in inventory icon
+scope_y 					= -4
+
+silencer_name  				= wpn_addon_silencer
+silencer_x 					= 205
+silencer_y 					= 12
+
+grenade_launcher_name 			= wpn_addon_grenade_launcher
+grenade_launcher_x          			= 130
+grenade_launcher_y          			= 33
+
+smoke_particles 	= weapons\generic_shoot_00
+silencer_smoke_particles 	= weapons\generic_shoot_00
+grenade_flame_particles		= weapons\generic_weapon01
+
+silencer_light_color		= 1.0, 0.1, 0.0
+silencer_light_range		= 0.01
+silencer_light_var_color	= 0.05
+silencer_light_var_range	= 0.5
+silencer_light_time 		= 0.2
+
+zoom_enabled		= true
+scope_zoom_factor	= 80
+
+;------------------------------ O.G.S.E. sound remake -----------------------
+;звуки
+snd_draw					= weapons\saiga\draw
+snd_holster				= weapons\saiga\holster
+snd_shoot					= weapons\saiga\saiga_shot
+snd_empty				= weapons\generic_empty, 0.7
+snd_reload				= weapons\saiga\saiga_reload
+snd_shoot_grenade				= weapons\gen_grenshoot
+snd_reload_grenade				= weapons\gen_grenload
+snd_switch				= weapons\groza_switch
+snd_silncer_shot				= weapons\gromoboi_shot
+
+
+;-----------------------------------------------------------------------------
+;-- HUD DESCRIPTION
+;----------------------------------------------------------------------------- 
+[wpn_sayga1_hud]
+allow_inertion					= true
+
+shell_point     	   	 		= 0,0,-0.05 
+shell_dir			     		= 0.0, 1.0, 0.0
+
+fire_point					= 0,0.05,0
+fire_point2              			= 0.05,-0.08,-0.5
+fire_bone               			= wpn_body
+
+position					= -0.025,-0.14,0.13
+orientation					= 2,2,0
+
+visual              = weapons\saiga\wpn_saiga12c_hud.ogf
+
+grenade_bone            			= joint12
+
+anim_idle					= idle
+anim_idle_aim					= aim
+anim_reload					= reload
+anim_draw					= draw
+anim_holster					= holster
+anim_shoot					= shoot
+anim_idle_sprint				= sprint
+anim_idle_moving				= moving
+	
+anim_idle_g					= idle_w_gl
+anim_idle_g_aim					= aim_w_gl
+anim_reload_g					= reload_g
+anim_shoot_g					= shoot_g
+anim_switch_grenade_on				= aim_w_gl
+anim_switch_grenade_off				= aim_w_gl
+anim_draw_g					= draw_w_gl
+anim_holster_g					= holster_w_gl
+anim_idle_sprint_g				= sprint_w_gl
+anim_idle_moving_g				= moving_w_gl
+
+anim_idle_gl					= idle_w_gl
+anim_idle_gl_aim				= aim_w_gl
+anim_reload_gl					= reload_w_gl
+anim_draw_gl					= draw_w_gl
+anim_holster_gl					= holster_w_gl
+anim_shoot_gl					= shoot_w_gl
+anim_idle_sprint_gl				= sprint_w_gl
+anim_idle_moving_gl				= moving_w_gl
+
+zoom_offset					= -0.132100,0.041200,-0.125000
+zoom_rotate_x					= 0.031600
+zoom_rotate_y					= 0.033700
+
+grenade_normal_zoom_offset			= -0.132100,0.041200,-0.125000
+grenade_normal_zoom_rotate_x			= 0.031600
+grenade_normal_zoom_rotate_y			= 0.033700
+
+grenade_zoom_offset				= -0.093300,-0.014200,0.000000
+grenade_zoom_rotate_x				= -0.080800
+grenade_zoom_rotate_y				= 0.028500
+
+scope_zoom_offset				= -0.132100,-0.005400,-0.125000
+scope_zoom_rotate_x				= 0.003200
+scope_zoom_rotate_y				= 0.038200
+
+scope_grenade_normal_zoom_offset		= -0.132100,-0.005400,-0.125000
+scope_grenade_normal_zoom_rotate_x		= 0.003200
+scope_grenade_normal_zoom_rotate_y		= 0.038200
+
+zoom_hide_crosshair				= false
+
+zoom_rotate_time				= 0.3
+rotate_time					= 0.3
+

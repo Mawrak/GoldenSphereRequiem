@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {=actor_has_weapon +garb_reketirs_task} nil %=send_tip(garb_reketirs_tip1:bandit) =play_snd(characters_voice\scenario\tirsa_talk2) +garb_reketirs_fail%
+on_info = {+garb_tirsa_dead} nil, {+reketirs_zuda_work} nil
+
+
+

@@ -1,0 +1,13 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_button@unpressed
+
+[ph_button@unpressed]
+anim_blend  = true
+anim        = lab_primary_switcher_idle
+tooltip     = niva_empty_use
+on_press    = {+esc_niva_empty_akum +esc_niva_empty_wheel1 +esc_niva_empty_wheel2 +esc_niva_empty_wheel3 +esc_niva_empty_wheel4 +esc_niva_empty_bearing +esc_niva_empty_tank} %=esc_niva_empty_delete =spawn_esc_niva_empty_unfuel =esc_niva_empty_info_clear%, {!actor_has_item(repair_kit)} %=send_tip(dont_has_repair_kit:default)%, {=actor_has_item(repair_kit)} %=esc_niva_empty_use%
+
+

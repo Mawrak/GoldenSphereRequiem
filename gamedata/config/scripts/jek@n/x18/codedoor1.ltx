@@ -1,0 +1,15 @@
+[logic]
+active = ph_door@locked
+
+[ph_door@locked]
+locked = true
+closed = true
+tip_open = 
+tip_close = 
+on_use = {=actor_has_item(x18_door1_card) +x18_rebellion_phase1} ph_door@open %=remove_item(x18_door1_card) =play_snd(device\door_servomotor) +x18_door1_open%
+
+[ph_door@open]
+locked = false
+closed = false
+tip_open = 
+tip_close = 

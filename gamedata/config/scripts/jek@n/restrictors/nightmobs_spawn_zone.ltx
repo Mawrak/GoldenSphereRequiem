@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {=nightmobs_spawn_time !actor_in_camp_zone =actor_on_ai_net =carma_low} sr_idle@2 %=current_level_nightmobs_spawn =wonderdoll_nightzones_help%
+
+[sr_idle@2]
+on_timer = 30000|sr_idle@1 %-nightmob1_dead -nightmob2_dead -nightmob3_dead -nightmob4_dead -nightmob5_dead%
+on_info = {=actor_in_camp_zone} sr_idle@1 %=night_mob1delete =night_mob2delete =night_mob3delete =night_mob4delete =night_mob5delete%
+on_info2 = {!nightmobs_spawn_time} sr_idle@1 %=night_mob1delete =night_mob2delete =night_mob3delete =night_mob4delete =night_mob5delete%
+on_info3 = {!carma_low} sr_idle@1 %=night_mob1delete =night_mob2delete =night_mob3delete =night_mob4delete =night_mob5delete%

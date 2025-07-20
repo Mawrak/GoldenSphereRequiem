@@ -1,0 +1,83 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = x18doctor_walk1
+path_look = x18doctor_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable =disable_trading%
+
+[walker@1]
+path_walk = x18doctor_walk1
+path_look = x18doctor_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+on_info = {+x18_doctor_trap} walker@2
+
+[walker@2]
+path_walk = x18doctor_walk1
+path_look = x18doctor_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+on_timer      = 8000 | walker@3
+
+[walker@3]
+path_walk = x18doctor_walk1
+path_look = x18doctor_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_dist_le = 2 | walker@4 %=x18_doctor_init_dialog%
+
+[walker@4]
+path_walk = x18doctor_walk1
+path_look = x18doctor_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+x18_doctor_final} remark@suicide %=unmake_invulnerable%
+
+[remark@suicide]
+no_move = true
+no_rotate = true
+anim = suicide
+;snd = val_suicide_before_death
+;snd_anim_sync = true
+meet = no_meet
+danger = danger_condition
+combat_ignore_cond = always
+on_signal = anim_end | nil %=suicide =restore_weapon%
+
+
+
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+x18doctor_dead =play_snd(characters_voice\scenario\jekan\jekan_soundtrack_8)%

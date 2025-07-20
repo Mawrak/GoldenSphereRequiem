@@ -1,0 +1,19 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home
+
+[mob_home]
+path_home = yan_swamp_anomaly_point
+home_min_radius = 3
+home_max_radius = 5
+on_actor_dist_le_nvis = 2 | %=acidic_hit_obj(37:bip01_spine:0.15:10) =run_postprocess(acidic_gaz)%
+
+[mob_camp]
+path_home = yan_swamp_anomaly_point
+path_look = yan_swamp_anomaly_point
+home_min_radius  = 6
+home_max_radius = 9
+braindead = true
+on_actor_dist_le_nvis = 2 | %=acidic_hit_obj(37:bip01_spine:0.15:10) =run_postprocess(acidic_gaz) =play_snd(anomaly\buzz_hit)%

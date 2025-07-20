@@ -1,0 +1,22 @@
+[logic]
+active = sr_idle@invisible
+
+[sr_idle@invisible]
+on_info = {=actor_has_item_on_belt(af_eye)} sr_particle@visible %=add_self_spot(alife_presentation_smart_target:dar_travel_port1_mark_text)%
+
+[sr_particle@visible]
+name = anomaly2\teleport_idle
+path = travel_port_dar_farm_point
+mode = 2
+looped = true
+on_actor_inside = %=travel_port_dar_farm_work%
+on_info = {!actor_has_item_on_belt(af_eye)} sr_idle@invisible %=remowe_self_spot(alife_presentation_smart_target:dar_travel_port1_mark_text)%
+
+
+
+
+
+
+
+
+

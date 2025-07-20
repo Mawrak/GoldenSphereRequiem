@@ -1,0 +1,78 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@idle
+on_death = mob_death
+
+
+[mob_walker@idle]
+path_walk = bar_karlik_walk1
+path_look = bar_karlik_look1
+braindead = true
+on_timer = 1|mob_walker@idle0 %=make_invulnerable =add_self_spot(crlc_mdl:bar_medbox_mark_point)%
+
+[mob_walker@idle0]
+path_walk = bar_karlik_walk1
+path_look = bar_karlik_look1
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk1think =remowe_self_spot(crlc_mdl:bar_medbox_mark_point)%
+on_actor_dist_le_nvis = 3 | mob_walker@idle0_1 %=play_snd_from_obj(8516:monsters\karlik\karlik_attack_1) =add_self_spot(green_location:bar_karlik_marker)%
+
+; Прибегаем к телу ученого и ждем, пока ГГ возмет с него ключ:
+[mob_walker@idle0_1]
+path_walk = bar_karlik_walk1_1
+path_look = bar_karlik_look1_1
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk2think%
+on_info2 = {=actor_has_item(bar_bunkerdoor_key)} mob_walker@idle1 %=play_snd_from_obj(8516:soundtrack\controller\9)%
+
+
+; Удираем от ГГ:
+[mob_walker@idle1]
+path_walk = bar_karlik_walk1
+path_look = bar_karlik_look1
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk3think%
+on_info2 = {=actor_has_item(cheburashka)} mob_walker@chebur1
+on_actor_dist_le_nvis = 3 | mob_walker@idle2 %=play_snd_from_obj(8516:monsters\karlik\karlik_idle_1)%
+
+[mob_walker@idle2]
+path_walk = bar_karlik_walk2
+path_look = bar_karlik_look2
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk3think%
+on_info2 = {=actor_has_item(cheburashka)} mob_walker@chebur1
+on_actor_dist_le_nvis = 3 | mob_walker@idle3 %=play_snd_from_obj(8516:monsters\karlik\karlik_ston)%
+
+[mob_walker@idle3]
+path_walk = bar_karlik_walk3
+path_look = bar_karlik_look3
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk3think%
+on_info2 = {=actor_has_item(cheburashka)} mob_walker@chebur1
+on_actor_dist_le_nvis = 3 | mob_walker@idle1 %=play_snd_from_obj(8516:monsters\karlik\karlik_attack_1)%
+
+
+
+;ГГ нашел игрушку, ждем, пока он нам ее принесет:
+[mob_walker@chebur1]
+path_walk = bar_karlik_walk7
+path_look = bar_karlik_look7
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk3think%
+on_info2 = {+bar_karlik_chebur_done} mob_walker@chebur2 %=play_snd_from_obj(8516:soundtrack\controller\21)%
+
+[mob_walker@chebur2]
+path_walk = bar_karlik_walk7
+path_look = bar_karlik_look7
+braindead = true
+on_info = {=actor_see_bar_karlik} %=bar_karlik_talk4think%
+
+
+
+[mob_death]
+on_info = {=killed_by_actor} %+bar_karlik_killed_by_actor%, {!killed_by_actor} %+bar_karlik_dead%
+
+
+

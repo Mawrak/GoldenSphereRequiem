@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_556х45>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="440" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Патроны 5.56x45</text>
+</system_logo>
+<price x="370" y="515" width="370" height="35">
+	<text x="0" y="0" r="225" g="58" b="58" font="letterica18">25 000 р.</text>
+</price>
+
+
+<description1 x="400" y="400" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Патроны калибра 5.56x45 для автоматов М-16 и Steyr AUG</text>
+</description1>
+<description2 x="400" y="420" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">400 шт. обычных и 100 шт. бронебойных.</text>
+</description2>
+<description3 x="400" y="440" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description3>
+<description4 x="400" y="460" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description4>
+<description5 x="400" y="480" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description5>
+<description6 x="400" y="500" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description6>
+<description7 x="400" y="520" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description7>
+<description8 x="400" y="540" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description8>
+<description9 x="400" y="560" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">	</text>
+</description9>
+
+
+	<btn_1 x="350" y="550" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="225" g="118" b="118" font="letterica16">Заказать</text>
+	</btn_1>
+	<btn_2 x="350" y="590" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="225" g="118" b="118" font="letterica16">Назад</text>
+	</btn_2>
+
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_556х45>
+

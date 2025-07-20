@@ -1,0 +1,23 @@
+[logic]
+active = ph_idle@0
+
+[ph_idle@0]
+on_info = {+yan_lost_hunter_task +yan_lost_hunter_pda_info} ph_idle@1
+
+[ph_idle@1]
+tips      = yan_lost_camp_pribor1_use
+on_use    = ph_idle@2 %=yan_lost_camp_pribor_use1 =play_snd_on_me(weapons\groza_switch)%
+
+[ph_idle@2]
+on_timer = 1000|ph_idle@3 %=send_tip(yan_lost_camp_pribor_tip:anomal)%
+
+[ph_idle@3]
+on_timer = 2000|ph_idle@4 %=yan_lost_camp_pribor_think%
+
+[ph_idle@4]
+tips      = yan_lost_camp_pribor2_use
+on_use    = {=have_all_yan_lost_scanners} ph_idle@5 %=play_snd_on_me(detectors\bomb_timer)%
+
+[ph_idle@5]
+on_timer = 6000|nil %+yan_lost_camp_bodies =play_particle_on_path(anomaly2\teleport_idle:yan_lost_camp_spawn_body_point)%
+

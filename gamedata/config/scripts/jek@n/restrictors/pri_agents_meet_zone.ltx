@@ -1,0 +1,7 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+pri_agents_meet_task} nil %+pri_agents_lider_spawn =send_tip(pri_agents_lider_tip1:stalker)%
+
+

@@ -1,0 +1,7 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+mil_antenna_on} %=delme2%
+on_actor_inside = {-mil_antenna_on} nil %=kill_actor%
+

@@ -1,0 +1,35 @@
+[logic]
+active = {+ros_blaster_dead} nil, sr_idle@0
+
+[sr_idle@0]
+on_info = {+spawn_ros_master} sr_idle@1
+
+[sr_idle@0_1]
+on_actor_inside = sr_idle@1
+
+
+; Покой:
+[sr_idle@1]
+on_info = {+ros_blaster_dead} nil
+on_actor_outside = sr_idle@0_1
+on_timer = 35000 | sr_idle@2 %=close_dialog =play_snd(soundtrack\controller\24) +ros_zomb_resurrection%
+
+[sr_idle@2]
+on_timer = 10 | sr_idle@3 %=ros_zomb_resurrection1%
+
+[sr_idle@3]
+on_timer = 10 | sr_idle@4 %=ros_zomb_resurrection2%
+
+
+; Ужас:
+[sr_idle@4]
+on_actor_outside = sr_idle@0_1 %=ros_zomb_resurrection3 =ros_zomb_resurrection4%
+on_timer = 70000 | sr_idle@5 %=ros_zomb_resurrection3%
+
+[sr_idle@5]
+on_info = {+ros_blaster_dead} nil
+on_timer = 10 | sr_idle@1 %=ros_zomb_resurrection4 -ros_zomb_resurrection%
+
+
+
+

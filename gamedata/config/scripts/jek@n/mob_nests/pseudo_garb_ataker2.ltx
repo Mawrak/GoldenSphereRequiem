@@ -1,0 +1,14 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@norm
+on_death = mob_death
+
+[mob_home@norm]
+path_home = garb_mobs_atak_zone_home
+home_min_radius = 2
+home_max_radius = 6
+
+[mob_death]
+on_info = %+pseudo_garb_ataker2_dead%

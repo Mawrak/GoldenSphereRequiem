@@ -1,0 +1,21 @@
+[logic]
+active = {+ros_blaster_dead} nil, sr_idle
+
+[sr_idle]
+on_info = {+ros_zomb_resurrection} sr_sound_act
+on_info2 = {+ros_blaster_dead} nil
+;on_actor_inside = %=stop_postprocess(psychic:1777:false)%
+
+[sr_sound_act]
+theme = ros_master_soundzone
+delay = 0
+delay_max = 100
+stereo = false
+on_info = {-ros_zomb_resurrection} sr_idle %=stop_postprocess(psychic:1777:false)%
+on_info2 = {+ros_blaster_dead} nil
+on_actor_inside = %=run_postprocess(psychic:1777:false)%
+
+
+
+
+

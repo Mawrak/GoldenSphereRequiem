@@ -1,0 +1,34 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+goldsphere_guard_off} sr_timer %=play_snd(characters_voice\scenario\sarcofag\monolith_heavy_damaged)%
+
+[sr_timer]
+type = dec
+start_value = 30000
+on_value = 0 | sr_particle@1 %+goldsphere_blow =play_snd(characters_voice\scenario\sarcofag\monolith_alarm)%
+string = goldsphere_countdown
+on_info = {+goldsphere_used} nil
+
+[sr_particle@1]
+name = explosions\group_items\expl_mushroom_smoke_00
+path = goldsphere_point
+mode = 2
+looped = true
+on_info = {-end_game} %=goldsphere_destroyed_think%
+on_timer = 25000|sr_particle@2
+
+[sr_particle@2]
+name = explosions\group_items\expl_mushroom_smoke_00
+path = goldsphere_point
+mode = 2
+looped = true
+on_info = {-end_game} %=goldsphere_destroyed_think =hit_obj(37:bip01_spine:0.01:10) =run_postprocess(fire_hit) =play_fire_on_actor%
+
+
+
+
+
+
+

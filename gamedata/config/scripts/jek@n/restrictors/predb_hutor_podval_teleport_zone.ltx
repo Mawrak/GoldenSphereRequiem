@@ -1,0 +1,16 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_actor_inside = {!actor_has_item(af_brain)} sr_teleport
+
+[sr_teleport]
+point1 = predb_hutor_podval_teleport_point
+look1 = predb_hutor_podval_teleport_point
+timeout = 0
+on_timer = 1000|sr_idle
+
+
+
+
+

@@ -1,0 +1,14 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+x16_brain_temperature} sr_idle@2 %=spawn_x16brain_npc%
+
+[sr_idle@2]
+on_info = {+x16_talk_to_brain_again} sr_idle@3, {=x16brain_talk_ready1} %=x16brain_init_dialog%
+;on_info2 = {+x16_talk_to_brain_again} sr_idle@3
+
+[sr_idle@3]
+on_info = {=x16brain_talk_ready2} %=x16brain_init_dialog%
+
+

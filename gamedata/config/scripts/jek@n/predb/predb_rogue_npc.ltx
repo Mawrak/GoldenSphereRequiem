@@ -1,0 +1,24 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = remark@start
+combat_ignore = combat_ignore
+trade = misc\trade_nothing.ltx
+
+[remark@start]
+anim = threat
+target = 37
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+

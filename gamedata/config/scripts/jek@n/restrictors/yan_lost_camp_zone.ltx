@@ -1,0 +1,17 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+yan_lost_camp_bodies} sr_sound
+
+[sr_sound]
+snd = anomaly\teleport_incoming
+position = yan_lost_camp_spawn_body_point
+on_signal = sound_end | sr_idle@2 %=spawn_yan_lost_camp_bodies%
+
+[sr_idle@2]
+on_info = {+faint_man2_companion} sr_idle@3
+
+[sr_idle@3]
+on_npc_in_zone = 8748|yan_bunker_yard_zone|nil %+yan_faint_on_base =yan_faint_companion_off%
+

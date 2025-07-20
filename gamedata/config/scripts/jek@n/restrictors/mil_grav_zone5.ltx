@@ -1,0 +1,10 @@
+[logic]
+active = sr_particle
+
+[sr_particle]
+name = anomaly2\monolith
+path = mil_gravit_anomaly_point1
+mode = 2
+looped = false
+on_actor_in_zone = mil_grav_zone_ground|%=hit_obj(37:bip01_spine:0:600) =play_snd(ambient\os_1)%
+on_info = {-mil_grav_off !mil_comandr_in_grav_zone} %=hit_obj(8811:bip01_spine:0:360) =hit_obj(8812:bip01_spine:0:360)%, {+mil_grav_off} nil

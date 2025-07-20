@@ -1,0 +1,142 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+
+[walker@start]
+path_walk = mad_hunter_walk1
+path_look = mad_hunter_look1
+on_timer = 1 | camper@idle %=make_invulnerable%
+
+[camper@idle]
+path_walk = mad_hunter_walk1
+path_look = mad_hunter_look1
+sniper = true
+def_state_campering = specnaz_hide
+radius = 1
+on_actor_dist_le = 4 | walker@runaway1 %=play_snd_from_obj(8326:characters_voice\human_01\newbie\states\panic_monster\panic_monster_3)%
+
+
+
+
+; Бежим:
+[walker@runaway1]
+path_walk = mad_hunter_walk2
+path_look = mad_hunter_look2
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_signal       = arrived | walker@runaway2
+
+; Стоим:
+[walker@runaway2]
+path_walk = mad_hunter_walk2
+path_look = mad_hunter_look2
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_actor_dist_le = 3 | walker@runaway3 %=play_snd_from_obj(8326:characters_voice\human_01\newbie\states\panic_monster\panic_monster_1)%
+
+; Бежим:
+[walker@runaway3]
+path_walk = mad_hunter_walk3
+path_look = mad_hunter_look3
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_signal       = arrived | walker@runaway4
+
+; Стоим:
+[walker@runaway4]
+path_walk = mad_hunter_walk3
+path_look = mad_hunter_look3
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_actor_dist_le = 3 | walker@runaway5 %=play_snd_from_obj(8326:characters_voice\human_01\newbie\states\panic_monster\panic_monster_1)%
+
+; Бежим:
+[walker@runaway5]
+path_walk = mad_hunter_walk4
+path_look = mad_hunter_look4
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_signal       = arrived | walker@runaway6
+
+; Стоим:
+[walker@runaway6]
+path_walk = mad_hunter_walk4
+path_look = mad_hunter_look4
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+combat_ignore_cond = always
+danger = danger_condition
+meet = no_meet
+on_actor_dist_le = 3 | walker@runaway1 %=play_snd_from_obj(8326:characters_voice\human_01\newbie\states\panic_monster\panic_monster_1)%
+
+
+
+
+
+
+
+[remark@suicide]
+anim = suicide
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+on_signal = anim_end | nil %=unmake_invulnerable =suicide%
+
+
+
+
+
+
+
+[meet]
+meet_state = 5| idle
+meet_state = 5| idle
+victim = 5| nil
+victim_wpn = 5| nil
+use = true
+use_wpn = true
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+
+[death]
+on_info = %+esc_mad_hunter_dead =spawn_esc_madhunter_treasure%
+

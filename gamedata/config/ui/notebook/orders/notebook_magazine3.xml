@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_magazine3>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="450" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Заказ с доставкой:</text>
+</system_logo>
+
+
+	<btn_1 x="450" y="350" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">5.45х39</text>
+	</btn_1>
+	<btn_2 x="450" y="380" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">5.56х45</text>
+	</btn_2>
+	<btn_3 x="450" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Дробь</text>
+	</btn_3>
+	<btn_4 x="450" y="440" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">7.62х54</text>
+	</btn_4>
+	<btn_5 x="450" y="470" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">7.62х51</text>
+	</btn_5>
+	<btn_6 x="450" y="500" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">7.62х39</text>
+	</btn_6>
+	<btn_7 x="450" y="530" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">9х18</text>
+	</btn_7>
+	<btn_8 x="450" y="560" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">9х19</text>
+	</btn_8>
+	<btn_9 x="450" y="590" width="90" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">СП5</text>
+	</btn_9>
+
+
+
+
+	<btn_10 x="580" y="590" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="225" g="118" b="118" font="letterica16">назад</text>
+	</btn_10>
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_magazine3>
+

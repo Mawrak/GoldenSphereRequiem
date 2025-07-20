@@ -1,0 +1,17 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+x18_temperature_on +x18_pressure_on +x18_radiation_on} sr_timer %-x18_mashroom_sucess -x18_mashroom_fail%
+
+[sr_timer]
+type = dec
+start_value = 8000
+on_value = 0 | sr_idle@1 %-x18_temperature_on -x18_pressure_on -x18_radiation_on =send_tip(x18mashroom_prepare_fail:anomal)%
+string = x18_mashroom_countdown
+on_info = {-x18_temperature_on -x18_pressure_on -x18_radiation_on} sr_idle@1 %+x18_mashroom_sucess%
+
+
+
+
+

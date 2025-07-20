@@ -1,0 +1,58 @@
+-- включение \ выключение ПНВ 
+
+local pp_eff = {
+["af_nightvision_1"] = "nightvision.ppe",
+["af_nightvision_2"] = "nightvision_good.ppe",
+["af_nightvision_3"] = "nightvision_grey.ppe"
+}
+
+function set_state(new_state) 
+	if new_state=="off" then
+		level.remove_pp_effector (9991)
+		amk.save_variable("pnvmode",0)
+	else
+		local pnv_sect = ""
+		local pnv_id = 0
+		for id, _ in pairs(inventory.belt_ids) do
+			local obj = level.object_by_id(id)
+			local eff = obj and pp_eff[obj:section()]
+			if eff and (pnv_sect < obj:section()) then
+				pnv_sect = obj:section()
+				pnv_id = obj:id()
+			end
+		end
+		if pnv_id ~= 0 then
+			amk.save_variable("pnvmode", pnv_id)
+			level.add_pp_effector(pp_eff[pnv_sect], 9991, true)
+		end
+	end
+end
+
+function change_state()
+	set_state((amk.load_variable("pnvmode",0)==0) and "on" or "off")
+	-- soundtrack.pnv_on()
+end
+
+-- отключаем при выкидывании из инвентаря
+function on_drop(item)
+	if item and item:id()==amk.load_variable("pnvmode",0) then set_state("off") end
+end
+
+-- отключаем при перекладывании с пояса в рюкзак
+function check_ruck(item)
+	if item and item:id() == amk.load_variable("pnvmode",0) then set_state("off") end
+end
+
+function check_belt(item)
+	-- при перекладывании на пояс скидываем остальные приборы в рюкзак
+	local sect = item:section()
+	if not pp_eff[sect] then return end
+	for id, _ in pairs (inventory.belt_ids) do
+		local obj = level.object_by_id(id)
+		if (id~=item:id()) and pp_eff[obj:section()] then
+			db.actor:move_to_ruck(obj)
+		end
+	end
+	-- включаем при загрузке уровня
+	if amk.load_variable("pnvmode",0)==item:id() then set_state("on") end
+end

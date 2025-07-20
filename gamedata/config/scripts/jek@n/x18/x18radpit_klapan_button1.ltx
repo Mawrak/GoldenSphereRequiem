@@ -1,0 +1,18 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+on_info = {+x18_radpit_manom_installed} ph_idle@2
+
+[ph_idle@2]
+tips     = x18radpit_klapan1_button_use
+on_use    = {=actor_has_item(radpit_klapan) +radpit_pressure_high} nil %=remove_item(radpit_klapan) =play_snd(interface\inv_attach_addon) +x18radpit_sucess%, {=actor_has_item(radpit_klapan) +radpit_pressure_low} nil %=remove_item(radpit_klapan) =play_snd(interface\inv_attach_addon) +x18radpit_fail%
+on_info = {+x18_radpit_off} nil
+
+
+
+
+

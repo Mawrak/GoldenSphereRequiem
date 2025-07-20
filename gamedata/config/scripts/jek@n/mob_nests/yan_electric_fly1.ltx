@@ -1,0 +1,12 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home
+
+[mob_home]
+path_home = yan_road_budka_tesla_point
+home_min_radius = 2
+home_max_radius = 3
+on_actor_dist_le_nvis = 2 | %=electric_hit_obj(37:bip01_spine:0.5:10) =play_shock_on_actor%
+

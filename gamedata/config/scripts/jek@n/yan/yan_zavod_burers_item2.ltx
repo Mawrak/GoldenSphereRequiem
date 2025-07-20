@@ -1,0 +1,17 @@
+[logic]
+active = ph_idle@0
+
+[ph_idle@0]
+on_info = {+yan_burers_actor_punish2} ph_idle@1
+
+[ph_idle@1]
+on_info2 = {-yan_burers_actor_punish2} ph_idle@0
+on_actor_dist_le_nvis = 50 | ph_idle@2 %=strike_to_actor1%
+
+[ph_idle@2]
+on_info = {-yan_burers_actor_punish2} ph_idle@0
+on_timer = 2000 | ph_idle@1
+
+
+
+ 

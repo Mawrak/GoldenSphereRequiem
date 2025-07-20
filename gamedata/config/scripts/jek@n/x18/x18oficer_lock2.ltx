@@ -1,0 +1,17 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+tips     = x18oficer_lock2_use1
+on_use    = {+x18oficer_lock1_on} ph_idle@2 %+x18oficer_lock2_on =play_snd(ambient\switch_1)%, {-x18oficer_lock1_on} ph_idle@2 %=play_snd(ambient\switch_1) -x18oficer_lock2_on -x18oficer_lock3_on -x18oficer_lock4_on%
+
+
+[ph_idle@2]
+tips     = x18oficer_lock2_use2
+on_info = {-x18oficer_lock2_on} ph_idle@1
+on_info2 = {+x18_oficer_door_open} nil
+on_use    = ph_idle@1 %-x18oficer_lock1_on -x18oficer_lock2_on -x18oficer_lock3_on -x18oficer_lock4_on%
+

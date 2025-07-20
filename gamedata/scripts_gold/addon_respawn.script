@@ -1,0 +1,609 @@
+
+
+
+
+-- –еспавн агентов: ----------------------------------------------------------------------------------------------
+function current_level_headhunters_respawn1()
+	local level_name = level.name()
+		if level_name == "l01_escape" then
+			headhunters_escape_respawn1()
+		elseif level_name == "l02_garbage" then
+			headhunters_garbage_respawn1()
+		elseif level_name == "l03_agroprom" then
+			headhunters_agro_respawn1()
+		elseif level_name == "l04_darkvalley" then
+			headhunters_dolina_respawn1()
+		elseif level_name == "l07_military" then
+			headhunters_military_respawn1()
+		elseif level_name == "l08_yantar" then
+			headhunters_yantar_respawn1()
+		elseif level_name == "l10_radar" then
+			headhunters_radar_respawn1()
+		elseif level_name == "predbannik" then
+			headhunters_predb_respawn1()
+		end
+end
+
+function headhunters_escape_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l01_escape", vector():set(311.82,3.78,115.06) ) -- остановка
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l01_escape", vector():set(-63.17,-3.80,75.24) )	--	за мельницей
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l01_escape", vector():set(272.02,12.85,9.67) )	--	за холмом
+end
+end
+
+function headhunters_garbage_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l02_garbage", vector():set(-185.88,4.00,-65.10) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter3", "l02_garbage", vector():set(-137.36,0.40,80.11) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l02_garbage", vector():set(72.91,-0.02,-52.39) )
+end
+end
+
+function headhunters_agro_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l03_agroprom", vector():set(173.50,0.30,6.70) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l03_agroprom", vector():set(75.99,0.00,-118.86) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l03_agroprom", vector():set(-135.29,0.00,-45.47) )
+end
+end
+
+function headhunters_dolina_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l04_darkvalley", vector():set(-2.21,1.20,-359.10) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l04_darkvalley", vector():set(146.69,14.70,-375.17) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l04_darkvalley", vector():set(-144.29,8.00,-124.89) )
+end
+end
+
+function headhunters_military_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l07_military", vector():set(-321.06,-5.20,126.21) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l07_military", vector():set(-122.47,-9.10,340.82) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l07_military", vector():set(51.08,-12.00,257.84) )
+end
+end
+
+function headhunters_yantar_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(142.82,-4.90,-98.67) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(59.77,2.50,-150.20) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-92.32,-11.20,-280.37) )
+end
+end
+
+function headhunters_radar_respawn1()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(594.53,-50.50,-324.05) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(646,35,-50,00,-58,13) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(364.89,-49.80,-1.89) )
+end
+end
+
+function headhunters_predb_respawn1()
+rnd = math.random(1, 4)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(-324.74,-6.31,348.77) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-506.14,18.13,104.85) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(-175.27,2.46,108.72) )
+end
+if rnd == 4 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-192.48,7.28,-298.99) )
+end
+end
+---------------------------------------
+
+function current_level_headhunters_respawn2()
+	local level_name = level.name()
+		if level_name == "l01_escape" then
+			headhunters_escape_respawn2()
+		elseif level_name == "l02_garbage" then
+			headhunters_garbage_respawn2()
+		elseif level_name == "l03_agroprom" then
+			headhunters_agro_respawn2()
+		elseif level_name == "l04_darkvalley" then
+			headhunters_dolina_respawn2()
+		elseif level_name == "l07_military" then
+			headhunters_military_respawn2()
+		elseif level_name == "l08_yantar" then
+			headhunters_yantar_respawn2()
+		elseif level_name == "l10_radar" then
+			headhunters_radar_respawn2()
+		elseif level_name == "predbannik" then
+			headhunters_predb_respawn2()
+		end
+end
+
+function headhunters_escape_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l01_escape", vector():set(311.82,3.78,115.06) ) -- остановка
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l01_escape", vector():set(-63.17,-3.80,75.24) )	--	за мельницей
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l01_escape", vector():set(272.02,12.85,9.67) )	--	за холмом
+end
+end
+
+function headhunters_garbage_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l02_garbage", vector():set(18.00,0.41,-15.55) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter3", "l02_garbage", vector():set(129.30,-3.94,156.35) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l02_garbage", vector():set(-204.67,0.42,-27.67) )
+end
+end
+
+function headhunters_agro_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l03_agroprom", vector():set(173.50,0.30,6.70) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l03_agroprom", vector():set(75.99,0.00,-118.86) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l03_agroprom", vector():set(-135.29,0.00,-45.47) )
+end
+end
+
+function headhunters_dolina_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l04_darkvalley", vector():set(-2.21,1.20,-359.10) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l04_darkvalley", vector():set(146.69,14.70,-375.17) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l04_darkvalley", vector():set(-144.29,8.00,-124.89) )
+end
+end
+
+function headhunters_military_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l07_military", vector():set(-321.06,-5.20,126.21) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l07_military", vector():set(-122.47,-9.10,340.82) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l07_military", vector():set(51.08,-12.00,257.84) )
+end
+end
+
+function headhunters_yantar_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(142.82,-4.90,-98.67) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(59.77,2.50,-150.20) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(-92.32,-11.20,-280.37) )
+end
+end
+
+function headhunters_radar_respawn2()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(594.53,-50.50,-324.05) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(646,35,-50,00,-58,13) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(364.89,-49.80,-1.89) )
+end
+end
+
+function headhunters_predb_respawn2()
+rnd = math.random(1, 4)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(-324.74,-6.31,348.77) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(-506.14,18.13,104.85) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(-175.27,2.46,108.72) )
+end
+if rnd == 4 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(-192.48,7.28,-298.99) )
+end
+end
+
+------------------------------------------------------------------
+function current_level_headhunters_respawn3()
+	local level_name = level.name()
+		if level_name == "l01_escape" then
+			headhunters_escape_respawn3()
+		elseif level_name == "l02_garbage" then
+			headhunters_garbage_respawn3()
+		elseif level_name == "l03_agroprom" then
+			headhunters_agro_respawn3()
+		elseif level_name == "l04_darkvalley" then
+			headhunters_dolina_respawn3()
+		elseif level_name == "l07_military" then
+			headhunters_military_respawn3()
+		elseif level_name == "l08_yantar" then
+			headhunters_yantar_respawn3()
+		elseif level_name == "l10_radar" then
+			headhunters_radar_respawn3()
+		elseif level_name == "predbannik" then
+			headhunters_predb_respawn3()
+		end
+end
+
+function headhunters_escape_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l01_escape", vector():set(311.82,3.78,115.06) ) -- остановка
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l01_escape", vector():set(-63.17,-3.80,75.24) )	--	за мельницей
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l01_escape", vector():set(272.02,12.85,9.67) )	--	за холмом
+end
+end
+
+function headhunters_garbage_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l02_garbage", vector():set(18.00,0.41,-15.55) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l02_garbage", vector():set(129.30,-3.94,156.35) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l02_garbage", vector():set(-204.67,0.42,-27.67) )
+end
+end
+
+function headhunters_agro_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter4", "l03_agroprom", vector():set(173.50,0.30,6.70) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l03_agroprom", vector():set(75.99,0.00,-118.86) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l03_agroprom", vector():set(-135.29,0.00,-45.47) )
+end
+end
+
+function headhunters_dolina_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l04_darkvalley", vector():set(-2.21,1.20,-359.10) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l04_darkvalley", vector():set(146.69,14.70,-375.17) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l04_darkvalley", vector():set(-144.29,8.00,-124.89) )
+end
+end
+
+function headhunters_military_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l07_military", vector():set(-321.06,-5.20,126.21) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l07_military", vector():set(-122.47,-9.10,340.82) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l07_military", vector():set(51.08,-12.00,257.84) )
+end
+end
+
+function headhunters_yantar_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(142.82,-4.90,-98.67) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(59.77,2.50,-150.20) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-92.32,-11.20,-280.37) )
+end
+end
+
+function headhunters_radar_respawn3()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(594.53,-50.50,-324.05) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(646,35,-50,00,-58,13) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(364.89,-49.80,-1.89) )
+end
+end
+
+function headhunters_predb_respawn3()
+rnd = math.random(1, 4)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(-324.74,-6.31,348.77) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-506.14,18.13,104.85) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter4", "l08_yantar", vector():set(-175.27,2.46,108.72) )
+end
+if rnd == 4 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-192.48,7.28,-298.99) )
+end
+end
+------------------------------------------------------------------
+function current_level_headhunters_respawn4()
+	local level_name = level.name()
+		if level_name == "l01_escape" then
+			headhunters_escape_respawn4()
+		elseif level_name == "l02_garbage" then
+			headhunters_garbage_respawn4()
+		elseif level_name == "l03_agroprom" then
+			headhunters_agro_respawn4()
+		elseif level_name == "l04_darkvalley" then
+			headhunters_dolina_respawn4()
+		elseif level_name == "l07_military" then
+			headhunters_military_respawn4()
+		elseif level_name == "l08_yantar" then
+			headhunters_yantar_respawn4()
+		elseif level_name == "l10_radar" then
+			headhunters_radar_respawn4()
+		elseif level_name == "predbannik" then
+			headhunters_predb_respawn4()
+		end
+end
+
+function headhunters_escape_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l01_escape", vector():set(311.82,3.78,115.06) ) -- остановка
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l01_escape", vector():set(-63.17,-3.80,75.24) )	--	за мельницей
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l01_escape", vector():set(272.02,12.85,9.67) )	--	за холмом
+end
+end
+
+function headhunters_garbage_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l02_garbage", vector():set(18.00,0.41,-15.55) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter1", "l02_garbage", vector():set(129.30,-3.94,156.35) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l02_garbage", vector():set(-204.67,0.42,-27.67) )
+end
+end
+
+function headhunters_agro_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter3", "l03_agroprom", vector():set(173.50,0.30,6.70) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l03_agroprom", vector():set(75.99,0.00,-118.86) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l03_agroprom", vector():set(-135.29,0.00,-45.47) )
+end
+end
+
+function headhunters_dolina_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter2", "l04_darkvalley", vector():set(-2.21,1.20,-359.10) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter3", "l04_darkvalley", vector():set(146.69,14.70,-375.17) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter1", "l04_darkvalley", vector():set(-144.29,8.00,-124.89) )
+end
+end
+
+function headhunters_military_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l07_military", vector():set(-321.06,-5.20,126.21) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter3", "l07_military", vector():set(-122.47,-9.10,340.82) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l07_military", vector():set(51.08,-12.00,257.84) )
+end
+end
+
+function headhunters_yantar_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(142.82,-4.90,-98.67) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(59.77,2.50,-150.20) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-92.32,-11.20,-280.37) )
+end
+end
+
+function headhunters_radar_respawn4()
+rnd = math.random(1, 3)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(594.53,-50.50,-324.05) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(646,35,-50,00,-58,13) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(364.89,-49.80,-1.89) )
+end
+end
+
+function headhunters_predb_respawn4()
+rnd = math.random(1, 4)
+if rnd == 1 then 
+addon.script_spawn("headhunter1", "l08_yantar", vector():set(-324.74,-6.31,348.77) )
+end
+if rnd == 2 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-506.14,18.13,104.85) )
+end
+if rnd == 3 then 
+addon.script_spawn("headhunter3", "l08_yantar", vector():set(-175.27,2.46,108.72) )
+end
+if rnd == 4 then 
+addon.script_spawn("headhunter2", "l08_yantar", vector():set(-192.48,7.28,-298.99) )
+end
+end
+---------------------------------------
+
+
+
+
+
+-- Ёкспериментальный респавн мобов на текущей локации: ----------------------------------------------------------------------------------------
+
+function rad_mob1respawn()
+addon.script_spawn("rad_mob1", "l10_radar", vector():set(557.63,-62.52,-204.90) )
+end
+
+function rad_mob2respawn()
+addon.script_spawn("rad_mob2", "l10_radar", vector():set(557.63,-62.52,-204.90) )
+end
+
+function rad_mob3respawn()
+addon.script_spawn("rad_mob3", "l10_radar", vector():set(557.63,-62.52,-204.90) )
+end
+
+function rad_mob4respawn()
+addon.script_spawn("rad_mob4", "l10_radar", vector():set(490.64,-52.52,-269.35) )
+end
+
+function rad_mob5respawn()
+addon.script_spawn("rad_mob5", "l10_radar", vector():set(490.64,-52.52,-269.35) )
+end
+
+function rad_mob6respawn()
+addon.script_spawn("rad_mob6", "l10_radar", vector():set(490.64,-52.52,-269.35) )
+end
+
+function rad_mob7respawn()
+addon.script_spawn("rad_mob7", "l10_radar", vector():set(403.24,-50.34,-207.48) )
+end
+
+function rad_mob8respawn()
+addon.script_spawn("rad_mob8", "l10_radar", vector():set(403.24,-50.34,-207.48) )
+end
+
+function rad_mob9respawn()
+addon.script_spawn("rad_mob9", "l10_radar", vector():set(403.24,-50.34,-207.48) )
+end
+
+function rad_mob10respawn()
+addon.script_spawn("rad_mob10", "l10_radar", vector():set(314.82,-48.12,-129.08) )
+end
+
+function rad_mob11respawn()
+addon.script_spawn("rad_mob11", "l10_radar", vector():set(314.82,-48.12,-129.08) )
+end
+
+function rad_mob12respawn()
+addon.script_spawn("rad_mob12", "l10_radar", vector():set(314.82,-48.12,-129.08) )
+end
+
+function rad_mob13respawn()
+addon.script_spawn("rad_mob13", "l10_radar", vector():set(383.99,-50.50,-110.50) )
+end
+
+function rad_mob14respawn()
+addon.script_spawn("rad_mob14", "l10_radar", vector():set(383.99,-50.50,-110.50) )
+end
+
+function rad_mob15respawn()
+addon.script_spawn("rad_mob15", "l10_radar", vector():set(383.99,-50.50,-110.50) )
+end
+
+function rad_mob16respawn()
+addon.script_spawn("rad_mob16", "l10_radar", vector():set(513.63,-50.85,-78.36) )
+end
+
+function rad_mob17respawn()
+addon.script_spawn("rad_mob17", "l10_radar", vector():set(513.63,-50.85,-78.36) )
+end
+
+function rad_mob18respawn()
+addon.script_spawn("rad_mob18", "l10_radar", vector():set(513.63,-50.85,-78.36) )
+end
+
+function rad_mob19respawn()
+addon.script_spawn("rad_mob19", "l10_radar", vector():set(570.40,-49.95,-6.49) )
+end
+
+function rad_mob20respawn()
+addon.script_spawn("rad_mob20", "l10_radar", vector():set(636.73,-43.82,186.64) )
+end
+
+
+
+

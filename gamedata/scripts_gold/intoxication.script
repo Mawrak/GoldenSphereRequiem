@@ -1,0 +1,24 @@
+
+local bad_food = {
+	["mre_bad"] = true,
+	["irp-b_bad"] = true,
+	["bread_bad"] = true,
+	["syrok_bad"] = true,
+	["kolbasa_bad"] = true, 
+	["conserva_bad"] = true, 
+	["salo_bad"] = true,
+	["conserva2_bad"] = true, 
+	["kefir_bad"] = true
+}
+ 
+function use_bad_food(obj)
+	-- if not inventory.belt["af_bottle"] then
+		if obj and bad_food[obj:section()] then 
+				if db.actor:dont_has_info("intoxication") then
+					db.actor:give_info_portion ("intoxication")
+				end
+		end	
+	-- elseif inventory.belt["af_bottle"] then
+		-- return false
+	-- end
+end    

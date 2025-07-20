@@ -1,0 +1,20 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle
+
+[ph_idle]
+on_info = {+x18_remoral_phase1} ph_button@1
+
+[ph_button@1]
+anim_blend  = true
+anim        = lab_primary_switcher_idle
+tooltip     = x18_remoralizer_switcher_use
+on_press    = ph_button@2 %=play_snd(ambient\x18\h_am_hit4) =run_postprocess(controller_hit) =play_snd(ambient\switch_1) +x18_remoralizer_blow =x18_remoral_blow_think%
+
+[ph_button@2]
+anim_blend  = true
+anim        = lab_primary_switcher_off
+tooltip     = x18_remoralizer_switcher_use
+on_press    = nil

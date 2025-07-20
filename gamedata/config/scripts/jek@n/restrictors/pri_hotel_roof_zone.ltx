@@ -1,0 +1,17 @@
+[logic]
+
+active = sr_idle@1
+
+
+[sr_idle@1]
+
+on_info = {+actor_teleport_to_pri_hotel_roofzone} sr_idle@2
+
+[sr_idle@2]
+
+on_info = {+pri_actors_mind_dead} sr_idle@3, {+pri_rooftop_battle_end} nil
+on_actor_outside = %=actor_teleport_to_pri_hotel_roofzone%
+
+[sr_idle@3]
+
+on_info = {+pri_actors_mind_dead} %=telepatic_hit_obj(37:bip01_spine:0.1:0)%

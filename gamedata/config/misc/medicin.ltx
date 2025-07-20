@@ -1,0 +1,387 @@
+;-------------------------------------------------------
+; Аптечки и медпрепараты
+;-------------------------------------------------------
+[medicin]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency =
+cform           = skeleton
+$prefetch 		= 32
+; food item
+animation_slot		= 4
+
+;hud item
+hud                 = wpn_vodka_hud
+
+[antirad]:medicin
+$spawn 			= "food and drugs\antirad"
+class			= II_ANTIR
+visual          = medic\drug_antirad.ogf
+description		= enc_equipment_medi_antirad1
+
+inv_name			= Antirad
+inv_name_short		= Antirad
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 11
+inv_grid_y			= 0
+cost				= 250
+
+; eatable item
+eat_health = -0.01
+eat_satiety = 0
+eat_power = 0
+eat_radiation = -0.75
+wounds_heal_perc = 0
+eat_portions_num = 1
+
+[dix]:medicin
+$spawn 			= "food and drugs\dix"
+class			= II_BOTTL
+visual			= medic\drug_stimulator.ogf  
+description		= enc_equipment_D-IX
+
+inv_name			= D-IX
+inv_name_short		= D-IX
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 12
+inv_grid_y			= 0
+cost				= 800
+
+; eatable item
+eat_health          = -0.09
+eat_satiety			= 0
+eat_power			= 1
+eat_alcohol			= 0.1
+eat_radiation		= 0
+wounds_heal_perc	= 0
+eat_portions_num	= 1
+eat_max_power		= 0.2
+
+[bipsizon]:medicin
+$spawn 			= "food and drugs\bipsizon"
+class			= II_BOTTL
+visual			= medic\drug_psy_blockade.ogf
+description		= enc_equipment_bipsizon
+
+inv_name			= bipsizon
+inv_name_short		= bipsizon
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 11
+inv_grid_y			= 1
+cost				= 3500
+
+; eatable item
+eat_health          = -0.05
+eat_satiety			= 0
+eat_power			= 0
+eat_alcohol			= 0.05
+eat_radiation		= 0
+wounds_heal_perc	= 0
+eat_portions_num	= 1
+eat_max_power		= 0
+
+[yod]:medicin
+$spawn 			= "food and drugs\yod"
+class			= II_BOTTL
+visual			= medic\drug_radioprotector.ogf 
+description		= enc_equipment_yod
+
+inv_name			= yod
+inv_name_short		= yod
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 12
+inv_grid_y			= 1
+cost				= 500
+
+; eatable item
+eat_health          = -0.05
+eat_satiety			= 0
+eat_power			= 0
+eat_alcohol			= 0.01
+eat_radiation		= 0
+wounds_heal_perc	= 0
+eat_portions_num	= 1
+eat_max_power		= 0
+
+[medkit]:medicin
+$spawn 				= "food and drugs\medkit"
+class				= II_MEDKI
+visual				= equipments\item_aptechka.ogf
+description			= enc_equipment_medi_medkit1
+inv_name			= Medkit
+inv_name_short		= Medkit
+inv_weight			= 0.2
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 0
+cost				= 250
+
+; eatable item
+eat_health			= 0.7
+eat_satiety			= 0
+eat_power			= -0.1
+eat_radiation		= -0.05
+wounds_heal_perc	= 0.3
+eat_portions_num	= 1
+eat_max_power		= 0.1
+
+[medkit_army]:medicin
+$spawn 				= "food and drugs\medkit_army"
+class				= II_MEDKI
+visual				= equipments\item_aptechka3.ogf
+description			= enc_equipment_medi_medkit2
+inv_name			= Medkit_army
+inv_name_short		= Medkit_army
+inv_weight			= 0.3
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 2
+cost				= 450
+
+; eatable item
+eat_health			= 0.8
+eat_satiety			= 0
+eat_power			= 0.5
+eat_radiation		= -0.2
+wounds_heal_perc	= 1.0
+eat_portions_num	= 1
+eat_max_power		= 0.1
+
+[medkit_scientic]:medicin
+$spawn 				= "food and drugs\medkit_scientic"
+class				= II_MEDKI
+visual				= equipments\item_aptechka2.ogf
+description			= enc_equipment_medi_medkit3
+inv_name			= Medkit_scientific
+inv_name_short		= Medkit_scientific
+inv_weight			= 0.4	;0.2
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 11
+inv_grid_y			= 2
+cost				= 650
+
+; eatable item
+eat_health			= 0.9
+eat_satiety			= 0
+eat_power			= -0.1
+eat_radiation		= -0.8
+wounds_heal_perc	= 0.3
+eat_portions_num	= 1
+eat_max_power		= 0.1
+
+[medkit1]:medicin
+$spawn 				= "food and drugs\medkit_scientic"
+class				= II_MEDKI
+visual				= equipments\item_aptechka2.ogf
+description			= enc_equipment_medi_medkit3
+inv_name			= Medkit_scientific
+inv_name_short		= Medkit_scientific
+inv_weight			= 0.4	;0.2
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 0
+cost				= 650
+
+; eatable item
+eat_health			= 0.9
+eat_satiety			= 0
+eat_power			= 0
+eat_radiation		= -0.6
+wounds_heal_perc	= 0.3
+eat_portions_num	= 1
+eat_max_power		= 0.1
+
+
+[bandage]:medicin
+$spawn 				= "food and drugs\bandage"
+class				= II_BANDG
+visual				= equipments\item_bandage.ogf
+description			= enc_equipment_medi_bandage1
+
+inv_name			= bandage
+inv_name_short		= bandage
+inv_weight			= 0.1
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 1
+cost				= 50
+
+; eatable item
+eat_health          = 0.0
+eat_satiety         = 0
+eat_power           = 0.0
+eat_radiation       = 0.0
+wounds_heal_perc    = 1.0
+eat_portions_num    = 1
+
+
+[bandage1]:medicin
+$spawn 				= "food and drugs\bandage"
+class				= II_BANDG
+visual				= equipments\item_bandage.ogf
+description			= enc_equipment_medi_bandage1
+
+inv_name			= bandage
+inv_name_short		= bandage
+inv_weight			= 0.1
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 1
+cost				= 50
+
+; eatable item
+eat_health         = 0
+eat_satiety        = 0
+eat_power          = 0.0
+eat_radiation      = 0.0
+wounds_heal_perc   = 0.7
+eat_portions_num   = 1	;100
+
+
+[vint]:medicin
+$spawn 			= "food and drugs\dix"
+class			= II_BOTTL
+visual			= equipments\shpriz.ogf  
+description		= vint_desc
+
+inv_name			= vint_name
+inv_name_short		= vint_name
+inv_weight			= 0.1
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 13
+inv_grid_y			= 4
+cost				= 5000
+
+; eatable item
+eat_health          = 0
+eat_satiety			= 0
+eat_power			= -1.0
+eat_alcohol			= 0.3
+eat_radiation		= 0
+wounds_heal_perc	= 0
+eat_portions_num	= 1
+eat_max_power		= 0
+
+
+
+[anabiotik]:medicin
+$spawn 			= "food and drugs\antirad"
+class			= II_ANTIR
+visual          = medic\drug_antirad.ogf
+description		= anabiotik_descr
+
+inv_name			= anabiotik_name
+inv_name_short		= anabiotik_name
+inv_weight			= 0.2
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 12
+inv_grid_y			= 4
+cost				= 1250
+
+; eatable item
+eat_health = -0.09
+eat_satiety = 1.0
+eat_power = 0
+eat_radiation = 0
+wounds_heal_perc = 0
+eat_portions_num = 1
+
+
+[ibuprophen]:medicin
+$spawn 			= "food and drugs\antirad"
+class			= II_ANTIR
+visual          = medic\drug_antirad.ogf
+description		= description_ibuprophen
+
+inv_name			= inv_name_ibuprophen
+inv_name_short		= inv_name_ibuprophen
+inv_weight			= 0
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 15
+inv_grid_y			= 0
+cost				= 300
+
+; eatable item
+eat_health = 0
+eat_satiety = 0
+eat_power = 0
+eat_radiation = 0
+wounds_heal_perc = 0
+eat_portions_num = 1
+
+
+[gidroperit]:medicin
+$spawn 			= "food and drugs\antirad"
+class			= II_ANTIR
+visual          = medic\drug_antirad.ogf
+description		= description_gidroperit
+
+inv_name			= inv_name_gidroperit
+inv_name_short		= inv_name_gidroperit
+inv_weight			= 0
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 14
+inv_grid_y			= 1
+cost				= 100
+
+; eatable item
+eat_health = 0
+eat_satiety = 0
+eat_power = 0
+eat_radiation = 0
+wounds_heal_perc = 0
+eat_portions_num = 1
+
+
+
+[medkomplekt]:antirad
+$spawn				= "food and drugs\antirad"
+visual                  			= equipments\planshetka.ogf
+description			= medkomplekt_descr
+inv_name			= medkomplekt_name
+inv_name_short		= medkomplekt_name
+inv_weight			= 0.4
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 11
+inv_grid_y			= 3
+cost				= 450
+eat_portions_num			= 1000000
+quest_item			= false
+can_trade				= true
+
+
+
+
+

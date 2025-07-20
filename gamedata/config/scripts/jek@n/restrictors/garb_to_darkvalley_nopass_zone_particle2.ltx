@@ -1,0 +1,15 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_info = {+garb_darkvalley_sphere_respawn} sr_particle
+
+[sr_particle]
+name = 1935\_flame_burst_01
+path = garb_moving_fly_darkvalley_particle
+mode = 2
+looped = false
+on_timer = 10000 | sr_idle %-garb_darkvalley_sphere_respawn%
+
+
+

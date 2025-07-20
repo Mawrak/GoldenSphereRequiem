@@ -1,0 +1,20 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@norm
+
+[mob_walker@norm]
+path_walk = dar_megapolter_smoke_home1
+path_look = dar_megapolter_smoke_home1
+braindead = true
+on_actor_dist_le_nvis = 8 | mob_home@agress %=play_snd(ambient\random\rnd_wolfhowl01)%
+
+[mob_home@agress]
+path_home = dar_megapolter_smoke_home1
+home_min_radius = 1
+home_max_radius = 9
+on_actor_dist_le_nvis = 3 | mob_walker@norm %=run_cam_effector(shell_shock:1984:false) =telepatic_hit_obj(37:bip01_spine:0.9:250) =play_snd(ambient\random\rnd_scr10) =run_postprocess(agr_u_fade)%
+on_actor_dist_ge_nvis = 20 | mob_walker@norm
+
+

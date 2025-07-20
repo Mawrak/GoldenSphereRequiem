@@ -1,0 +1,8 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {=actor_has_item(wonder_doll) +wonder_task_done7} nil %=play_snd(characters_voice\woman\fight\attack\attack_many_1) =give_dolltip1 +wonder_task_done8%
+
+
+

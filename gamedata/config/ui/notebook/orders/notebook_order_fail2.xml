@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_order_fail2>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="450" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="118" b="118" font="letterica18">Запрос отменен.</text>
+</system_logo>
+
+
+<description1 x="335" y="405" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">К сожелению, в данный момент наша компания не может оформить Ваш</text>
+</description1>
+<description2 x="335" y="425" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">заказ, так как к нам не поступили данные о получении Вашего предыду-</text>
+</description2>
+<description3 x="335" y="445" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">щего заказа. Все, что Вам нужно - получить предыдущий заказ и</text>
+</description3>
+<description4 x="335" y="465" width="370" height="35">
+<text x="0" y="0" r="225" g="218" b="118" font="arial_14">попробовать оформить заказ снова. Удачного дня!</text>
+</description4>
+
+	<btn_1 x="470" y="520" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="225" g="118" b="118" font="letterica16">Магазин</text>
+	</btn_1>
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_order_fail2>
+

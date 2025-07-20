@@ -1,0 +1,14 @@
+[logic]
+active = sr_particle
+
+[sr_particle]
+name = alwen\kaktus_group\artefact_gravi_idle_01
+path = garb_hlust_art_point
+mode = 2
+looped = false
+on_info = {+actor_has_af_loop} nil
+on_info2 = {=actor_has_item(af_loop)} sr_idle
+
+[sr_idle]
+on_info = {+actor_has_af_loop} nil
+on_actor_outside = {~20} sr_particle %=play_snd_from_obj(8268:characters_voice\human_01\killer\states\idle\idle_18) =garb_static_af_loop_spawn%, {~40} sr_particle %=play_snd_from_obj(8268:characters_voice\human_01\killer\states\idle\idle_20) =garb_static_af_loop_spawn%, {~60} sr_particle %=play_snd_from_obj(8268:characters_voice\human_01\stalker\states\idle\idle_32) =garb_static_af_loop_spawn%, {~80} sr_particle %=play_snd_from_obj(8268:characters_voice\human_01\stalker\states\idle\idle_30) =garb_static_af_loop_spawn%

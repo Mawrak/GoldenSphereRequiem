@@ -1,0 +1,16 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_actor_inside = {!actor_has_item(mil_bilet)} sr_teleport, {=actor_has_item(mil_bilet)} nil %=remove_item(mil_bilet)%
+
+[sr_teleport]
+point1 = mil_abdul_walk2
+look1 = mil_abdul_walk2
+timeout = 0
+on_timer = 500|sr_idle
+
+
+
+
+

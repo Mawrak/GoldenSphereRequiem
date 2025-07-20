@@ -1,0 +1,13 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+on_use    = %=give_items_to_actor(yan_lost_scaner) =delme%
+on_timer = 2000|ph_idle@2 %=play_snd_on_me(detectors\contact_8)%
+
+[ph_idle@2]
+on_use    = %=give_items_to_actor(yan_lost_scaner) =delme%
+on_timer = 2000|ph_idle@1 %=play_snd_on_me(detectors\contact_8)%

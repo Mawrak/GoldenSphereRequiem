@@ -1,0 +1,13 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+x10_button_switch} sr_sound_act@1
+
+[sr_sound_act@1]
+snd = characters_voice\scenario\siren1
+on_timer = 2000|sr_sound_act@2
+
+[sr_sound_act@2]
+snd = characters_voice\scenario\siren1
+on_timer = 2000|sr_sound_act@1

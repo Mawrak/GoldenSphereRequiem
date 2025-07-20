@@ -1,0 +1,21 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@norm
+on_death = mob_death
+
+[mob_home@norm]
+path_home = dar_trap_tuschano_nest_center
+home_min_radius = 5
+home_max_radius = 15
+on_actor_dist_le = 5 | mob_home@agress
+
+[mob_home@agress]
+path_home = dar_trap_tuschano_nest_center
+home_min_radius = 5
+home_max_radius = 30
+on_actor_dist_ge = 35 | mob_home@norm
+
+[mob_death]
+on_info = %+dar_trap_tuschano7_dead%

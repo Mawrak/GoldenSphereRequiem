@@ -1,0 +1,93 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = {+yan_bunker_scout_hunt} walker@2, walker@start
+combat_ignore = combat_ignore
+threshold = threshold@yan_sold_comandr
+on_death = death
+
+
+[walker@start]
+path_walk = yan_sold_comander_walk1
+path_look = yan_sold_comander_look1
+on_timer = 1 | walker@1 %=make_invulnerable%
+
+[walker@1]
+path_walk = yan_sold_comander_walk1
+path_look = yan_sold_comander_look1
+danger = danger_condition
+combat_ignore_cond = always
+on_info = {+yan_bunker_atack_start} remark@before_atack
+on_info2 = {=yan_burer_scout_body_on_place} remark@burer_see
+
+[remark@before_atack]
+snd = yan_sold_comander_alarm
+anim = threat
+target = nil
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+on_signal = anim_end | walker@defense
+
+[walker@defense]
+path_walk = yan_sold_comander_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_info = {-yan_bunker_atack_start} walker@1
+
+
+
+
+[remark@burer_see]
+snd = yan_comander_burer_see
+anim = search
+target = 8695
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+on_signal = action_end|walker@2
+
+[walker@2]
+path_walk = yan_sold_comander_walk1
+path_look = yan_sold_comander_look1
+danger = danger_condition
+combat_ignore_cond = always
+on_info = {+yan_bunker_atack_start} walker@defense2 %=make_invulnerable%
+
+[walker@defense2]
+path_walk = yan_sold_comander_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_info = {-yan_bunker_atack_start} walker@2
+
+
+
+
+
+
+[threshold@yan_sold_comandr]
+max_ignore_distance = 15
+ignore_monster = 0
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+yan_sold_comander_dead%

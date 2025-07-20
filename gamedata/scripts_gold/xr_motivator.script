@@ -1,0 +1,1210 @@
+--[[------------------------------------------------------------------------------------------------------------------
+
+порядок вызова методов биндера:
+reload
+reinit
+load
+net_spawn
+--------------------------------------------------------------------------------------------------------------------]]
+memtsg = {} --' временная таблица
+lasthealth = 0
+lastime = nil
+
+local count = 0
+
+local warn_check_timer = {}
+local snd_check_timer = {}
+local armor_check = {}
+
+local check_npc_on_fire_line = true
+local check_npc_arm_hit = true
+
+local pri_checked = 0
+
+local pri_f_count = 0
+local pri_d_count = 0
+local pri_m_count = 0
+
+local watchdog = {}
+local watchdog_max = 8
+
+local fx_particle2 = particles_object("explosions\\campfire_01")
+
+function pripyat_chk(self)
+	local lname = level.name() 
+	local name = self:name()
+
+	local blow = hit()
+	blow.direction = vector():set(0,0,0)
+	blow.impulse = 0
+	blow.draftsman = self
+	blow.power = 200
+	blow.type = hit.explosion
+
+	if lname == "l11_pripyat" and has_alife_info("freeplay") then
+		 if (string.find(name, "mil_freedom_barier_respawn") or string.find(name, "mil_freedom_respawn")) and self:alive() then
+			pri_f_count = pri_f_count + 1
+			if pri_f_count > 4 then
+				self:hit(blow)
+				return true
+			end
+		 end
+		 if (string.find(name, "mil_stalker_respawn") or string.find(name, "bar_stalker_respawn")) and self:alive() then
+			pri_m_count = pri_m_count + 1
+			if pri_m_count > 4 then
+				self:hit(blow)
+				return true
+			end
+		 end	
+		 if string.find(name, "bar_dolg_respawn") and self:alive() then
+			pri_d_count = pri_d_count + 1
+			if pri_d_count > 4 then
+				self:hit(blow)
+				return true
+			end
+		 end		
+	end
+	return false
+end
+
+
+----------------------------------------------------------------------------------------------------------------------
+function protected_loot(object, backup)
+	death_manager.drop_manager(object, backup):create_release_item()
+end
+
+function arm_hit(npc, amount, bone_index)
+	if check_npc_arm_hit and npc and IsStalker(npc) then
+		if amount > 0 then
+			-- bone 34 ... r arm
+			-- bone 33 ... r forearm
+			-- bone 38 ... r "pointer" finger
+			-- bone 20 ... l forearm
+			-- bone 21 ... l arm
+			-- bone 25 .... l finger ... which one? .. 22 - 23 same?
+			local r = -1
+			local need_drop = false
+			local drop_hit = 0.5
+			local drop_prob_mod = amount/drop_hit
+			if (bone_index == 33) then
+				-- right forearm hit
+				r = math.random()*100
+				need_drop = (r<10)
+			end
+			if ((bone_index >= 34) and (bone_index <= 38)) then
+				r = math.random()*100
+				need_drop = (r<30)
+			end
+		
+			-- собсна выбрасываем пушку, точнее активный предмет
+			if need_drop and npc then
+				local act_item = npc:active_item()
+				if act_item then 
+					act_item:set_condition(math.random(25,65)/100)
+					npc:drop_item(act_item) 
+				end
+			end
+		end
+	end
+end
+
+function look_to_shot(object, who)
+	if object and who then
+		if IsStalker(object) and 
+		(object:alive() and who:alive()) and
+		not xr_wounded.is_wounded(object) and
+		((IsStalker(who) and object:relation(who) ~= game_object.friend) or IsMonster(who)) then
+			if object:best_enemy() then
+				local be = object:best_enemy()
+				local enemy_dist = object:position():distance_to_sqr(be:position())
+				local who_dist = object:position():distance_to_sqr(who:position())
+				if who_dist < enemy_dist then
+					object:set_sight(look.danger,who:bone_position("bip01_head"))
+				end		
+			else	
+				object:set_sight(look.danger,who:bone_position("bip01_head"))
+			end
+		end
+	end
+end
+
+function recognize_sound(sound_type)
+	local sn_t = "NIL"
+	
+	if bit_and(sound_type, snd_type.weapon) == snd_type.weapon then
+		sn_t = "WPN"
+		if bit_and(sound_type, snd_type.weapon_shoot) == snd_type.weapon_shoot then
+			sn_t = "WPN_shoot"
+		elseif bit_and(sound_type, snd_type.weapon_empty) == snd_type.weapon_empty then
+			sn_t = "WPN_empty"
+		elseif bit_and(sound_type, snd_type.weapon_bullet_hit) == snd_type.weapon_bullet_hit then
+			sn_t = "WPN_hit"
+		elseif bit_and(sound_type, snd_type.weapon_reload) == snd_type.weapon_reload then
+			sn_t = "WPN_reload"
+		end
+	elseif bit_and(sound_type, snd_type.item) == snd_type.item then
+		sn_t = "ITM"
+		if bit_and(sound_type, snd_type.item_pick_up) == snd_type.item_pick_up then
+			sn_t = "ITM_pckup"
+		elseif bit_and(sound_type, snd_type.item_drop) == snd_type.item_drop then
+			sn_t = "ITM_drop"
+		elseif bit_and(sound_type, snd_type.item_hide) == snd_type.item_hide then
+			sn_t = "ITM_hide"
+		elseif bit_and(sound_type, snd_type.item_take) == snd_type.item_take then
+			sn_t = "ITM_take"
+		elseif bit_and(sound_type, snd_type.item_use) == snd_type.item_use then
+			sn_t = "ITM_use"
+		end
+	elseif bit_and(sound_type, snd_type.monster) == snd_type.monster then
+		sn_t = "MST"
+		if bit_and(sound_type, snd_type.monster_die) == snd_type.monster_die then
+			sn_t = "MST_die"
+		elseif bit_and(sound_type, snd_type.monster_injure) == snd_type.monster_injure then
+			sn_t = "MST_damage"
+		elseif bit_and(sound_type, snd_type.monster_step) == snd_type.monster_step then
+			sn_t = "MST_step"
+		elseif bit_and(sound_type, snd_type.monster_talk) == snd_type.monster_talk then
+			sn_t = "MST_talk"
+		elseif bit_and(sound_type, snd_type.monster_attack) == snd_type.monster_attack then
+			sn_t = "MST_attack"
+		elseif bit_and(sound_type, snd_type.monster_eat) == snd_type.monster_eat then
+			sn_t = "MST_eat"
+		end
+	end
+	
+	return sn_t
+end
+
+function check_sound(self, who, sound_type, sound_position, sound_power)
+	
+	if not self or
+		not who or
+		not sound_type or
+		not sound_position or
+		not sound_power then
+	return end
+	
+	local actsch = nil
+	
+	if db.storage[self:id()] and db.storage[self:id()].active_scheme then
+		actsch = db.storage[self:id()].active_scheme
+	end
+	
+	if actsch and (actsch == "remark" or actsch == "wounded" or actsch == "actor_dialogs")
+	then return end
+
+	local who_dist = 1000
+	local check_dist = 25*sound_power
+	
+	if (IsMonster(who) or IsStalker(who)) 
+	and (who:alive() and self:alive()) 
+	and self:id() ~= db.actor:id() 
+	and who:id() ~= db.actor:id() then
+		who_dist = self:position():distance_to(who:position())
+		if who_dist > check_dist 
+		or who:id() == self:id() 
+		or who:id() == db.actor:id()
+		or db.cars[who:id()]
+		or self:relation(who) == game_object.friend 
+		or self:relation(who) == game_object.neutral
+		or xr_wounded.is_wounded(self) then
+			return
+		end
+	else	
+		return
+	end
+	
+	local snd_t = recognize_sound(sound_type)
+	
+	local self_hit = hit()
+	self_hit.type = hit.strike
+	self_hit.power = 0
+	self_hit.impulse = 0.01
+	self_hit.draftsman = self
+	self_hit.direction = vector():set(0,0,0)	
+	
+	local hit = hit()
+	hit.type = hit.strike
+	hit.power = 0
+	hit.impulse = 0.01
+	hit.draftsman = self
+	hit.direction = vector():set(0,0,0)		
+	
+	if snd_t and snd_t ~= "NIL" and not self:best_enemy() then
+		self:set_sight(look.point,sound_position)
+		if IsStalker(who) and (self:relation(who) == game_object.enemy) then
+			if snd_t == "WPN_empty" or
+			snd_t == "WPN_reload" or 
+			snd_t == "ITM_drop" or
+			snd_t == "ITM_use" then		
+				check_dist = 10*sound_power
+				who_dist = self:position():distance_to(who:position())
+				if who_dist > check_dist then
+					return
+				else				
+					self:set_mental_state(anim.danger)
+				end
+			elseif snd_t == "WPN_shoot" then
+				self:hit(self_hit)
+				self:set_mental_state(anim.danger)			
+			end		
+		elseif IsMonster(who) then
+			if snd_t == "MST_step" or snd_t == "MST_talk" then
+				if string.find(who:name(), "gigant") then
+					self:hit(hit)
+					self:set_mental_state(anim.panic)
+				else
+					self:set_mental_state(anim.danger)
+				end				
+			elseif snd_t == "MST_attack" then
+				self:hit(self_hit)
+				self:set_mental_state(anim.danger)			
+			end
+		end
+	end
+end
+
+function check_art_weapon(npc)
+	local item_in_slot = npc:item_in_slot(1)
+	local act_item = npc:active_item()
+	if act_item and item_in_slot and act_item:id() == item_in_slot:id() then
+		local item_in_slot_sec = act_item:section()
+		local item_in_slot_id = act_item:id()
+		if item_in_slot_sec and item_in_slot_id and string.find(item_in_slot_sec, "af_") then
+			local bw = npc:best_weapon()
+			local be = npc:best_enemy()
+			local rem_id = npc:active_item():id()
+			npc:drop_item(npc:active_item())
+			local s_obj = alife():object(rem_id)
+			if s_obj then
+				alife():release(s_obj, true)
+				alife():create(item_in_slot_sec,npc:position(),npc:level_vertex_id(),npc:game_vertex_id(),npc:id())
+			end			
+			if bw and string.find(bw:section(), "wpn_") then
+				if be then
+					npc:set_item(object.fire1, bw)
+					return
+				else
+					npc:set_item(object.idle, bw)
+					return
+				end
+			end
+		end
+	end
+end
+
+---------------------------------------------------------------------------------------------------------------------
+class "motivator_binder" (object_binder)
+
+function motivator_binder:__init (obj) super(obj)
+	self.loaded = false
+	self.last_update = 0
+
+    self.first_update = false
+	self.treasure_processed = false
+	if (amkII_equip) then
+		self.oDisguise = amkII_equip.CAmkDisguise()
+	end	
+end
+
+function motivator_binder:extrapolate_callback(cur_pt)
+    if self.object == nil then return false end
+	if self.st.active_section then
+		xr_logic.issue_event(self.object, self.st[self.st.active_scheme], "extrapolate_callback")
+		self.st.move_mgr:extrapolate_callback(self.object)
+	end
+
+		if patrol(self.object:patrol()):flags(cur_pt):get() == 0 then
+			return true
+		end
+	return false
+end
+
+function motivator_binder:reinit()
+
+    if self.object == nil then return end
+	
+    object_binder.reinit(self)
+
+
+    local char_ini = self.object:spawn_ini() or ini_file("scripts\\dummy.ltx")
+
+----------------------------------------------------------------------------------------------------------------------
+-- Общие скрипты
+
+    db.storage[self.object:id()] = {  followers = {} }
+    self.st = db.storage[self.object:id()]
+
+	self.st.state_mgr = state_mgr.bind_manager(self.object)
+	self.st.move_mgr = move_mgr.move_mgr(self.object)
+	self.st.move_mgr:initialize()
+
+end
+
+function motivator_binder:net_spawn(sobject)
+	printf("motivator_binder:net_spawn(): self.object:name()='%s'", self.object:name())
+	
+	if pripyat_chk(self.object) == true then
+		return false
+	end
+
+	if not object_binder.net_spawn(self, sobject) then
+		return false
+	end
+
+
+	db.add_obj(self.object)
+
+	-- Все CALLBACK-и ставить здесь:
+	self.object:set_patrol_extrapolate_callback(motivator_binder.extrapolate_callback, self)
+	self.object:set_callback(callback.hit, motivator_binder.hit_callback, self)
+	self.object:set_callback(callback.death, motivator_binder.death_callback, self)
+	self.object:set_callback(callback.use_object, motivator_binder.use_callback, self)
+
+	if not amk.is_quest_npc(self.object) then
+		self.object:set_callback(callback.sound, motivator_binder.hear_callback, self)
+	end
+
+	if self.loaded == false then
+		local char_ini = self.object:spawn_ini() or ini_file("scripts\\dummy.ltx")
+		xr_info.loadInfo(self.object, char_ini)
+	end
+	
+	if not self.object:alive() then
+		if xr_companion.is_companion(self.object:id()) then
+			xr_companion.save_var_companion(self.object:id(), "is_companion", 0)
+		end
+		return true
+	end
+
+  if self.object:character_community() == "zombied" then
+    local manager = self.object:motivation_action_manager()
+    manager:remove_evaluator  (stalker_ids.property_anomaly)
+    manager:add_evaluator   (stalker_ids.property_anomaly, property_evaluator_const(false))
+  else
+    local manager = self.object:motivation_action_manager()
+    manager:remove_evaluator  (stalker_ids.property_anomaly)
+    manager:add_evaluator   (stalker_ids.property_anomaly, property_evaluator_const(false))
+  end
+  
+	if xr_companion then
+		local manager = self.object:motivation_action_manager()
+		manager:add_evaluator(xr_companion.property_need_companion, property_evaluator_const(false))
+		manager:add_evaluator(xr_companion.property_need_run, property_evaluator_const(false))
+	end
+	  
+
+  if ogsm_hideout then
+	local manager = self.object:motivation_action_manager()
+      manager:add_evaluator(ogsm_hideout.property_blowout, property_evaluator_const(false))
+      manager:add_evaluator(ogsm_hideout.property_hideout_lost, property_evaluator_const(false))
+      manager:add_evaluator(ogsm_hideout.property_inhide, property_evaluator_const(false))
+      manager:add_evaluator(ogsm_hideout.property_psyzoned, property_evaluator_const(false))
+
+  end
+
+    xr_sound.load_sound(self.object)
+
+	xr_gulag.setup_gulag_and_logic_on_spawn( self.object, self.st, sobject, modules.stype_stalker, self.loaded )
+	
+	local npc = self.object
+
+	--// xr_companion
+	if xr_companion.is_companion(self.object:id()) then
+		if db.actor then
+			db.actor:give_game_news("Обнаружен сигнал КПК вашего напарника. "..npc:character_name() .. " находится поблизости!", "ui\\ui_iconsTotal", Frect():set(0,235,83,47), 0, 15000)
+		end
+		sobject:smart_terrain_task_deactivate()
+	end	
+	--// xr_companion	
+	return true
+end
+
+function motivator_binder:net_destroy()
+
+	local st = db.storage[self.object:id()]
+	if st.active_scheme then
+		xr_logic.issue_event(self.object, st[st.active_scheme], "net_destroy", self.object)
+	end
+
+	db.del_obj(self.object)
+
+	db.storage[self.object:id()] = nil
+
+	self:clear_callbacks()
+	self.object:set_callback(callback.use_object, nil)
+
+	object_binder.net_destroy(self)
+end
+
+function motivator_binder:clear_callbacks()
+	self.object:set_patrol_extrapolate_callback(nil)
+	self.object:set_callback(callback.hit, nil)
+	self.object:set_callback(callback.death, nil)
+end
+
+
+
+
+function motivator_binder:hit_callback(obj, amount, local_direction, who, bone_index)
+
+-- От других НПС: ---------------------------------------------------------------------------------------------
+if ( who and who:id()~=db.actor:id() and IsStalker(who) and who.active_item and who:active_item() and amount > 0 ) and not string.find(obj:name(), "^dar_build_sergey") then
+		local h = hit()
+         h.type = hit.fire_wound
+         h.power = 0.4
+         h.impulse = 50
+         h.draftsman = obj 
+         h.direction = vector():set(-1,0,0) 
+         obj:hit(h)
+end
+
+if ( who and who:id()==db.actor:id() and amount > 0 ) then
+
+local pos = obj:position()
+local sobj = level.object_by_id(self.object:id())
+local active_weapon = db.actor:active_item()
+local ammo_type = 0
+if active_weapon then
+ammo_type = rx_utils.get_weapon_data(alife():object(db.actor:active_item():id())).ammo_type
+end
+local h = hit()
+local target_dist = obj:position():distance_to(db.actor:position())
+local obj_name = obj:name()
+local string_find = string.find
+local blow_sound = sound_object([[characters_voice\scenario\meat]])
+
+function power_ammo()
+local active_weapon = db.actor:active_item()
+if active_weapon then ammo_type = rx_utils.get_weapon_data(alife():object(active_weapon:id())).ammo_type end
+	if ammo_type == 1 then
+	    return true
+	end
+    return false
+end
+
+function salt_ammo()	--	только для дробовиков
+local active_weapon = db.actor:active_item()
+if active_weapon then ammo_type = rx_utils.get_weapon_data(alife():object(active_weapon:id())).ammo_type end
+	if ammo_type == 2 then
+	    return true
+	end
+    return false
+end
+
+function strong_visual()
+	local string_find = string.find
+	local name = self.object:name()
+	if string_find(name, "^headhunter1")
+	or string_find(name, "^headhunter2")
+	or string_find(name, "^dar_renegade1")
+	or string_find(name, "^dar_renegade2")
+	or string_find(name, "^x10_agent1")
+	or string_find(name, "^x10_agent2")
+	or string_find(name, "^x10_agent3")
+	or string_find(name, "^x10_agent4")
+	or string_find(name, "^x10_agent5")
+	or string_find(name, "^x10_agent6")
+	or string_find(name, "^x10_agent7")
+	or string_find(name, "^x10_agent8")
+	or string_find(name, "^x10_agent9")
+	or string_find(name, "^x10_agent10")
+	or string_find(name, "^x10_agent11")
+	or string_find(name, "^x10_agent12")
+	or string_find(name, "^pri_agent_lider")
+	or string_find(name, "^aes_guard_agent1")
+	or string_find(name, "^aes_guard_agent2")
+	or string_find(name, "^aes_guard_agent3")
+	or string_find(name, "^aes_guard_agent4")
+	or string_find(name, "^aes_guard_agent5")
+	or string_find(name, "^aes_guard_agent6")
+	or string_find(name, "^aes_guard_agent7")
+	or string_find(name, "^aes_guard_agent8")
+	or string_find(name, "^aes_guard_agent9")
+	or string_find(name, "^aes_guard_agent10")
+	or string_find(name, "^miln_stranger1")
+	or string_find(name, "^miln_stranger2")
+	or string_find(name, "^miln_stranger3")
+	or string_find(name, "^predb_kontrabander3")
+	or string_find(name, "^predb_kontrabander4")
+	or string_find(name, "^predb_courier1")
+	or string_find(name, "^predb_courier2")
+	or string_find(name, "^predb_courier3")
+	or string_find(name, "^predb_kpp_soldier5")
+	or string_find(name, "^predb_zomb1")
+	or string_find(name, "^predb_zomb2")
+	or string_find(name, "^mil_separ_commander")
+	or string_find(name, "^mil_vsu_commander")
+	or string_find(name, "^predb_courier")
+	or string_find(name, "^stalker_freak")
+	then
+	    return true
+	end
+    return false
+end
+
+-- Вычисляем урон, дистанцию, хэдшот, тип патрона и импульс: ----------------------
+if xr_conditions.actor_armed_pistols1() == true then 
+base_hit = 0.5
+base_dist = 20
+impls = 50
+elseif xr_conditions.actor_armed_pistols2() == true then
+base_hit = 0.9
+base_dist = 35
+impls = 80
+elseif xr_conditions.actor_armed_smg1() == true then
+base_hit = 0.5
+base_dist = 25
+impls = 60
+elseif xr_conditions.actor_armed_smg2() == true then
+base_hit = 0.7
+base_dist = 25
+impls = 90
+elseif xr_conditions.actor_armed_rifles1() == true then
+base_hit = 0.7
+base_dist = 40
+impls = 100
+elseif xr_conditions.actor_armed_rifles2() == true then
+base_hit = 0.8
+base_dist = 50
+impls = 120
+elseif xr_conditions.actor_armed_shotguns1() == true then
+base_hit = 0.27
+base_dist = 30
+impls = 50
+elseif xr_conditions.actor_armed_shotguns2() == true then
+base_hit = 0.37
+base_dist = 40
+impls = 70
+elseif xr_conditions.actor_armed_sniper1() == true then
+base_hit = 2.0
+base_dist = 80
+impls = 130
+elseif xr_conditions.actor_armed_sniper2() == true then
+base_hit = 3.5
+base_dist = 110
+impls = 150
+elseif xr_conditions.actor_armed_psy() == true then
+base_hit = 0.01
+base_dist = 1000
+impls = 1
+else
+
+base_hit = 0.5 -- базовый урон;
+base_dist = 20 -- базовая дистанция;
+impls = 50	--	базовый импульс;
+end
+
+if ammo_type == 1 then
+ammo = 2.0
+else ammo = 1.0	--	кофициент типа патрона;
+end
+
+if ( bone_index == 13 or bone_index == 14 or bone_index == 15 or bone_index == 16 ) then
+headshot = 3.0
+else headshot = 1.0	--	кофициент хэдшота;
+end
+
+if ( has_alife_info("achievement6") and xr_conditions.actor_armed_weak_sniper() == true ) then
+snpr = 2.0	--	кофициент снайперского навыка;
+else
+snpr = 1.0
+end
+
+local enemy = self.object:best_enemy()
+if not enemy and not self.object:see(db.actor) and xr_conditions.actor_silencer_use() == true then
+sil = 2.0		--	кофициент глушителя;
+else
+sil = 1.0
+end
+
+
+-- Огнестрел общий : -------------------
+if db.actor:dont_has_info("arts_powerup_steel") then
+	if ( target_dist > base_dist and strong_visual() == true ) then -- большая дистанция + сильный визуал = нет хита;
+		addon.enemy_armor_hold_indicator()
+	else
+		h.type = hit.fire_wound
+		h.power = base_hit*ammo*headshot*snpr*sil
+		h.impulse = impls
+		h.draftsman = obj
+		h.direction = obj:position():sub(db.actor:position())
+		obj:hit(h)
+		--news_manager.send_tip(db.actor, base_hit*ammo*headshot*snpr*sil, nil)
+	end
+elseif has_alife_info("arts_powerup_steel") then
+		h.type = hit.fire_wound
+		h.power = 10.0
+		h.impulse = 300
+		h.draftsman = obj 
+		h.direction = obj:position():sub(db.actor:position())
+		obj:hit(h)
+end
+
+-- Пси-винтовка: -----------------------------------------------------------------
+if xr_conditions.actor_armed_psy() == true then
+--[[        h.type = hit.fire_wound
+        h.power = 100
+        h.impulse = 0
+        h.draftsman = who 
+        h.direction = vector():set(0,0,0) 
+        obj:hit(h) ]]
+	local vis = obj:get_visual_name()
+	local zomb = alife():create("pervert_zombied", obj:position(), obj:level_vertex_id(), obj:game_vertex_id())
+	local pk = get_netpk(zomb)
+	local data = pk:get()
+	data.visual_name = vis
+	data.health = 0.1
+	data.upd.health = 0.1
+	pk:set(data)
+	amk.remove_item(obj)
+	news_manager.send_tip(db.actor, "target_zombied", nil)
+end
+
+-- Арбалет: --------------------------------------------------------------
+if xr_conditions.actor_armed_crossbow() == true then
+         h.type = hit.radiation
+         h.power = 1.0
+         h.impulse = 0
+         h.draftsman = obj
+         h.direction = vector():set(0,0,0) 
+         obj:hit(h)
+end
+
+-- Обрез: ---------------------------------------------------------------------------------
+if xr_conditions.actor_armed_some_obrez() == true and target_dist < 3 then
+local obrez_particle = particles_object("anomaly2\\group_items\\body_tear_blood_01")
+         h.type = hit.fire_wound
+         h.power = 100
+         h.impulse = 0
+         h.draftsman = who 
+         h.direction = vector():set(0,0,0) 
+         obj:hit(h) 
+	obrez_particle:play_at_pos(pos)
+	addon.buck_shooting()
+end
+
+-- По Фениксу: ------------------------------------------------------------------------------------------------------
+
+if ( bone_index == 13 or bone_index == 14 or bone_index == 15 or bone_index == 16 ) and string.find(self.object:name(), "^rad_fenix") then
+if db.actor:dont_has_info("rad_fenix_headshot") then
+	db.actor:give_info_portion ("rad_fenix_headshot")
+end
+end
+
+end
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+	--// xr_companion
+	if xr_companion.is_companion(self.object:id()) and amount < 0.3 then
+		xr_sound.set_sound(self.object, nil)
+		stop_play_sound(self.object)
+	end
+	
+	if self.st.active_section then
+		xr_logic.issue_event(self.object, self.st[self.st.active_scheme], "hit_callback", obj, amount, local_direction, who, bone_index)
+	end
+
+	if self.st.combat_ignore then
+		xr_logic.issue_event(self.object, self.st.combat_ignore, "hit_callback", obj, amount, local_direction, who, bone_index)
+	end
+
+	if self.st.combat then
+		xr_logic.issue_event(self.object, self.st.combat, "hit_callback", obj, amount, local_direction, who, bone_index)
+	end
+	
+	if self.st.hit then
+		xr_logic.issue_event(self.object, self.st.hit, "hit_callback", obj, amount, local_direction, who, bone_index)
+	end
+
+	if amount > 0 then
+		sr_territory.issue_event(self.object, "hit_callback", obj, amount, local_direction, who, bone_index)
+		if self.object then
+			local drop, err_msg = pcall(xr_wounded.hit_call_back,self.object:id())
+		else	
+			local drop, err_msg = pcall(xr_wounded.hit_call_back,obj:id())
+		end
+	end
+	
+	--// xr_companion
+	if xr_companion.is_companion(self.object:id()) then
+		xr_companion.we_are_hit(self.object, who, true)
+	end			
+	
+
+	
+	local drop, err_msg = pcall(arm_hit,obj,amount,bone_index)
+	
+	local warn_timer = time_global()
+	
+	if not amk.is_quest_npc(obj) and not (xr_companion.is_companion(obj:id()) and xr_companion.being_attacked == false) then
+		if not warn_check_timer[obj:id()] then
+			warn_check_timer[obj:id()] = warn_timer + math.random(1000, 2000) 
+		else
+			if warn_check_timer[obj:id()] < warn_timer then
+				drop, err_msg = pcall(look_to_shot,obj,who)
+				if not drop then
+				end
+				warn_check_timer[obj:id()] = warn_timer + math.random(1000, 2000)
+			end
+		end
+	end
+	
+	if amount > 0.1 then
+		xr_effects.bar_territory_hit(self.object, who)
+	end
+	
+end
+
+
+
+function motivator_binder:death_callback(victim, who)
+
+local pos = victim:position()
+local obj_name = victim:name()
+local string_find = string.find
+	
+	
+-- Повышение снайперского навыка, если убиваем из винтовок\карабинов: -------------------------------------------------------------
+if who and who.active_item and who:active_item() and ( who:id()==db.actor:id() or who:id()==victim:id() ) and xr_conditions.actor_armed_weak_sniper() == true then
+	addon.sniper_shooting()
+end
+	
+-- Возгорание задницы жертвы, если она убита из лазера или огнемёта: --------------------------------------------------------------
+if who and who.active_item and who:active_item() and ( who:id()==db.actor:id() or who:id()==victim:id() ) 
+and ( xr_conditions.actor_armed_laser() == true or xr_conditions.actor_armed_flame() == true ) then
+	fx_particle2:play_at_pos(pos)
+end
+
+-- Спавн подарка на месте жертвы, если одет костюм убийцы: -------------------------------------------------------------------------
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() )
+and xr_conditions.actor_wears_slayer_outfit() == true then
+	rnd = math.random(1, 11)
+	if rnd == 1 then 
+		alife():create('af_scale', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 2 then 
+		alife():create('af_roll', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 3 then 
+		alife():create('af_steel_nut', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 4 then 
+		alife():create('af_frog', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 5 then 
+		alife():create('af_glass', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 6 then 
+		alife():create('af_spiral', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 7 then 
+		alife():create('af_bone', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 8 then 
+		alife():create('af_bolt', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 9 then 
+		alife():create('af_hole', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 10 then 
+		alife():create('medic_bag', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+	if rnd == 11 then 
+		alife():create('equipment_bag', victim:position(), victim:level_vertex_id(), victim:game_vertex_id())
+	end
+end
+
+
+-- Респавн агентов: -----------------------------------------------------------------------------------------------
+
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "headhunter1" then	--	убийца ГГ;
+	addon_respawn.current_level_headhunters_respawn1()
+	local murder = starvation.get_murder()
+	if murder<1.0 then starvation.add_murder(0.02)
+	end
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "headhunter1" then	--	сдох сам;
+	addon_respawn.current_level_headhunters_respawn1()
+end
+
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "headhunter2" then	--	убийца ГГ;
+	addon_respawn.current_level_headhunters_respawn2()
+	local murder = starvation.get_murder()
+	if murder<1.0 then starvation.add_murder(0.02)
+	end
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "headhunter2" then	--	сдох сам;
+	addon_respawn.current_level_headhunters_respawn2()
+end
+
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "headhunter3" then	--	убийца ГГ;
+	addon_respawn.current_level_headhunters_respawn3()
+	local murder = starvation.get_murder()
+	if murder<1.0 then starvation.add_murder(0.02)
+	end
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "headhunter3" then	--	сдох сам;
+	addon_respawn.current_level_headhunters_respawn3()
+end
+
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "headhunter4" then	--	убийца ГГ;
+	addon_respawn.current_level_headhunters_respawn4()
+	local murder = starvation.get_murder()
+	if murder<1.0 then starvation.add_murder(0.02)
+	end
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "headhunter4" then	--	сдох сам;
+	addon_respawn.current_level_headhunters_respawn4()
+end
+-------------------------
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "predb_zomb1" then
+	addon.script_spawn("predb_zomb2", "predbannik", vector():set(-50.98,32.83,220.36) )
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "predb_zomb1" then
+	addon.script_spawn("predb_zomb2", "predbannik", vector():set(-50.98,32.83,220.36) )
+end
+
+if who and ( who:id()==db.actor:id() or who:id()==victim:id() ) and self.object:section() == "predb_zomb2" then
+	addon.script_spawn("predb_zomb1", "predbannik", vector():set(-417.38,30.43,81.05) )
+elseif who and ( who:id()~=db.actor:id() and who:id()~=victim:id() ) and self.object:section() == "predb_zomb2" then
+	addon.script_spawn("predb_zomb1", "predbannik", vector():set(-417.38,30.43,81.05) )
+end
+
+
+-- В состоянии озверения: -------------------------------------------------------------------------------------
+
+if who and who.active_item and who:active_item() and ( who:id()==db.actor:id() or who:id()==victim:id() ) 
+and has_alife_info("rage2") then
+	local murder = starvation.get_murder()
+		if murder<1.0 then starvation.set_murder(0.0) end
+	db.actor.power = 1.0
+		if db.actor:get_bleeding() > 0.1 then db.actor:heal_wounds(1.5) end
+	db.actor.psy_health = 1.0
+	db.actor:disable_info_portion("pain")
+	local hlth = db.actor.health
+		if hlth < 1 then db.actor.health = 1.0 end
+end
+
+
+
+
+	local name = tostring(victim:name())
+
+	if self.st.death then
+		xr_logic.issue_event(self.object, self.st.death, "death_callback", victim, who)
+	end
+
+	if self.st.active_section then
+		xr_logic.issue_event(self.object, self.st[self.st.active_scheme], "death_callback", victim, who)
+	end
+
+	sr_territory.issue_event(self.object, "death_callback", victim, who)
+
+	if self.object then
+		smart_terrain.on_death(self.object:id())
+	elseif victim then
+		smart_terrain.on_death(victim:id())
+		self.object = victim
+	end
+	
+	local drop, err_msg = pcall(sr_light.check_light,obj)
+
+	local drop, err_msg = pcall(protected_loot,self.object,victim)
+
+	if drop then
+	else
+
+	end
+	
+	self:clear_callbacks()
+
+	if who:id() == db.actor:id() then
+		xr_statistic.addKillCount(self.object)
+	end	
+
+    --новости 
+    -- death_news.on_death(victim, who)
+
+
+	
+	local h = hit()
+	h.draftsman = self.object
+	h.type = hit.fire_wound
+	h.direction = db.actor:position():sub(self.object:position())
+	h:bone("pelvis")
+	h.power = 1
+	h.impulse = 10
+	self.object:hit(h)
+
+	if(actor_stats.remove_from_ranking~=nil)then
+		local community = self.object:character_community()
+		if community == "zombied" or
+		   community == "monolith" or
+		   community == "arena_enemy" or
+		   string.find(self.object:name(), "aem_")
+		then
+			return
+		end
+		actor_stats.remove_from_ranking(self.object:id())
+	end
+	
+	--// xr_companion
+	xr_companion.companion_death(self.object)	
+	
+	xr_effects.bar_territory_death(self.object, who)
+	
+end
+
+function motivator_binder:use_callback(obj, who)
+
+    if not self.object then 
+		if obj then
+			self.object = obj
+		else	
+			return
+		end
+	end
+
+	if self.object:alive() then
+		xr_use.notify_on_use(obj, who)
+		if self.st.active_section then
+			xr_logic.issue_event(self.object, self.st[self.st.active_scheme], "use_callback", obj, who)
+		end
+	else
+		--if self.treasure_processed == false then
+			--treasure_manager:get_treasure_manager():use(self.object)
+			--self.treasure_processed = true
+		--end
+	end
+
+
+end
+
+function motivator_binder:update(delta)
+	object_binder.update(self, delta)
+	
+	if not watchdog[self.object:id()] then
+		watchdog[self.object:id()] = 0
+	end
+	
+    if self.first_update == false then
+        if self.object:alive() == false then
+			local obj = level.object_by_id(self.object:id())
+			if obj and IsStalker(obj) and (obj:object("device_torch") or obj:object("device_pda")) then
+				death_manager.drop_manager(self.object, nil):create_release_item()
+				return
+			end				
+        end        
+        self.first_update = true
+    end
+
+	if self.st.state_mgr then
+		if self.object:alive() then
+			self.st.state_mgr:update()
+		else
+			self.st.state_mgr = nil
+		end
+	end
+	
+	if self.object:alive() then
+		xr_sound.update(self.object)
+	end
+	
+	if self.object:alive() then
+		if self.object:is_talk_enabled() then
+			self.object:set_tip_text("character_use")
+		else
+			self.object:set_tip_text("")
+		end
+	else
+		self.object:set_tip_text_default()
+	end
+
+
+	self.object:info_clear()
+	local best_enemy = self.object:best_enemy()
+	if best_enemy then
+		self.object:info_add('enemy -- ' .. best_enemy:name())
+	end
+	local active_section = db.storage[self.object:id()].active_section
+	if active_section then
+		self.object:info_add('section -- ' .. active_section)
+	end
+	self.object:info_add('name -- ' .. self.object:name())
+
+--[[
+	if lasttime == nil or
+	   game.get_game_time():diffSec(lasttime) > 1
+	then
+		printf("%f * %f", self.object.health, self.object.health - lasthealth)
+		lasthealth = self.object.health
+		lasttime = game.get_game_time()
+	end
+]]
+--[[	if not self.debug_smrt then
+		for k, v in pairs( db.smart_terrain_by_id ) do
+			self.debug_smrt = true
+
+			local o = alife():object( self.object:id() )
+
+			if v:enabled(o) then
+				v:register(o)
+			end
+
+			break
+		end
+	end]]
+	
+	if watchdog[self.object:id()] == 1 then
+		-- Апдейт включения/выключения фонарика
+		if time_global() - self.last_update > 1000 then
+		   sr_light.check_light(self.object)
+		   self.last_update = time_global()
+		end	
+		-- Апдейт включения/выключения фонарика
+	end
+	if watchdog[self.object:id()] == 2 then
+		-- Апдейт торговли
+		if self.object:alive() then
+			if self.st.state_mgr.combat == false and
+			   self.st.state_mgr.alife == false
+			then
+				trade_manager.update(self.object)
+			end					
+		end
+		-- Апдейт торговли
+	end
+	if watchdog[self.object:id()] == 3 then
+		--' Апдейт напарника - если у какого-то непися главный враг - главгерой,
+		--' то напарник воспринимает это как атаку на самого себя
+		xr_companion.process_enemy(self.object)	
+		-- Апдейт напарника
+	end
+	if watchdog[self.object:id()] == 4 then
+	end
+	if watchdog[self.object:id()] == 5 then
+	end
+	if watchdog[self.object:id()] == 6 then
+		-- Проверка артефакта в руках
+		check_art_weapon(self.object)
+	end
+	if watchdog[self.object:id()] == 7 then
+		-- Проверка брони
+		local chk_time = time_global()
+		if not armor_check[self.object:id()] then
+			armor_check[self.object:id()] = time_global() + math.random(30000, 60000)
+			if (amkII_equip) then
+				amkII_equip.CAmkDisguise():PeriodicalUpdate(self.object)
+			end	
+		elseif chk_time > armor_check[self.object:id()] then
+			armor_check[self.object:id()] = time_global() + math.random(30000, 60000)
+			if (amkII_equip) then
+				amkII_equip.CAmkDisguise():PeriodicalUpdate(self.object)
+			end		
+		end
+	end		
+	
+	watchdog[self.object:id()] = watchdog[self.object:id()] + 1
+	if watchdog[self.object:id()] >= watchdog_max then
+		watchdog[self.object:id()] = 0
+	end	
+	
+end
+
+function motivator_binder:reload(section)
+	object_binder.reload(self, section)
+end
+
+function motivator_binder:net_save_relevant()
+	return true
+end
+
+function motivator_binder:save(packet)
+	printf("motivator_binder:save(): self.object:name()='%s'", self.object:name())
+	object_binder.save(self, packet)
+
+	packet:w_bool(self.treasure_processed)
+	xr_logic.pstor_store(self.object, "is_invulnerable", self.object:invulnerable())
+	xr_logic.save_obj(self.object, packet)
+	dialog_manager.save(self.object, packet)
+	trade_manager.save(self.object, packet)
+end
+
+function motivator_binder:load(reader)
+	self.loaded = true
+
+	printf("motivator_binder:load(): self.object:name()='%s'", self.object:name())
+	object_binder.load(self, reader)
+	printf("motivator_binder:object_binder.load(): self.object:name()='%s'", self.object:name())
+
+	if reader:r_eof() then
+		abort("SAVE FILE IS CORRUPT - XR_MOTIV, OBJ: "..tostring(self.object:name()).." ID "..self.object:id().." PRO: "..self.object:profile_name())
+	end
+
+
+	self.treasure_processed = reader:r_bool()
+
+	xr_logic.load_obj(self.object, reader)
+
+	self.npc_script_version = alife():object(self.object:id()).script_version
+	dialog_manager.load(self.object, reader, self.npc_script_version)
+	trade_manager.load(self.object, reader)
+
+   local is_invulnerable = xr_logic.pstor_retrieve(self.object, "is_invulnerable", false)
+   self.object:invulnerable(is_invulnerable)
+
+end
+
+function motivator_binder:hear_callback(self, who, sound_type, sound_position, sound_power)
+
+	--// xr_companion
+	if xr_companion.is_companion(self:id()) and xr_companion.being_attacked == false then
+		return
+	end		
+	
+	local snd_timer = time_global()
+	
+	if not snd_check_timer[self:id()] then
+		snd_check_timer[self:id()] = snd_timer + math.random(1000, 2000) 
+	else
+		if snd_check_timer[self:id()] < snd_timer then
+			local result, err = pcall(check_sound, self, who, sound_type, sound_position, sound_power)
+			if not result then
+			end
+			snd_check_timer[self:id()] = snd_timer + math.random(1000, 2000)
+		end
+	end
+
+end
+
+function AddToMotivator(npc)
+	if alife() then
+		npc:bind_object(this.motivator_binder(npc))
+	end
+end
+
+function addCommonPrecondition(action)
+	action:add_precondition (world_property(xr_evaluators_id.stohe_meet_base + 1,false))
+	action:add_precondition (world_property(xr_evaluators_id.sidor_wounded_base + 0,  false))
+	action:add_precondition (world_property(xr_evaluators_id.chugai_heli_hunter_base, false))
+	action:add_precondition (world_property(xr_evaluators_id.abuse_base, false))
+	action:add_precondition (world_property(xr_companion.property_need_companion, false))
+	action:add_precondition (world_property(xr_companion.property_need_run, false))
+	
+	if ogsm_hideout then
+		action:add_precondition(world_property(ogsm_hideout.property_blowout, false))
+		action:add_precondition(world_property(ogsm_hideout.property_hideout_lost, false))
+		action:add_precondition(world_property(ogsm_hideout.property_inhide, false))
+		action:add_precondition(world_property(ogsm_hideout.property_psyzoned, false))
+	end
+
+	if xrs_ai then xrs_ai.addCommonPrecondition(action) end
+
+	if watcher_act then
+		action:add_precondition (world_property(watcher_act.evid_see_stuff, false))
+	end		
+
+	 if anomaly_evader then
+		action:add_precondition (world_property(1099,false))
+	 end	
+	
+end

@@ -1,0 +1,37 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@idle
+
+[ph_idle@idle]
+tips      = x18mashroom_block_use
+;on_use    = nil
+on_info = {+subj2_perfocards_done} ph_idle@1
+
+
+[ph_idle@1]
+tips      = x18mashroom_block_use
+on_use    = ph_idle@2 {=actor_has_item(perfocard)} %=remove_item(perfocard) =play_snd(characters_voice\scenario\pilik) =send_tip(x18mashroom_block_prepare1:anomal) +x18_temperature_acess%
+
+[ph_idle@2]
+tips      = x18mashroom_block_use
+on_use    = ph_idle@3 {=actor_has_item(perfocard)} %=remove_item(perfocard) =play_snd(characters_voice\scenario\pilik) =send_tip(x18mashroom_block_prepare2:anomal) +x18_pressure_acess%
+
+[ph_idle@3]
+tips      = x18mashroom_block_use
+on_use    = ph_sound@1 {=actor_has_item(perfocard)} %=remove_item(perfocard) =play_snd(characters_voice\scenario\pilik) =send_tip(x18mashroom_block_prepare3:anomal) +x18_radiation_acess%
+
+
+[ph_sound@1]
+snd = x18_incubator_work
+on_info = {+x18_mashroom_sucess} ph_sound@2
+
+[ph_sound@2]
+snd = x18_incubator_alarm
+on_info = {+x18_mashroom_recharge} ph_sound@1
+
+
+
+
+

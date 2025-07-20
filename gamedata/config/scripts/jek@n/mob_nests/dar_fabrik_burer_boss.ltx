@@ -1,0 +1,22 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@agress
+on_death = mob_death
+
+[mob_remark@sleep]
+anim = sleep_idle_0
+braindead = true
+target = nil
+on_actor_dist_le = 25 | mob_home@agress %=dar_fabrik_burers_see_me_think =play_snd_from_obj(8534:monsters\burer2\burer_attacking_)%
+
+[mob_home@agress]
+path_home = dar_fabrik_burer_boss_walk
+home_min_radius = 1
+home_max_radius = 5
+braindead = false
+
+
+[mob_death]
+on_info = %+dar_fabrik_burerboss_dead%

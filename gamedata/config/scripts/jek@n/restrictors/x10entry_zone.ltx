@@ -1,0 +1,22 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+rad_headhunters_actor_alarm !x10abdul_near} sr_timer
+on_info2 = {+x10_abdul_button_info} nil
+
+[sr_timer]
+type = dec
+start_value = 300000
+on_value = 0 | nil %+x10_abdul_punish%
+string = x10_abdul_countdown
+on_info = {+x10_agent1_dead +x10_agent2_dead} sr_idle@2
+on_info2 = {=actor_in_x10abdul_zone -x10_abdul_dead} sr_idle@2
+
+[sr_idle@2]
+on_info = {+x10_button_switch} sr_sound_act
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\antenna_escape_x10
+
+

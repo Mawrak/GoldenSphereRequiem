@@ -1,0 +1,78 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = subject_strong_1_walk1
+path_look = subjects_strong_look
+show_spot = false
+on_info = {+x18_door1_open} walker@1 %=set_enemy%
+
+[walker@1]
+path_walk = subject_strong_1_walk1
+path_look = subjects_strong_look
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_actor_dist_le = 12 | {~50} remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_2) =killactor%, remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_4) =killactor%
+on_signal       = arrived | walker@2
+
+[walker@2]
+path_walk = subject_strong_1_walk2
+path_look = subjects_strong_look
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_actor_dist_le = 12 | {~50} remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_2) =killactor%, remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_4) =killactor%
+on_signal       = arrived | walker@3
+
+[walker@3]
+path_walk = subject_strong_1_walk3
+path_look = subjects_strong_look
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_actor_dist_le = 12 | {~50} remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_2) =killactor%, remark@kill_actor %=play_snd_from_obj(8458:monsters\controller_act\controller_attack_4) =killactor%
+on_signal       = arrived | walker@1
+
+
+[remark@kill_actor]
+snd = subject_psy_atack
+anim = caution
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+on_actor_dist_le = 25 | %=subject_psy_hit%
+on_info = {!see_actor} walker@1
+
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject_strong1_dead%

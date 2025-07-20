@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle
+ 
+[sr_idle]
+on_actor_inside = {+predb_rpg_info -predb_firest_search} sr_cutscene, {+predb_firest_search} nil %=spawn_predb_firest_dogs =send_tip(predb_firest_marod_dogs_tip:stalker)%
+ 
+[sr_cutscene]
+point = predb_firest_entry_point
+look = predb_marouder1_tower_look
+cam_effector = predb_firest_entry_fly
+on_signal = cameff_end|nil

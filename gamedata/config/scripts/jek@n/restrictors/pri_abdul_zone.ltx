@@ -1,0 +1,41 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+x10_button_switch} sr_idle@2 %+rad_abdul_delete%, {-x10_button_switch} sr_idle@4 %+x10_abdul_dead%
+
+
+; Если Абдуль дошел до Припяти:
+[sr_idle@2]
+on_info = {+pri_abdul_last_talk1} sr_cutscene
+
+[sr_cutscene]
+point = pri_abdul_look2
+look = pri_abdul_walk2
+cam_effector = pri_abdul_sniper_fly
+on_signal = cameff_end | sr_idle@3
+
+[sr_idle@3]
+on_info = {+pri_abdul_dead} sr_sound_act
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\pri_abdul_dead
+on_info = {+pri_detsad_car_dokuments_info} nil
+
+
+; Если Абдуль НЕ дошел до Припяти:
+[sr_idle@4]
+on_timer = 8000|nil %=pri_no_abdul_think +pri_abdul_shron_task%
+
+
+
+
+
+
+
+
+
+
+
+
+

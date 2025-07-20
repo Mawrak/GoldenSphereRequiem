@@ -1,0 +1,15 @@
+[logic]
+active = sr_idle@1
+
+; Актор появился на локации. Спавним аномалии:
+[sr_idle@1]
+on_timer = 1|nil %=current_level_anomaly_spawn%
+
+
+; Актор вошел в зону. Удаляем аномалии:
+[sr_idle@2]
+on_actor_inside = sr_idle@3 %=del_level_anomalys%
+
+; Актор покину зону. Спавним аномалии по новой:
+[sr_idle@3]
+on_actor_outside = sr_idle@2 %=current_level_anomaly_spawn%

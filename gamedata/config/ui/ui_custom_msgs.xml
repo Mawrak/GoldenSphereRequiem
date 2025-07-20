@@ -1,0 +1,1304 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<header>
+<!-- x = width y = height -->
+<!------------------------- SDATA ------------------------->
+
+
+
+<act_hit_head_indicator x="44" y="657" width="6" height="10" stretch="1">
+	<texture>ui\act_hit_head_indicator</texture>
+</act_hit_head_indicator>
+
+<act_hit_torso_indicator x="38" y="665" width="18" height="21" stretch="1">
+	<texture>ui\act_hit_torso_indicator</texture>
+</act_hit_torso_indicator>
+
+<act_hit_rarm_indicator x="22" y="668" width="19" height="11" stretch="1">
+	<texture>ui\act_hit_rarm_indicator</texture>
+</act_hit_rarm_indicator>
+
+<act_hit_larm_indicator x="53" y="669" width="19" height="11" stretch="1">
+	<texture>ui\act_hit_larm_indicator</texture>
+</act_hit_larm_indicator>
+
+<act_hit_rleg_indicator x="39" y="693" width="8" height="34" stretch="1">
+	<texture>ui\act_hit_rleg_indicator</texture>
+</act_hit_rleg_indicator>
+
+<act_hit_lleg_indicator x="47" y="693" width="8" height="34" stretch="1">
+	<texture>ui\act_hit_lleg_indicator</texture>
+</act_hit_lleg_indicator>
+
+<act_hit_pelvis_indicator x="41" y="685" width="13" height="9" stretch="1">
+	<texture>ui\act_hit_pelvis_indicator</texture>
+</act_hit_pelvis_indicator>
+
+
+<act_hit_arm_think x="580" y="40" width="105" height="160" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	 <text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">act_hit_arm_think_text</text>
+</act_hit_arm_think>
+
+
+
+
+
+
+<!-- positins -->
+    <ogse_debug  x="0" y="0" width="1024" height="768" complex_mode="1">
+	</ogse_debug>
+
+    <logic_debug  x="100" y="210" width="470" height="350" complex_mode="1">
+		<text font="letterica18"  r="255" g="255" b="255" a="255" align="l"/>
+	</logic_debug>
+
+    <cs_debug  x="180" y="10" width="270" height="150" complex_mode="1">
+		<text font="letterica18"  r="255" g="255" b="255" a="255" align="l"/>
+	</cs_debug>
+
+<!-- infoporshns -->
+	
+    <prs_debug  x="450" y="10" width="290" height="300" complex_mode="1">
+		<text font="letterica18"  r="255" g="255" b="255" a="255" align="l"/>
+	</prs_debug>
+	
+<!-- actor_data -->
+	
+    <act_debug  x="10" y="250" width="250" height="300" complex_mode="1">
+		<text font="letterica18"  r="255" g="255" b="255" a="255" align="l"/>
+	</act_debug>
+	
+<!-- gulags and zones -->
+	
+    <gul_debug  x="740" y="10" width="300" height="300" complex_mode="1">
+		<text font="letterica18"  r="255" g="255" b="255" a="255" align="l"/>
+	</gul_debug>
+
+
+<!-- breath -->
+<hud_blur1 x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\breath1</texture>
+  </hud_blur1>
+  <hud_blur2 x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\breath2</texture>
+  </hud_blur2>
+  <hud_blur3 x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\breath5</texture>
+  </hud_blur3>
+  <hud_blur4 x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\breath3</texture>
+  </hud_blur4>
+  <hud_blur5 x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\breath4</texture>
+  </hud_blur5>
+  
+<!-- gaz_hud -->
+   <hud_gaz_blue x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\gaz1</texture>
+   </hud_gaz_blue>
+   <hud_gaz_yellow x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\gaz2</texture>
+   </hud_gaz_yellow>
+   <hud_gaz_red2 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\gaz3</texture>
+   </hud_gaz_red2>
+   <hud_gaz_red3 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\gaz3</texture>
+   </hud_gaz_red3>
+
+<!-- merc_hud -->  
+<hud_kill_blue x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+    <texture>hud\merc1</texture>
+   </hud_kill_blue>
+      <hud_kill_yellow x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+    <texture>hud\merc2</texture>
+   </hud_kill_yellow>
+   <hud_kill_red2 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+    <texture>hud\merc3</texture>
+   </hud_kill_red2>
+   <hud_kill_red3 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+    <texture>hud\merc3</texture>
+   </hud_kill_red3>
+
+<!-- sci_hud -->
+<hud_sci_blue x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\sci1</texture>
+   </hud_sci_blue>
+   <hud_sci_yellow x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\sci2</texture>
+   </hud_sci_yellow>
+   <hud_sci_red2 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\sci3</texture>
+   </hud_sci_red2>
+   <hud_sci_red3 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\sci3</texture>
+   </hud_sci_red3>
+
+<!-- mil_hud -->
+<hud_mil_blue x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\mil1</texture>
+   </hud_mil_blue>
+   <hud_mil_yellow x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\mil2</texture>
+   </hud_mil_yellow>
+  <hud_mil_red2 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\mil3</texture>
+   </hud_mil_red2>
+   <hud_mil_red3 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\mil3</texture>
+   </hud_mil_red3>
+
+<!-- exo_hud -->
+ <hud_exo_blue x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\exo1</texture>
+   </hud_exo_blue>
+    <hud_exo_yellow x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\exo2</texture>
+   </hud_exo_yellow>
+    <hud_exo_red2 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\exo3</texture>
+   </hud_exo_red2>
+    <hud_exo_red3 x="0" y="0" width="1024" height="768" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+     <texture>hud\exo3</texture>
+   </hud_exo_red3>
+
+<!-- gazmask_hud -->
+<hud_gazmask x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\gazmask</texture>
+</hud_gazmask>
+
+<!-- gazmask_hud -->
+<hud_merc x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\merc1</texture>
+</hud_merc>
+
+<!-- gazmask_hud -->
+<periscope x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\periscope</texture>
+</periscope>
+<periscope_faile x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>ui\ui_noise</texture>
+</periscope_faile>
+<pnv_faile x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>ui\ui_noise</texture>
+</pnv_faile>
+
+<!-- blooddrop_hud -->
+
+  <hud_blood_exo x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\hud_blood_exo</texture>
+  </hud_blood_exo>
+  
+  <hud_blood_gas x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\hud_blood_gas</texture>
+  </hud_blood_gas>
+
+  <hud_blood_merc x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\hud_blood_merc</texture>
+  </hud_blood_merc>
+  
+  <hud_blood_mil x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\hud_blood_mil</texture>
+  </hud_blood_mil>
+
+  <hud_blood_sci x="0" y="0" width="1024" height="768" stretch="1">
+    <texture>hud\hud_blood_sci</texture>
+  </hud_blood_sci>  
+  
+   
+  <target_dot_1 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_2 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_3 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_4 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_5 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_6 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_7 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_8 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_9 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_10 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_11 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_12 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_13 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_14 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_15 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_16 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_17 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_18 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_19 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_20 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_21 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_22 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_23 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_24 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_25 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_26 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_27 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_28 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_29 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_30 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_31 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_32 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_33 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_34 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_35 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_36 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_37 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_38 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_39 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_40 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_41 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_42 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_43 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_44 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_45 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_46 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_47 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_48 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_49 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_50 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_51 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_52 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_53 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_54 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_55 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_56 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_57 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_58 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_59 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_60 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_61 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_62 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_63 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_64 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_65 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_66 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_67 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_68 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_69 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_70 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_71 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_72 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_73 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_74 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_75 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_76 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_77 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_78 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_79 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_80 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_81 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_82 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_83 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_84 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_85 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_86 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_87 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_88 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_89 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_90 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_91 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_92 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_93 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_94 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_95 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_96 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_97 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_98 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_99 x="-10" y="-10" width="4" height="4" stretch="1" />
+  <target_dot_100 x="-10" y="-10" width="4" height="4" stretch="1" />
+
+  <biomap x="752" y="16" width="256" height="256" stretch="1">
+    <texture>biomap\biomap_texture</texture>
+  </biomap>
+
+	<hud_timer  x="852" y="15" width="157" height="67">
+		<text x="-15" y="23it" font="graffiti32" r="238" g="155" b="23" a="255" align="r"/>
+		<texture>ui_hud_frame_clock</texture>
+	</hud_timer>
+	
+	<hud_timer_2  x="852" y="15" width="173" height="74" stretch="1">
+		<text x="-15" y="23it" font="graffiti32" r="238" g="155" b="23" a="255" align="r"/>
+		<texture>ui_hud_frame_clock</texture>
+	</hud_timer_2>
+	
+	<hud_timer_text x="852" y="80" width="157" height="67" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+		<text x="0" y="0" font="graffiti22" r="240" g="217" b="182" a="255" align="c"/>
+	</hud_timer_text>
+
+	<hud_timer_text_2 x="916" y="40" width="157" height="67" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+		<text x="0" y="0" font="graffiti32" r="240" g="217" b="182" a="255"/>
+	</hud_timer_text_2>
+
+	<sleep_001  x="20" y="20" width="984" height="728">
+		<texture x="0" y="0" width="984" height="728">car\trabantnoise</texture>
+	</sleep_001>
+
+	<controller_fx  x="0" y="0" width="1024" height="768" stretch="1">
+		<texture>act\act_controller_hit</texture>
+	</controller_fx>
+
+	<controller_fx2  x="0" y="0" width="1024" height="768" stretch="1">
+		<texture>act\act_controller_hit1</texture>
+	</controller_fx2>
+	
+	<monster_claws  x="512" y="150" width="512" height="512" alignment="c" stretch="1" heading="1" light_anim="monster_claws" la_alpha="1" la_cyclic="0">
+		<texture>controller\controller_blood_01</texture>
+	</monster_claws>
+	
+	<main_task  x="200" y="120" width="600" height="60" complex_mode="1">
+		<text align="c" font="graffiti32"  r="240" g="217" b="182" a="0"/>
+	</main_task>
+	
+	<main_task_lc  x="200" y="120" width="600" height="60" complex_mode="1">
+		<text align="c" font="graffiti32"  r="240" g="217" b="182" a="255"/>
+	</main_task_lc>
+	
+	<cs_psy_danger  x="200" y="10" width="600" height="50" complex_mode="1">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
+	</cs_psy_danger>
+	<cs_radiation_danger  x="200" y="60" width="600" height="50" complex_mode="1">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
+	</cs_radiation_danger>
+	
+	<game_saved  x="100" y="730" width="800" height="30">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
+	</game_saved>
+
+	<autosave  x="100" y="700" width="800" height="30">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">st_autosave</text>
+	</autosave>
+	
+	<item_used  x="100" y="730" width="800" height="30">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c"/>
+	</item_used>
+
+	<gun_jammed x="200" y="70" width="600" height="50" ttl="3">
+		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">gun_jammed</text>
+	</gun_jammed>
+	
+	<cant_walk x="200" y="650" width="600" height="30" ttl="3">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">cant_walk</text>
+	</cant_walk>
+	
+	<cant_walk_weight x="20" y="650" width="600" height="30" ttl="3">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="c">cant_walk_weight</text>
+	</cant_walk_weight>
+	
+	<has_trouble x="20" y="620" width="600" height="30" ttl="3">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="l"/>
+	</has_trouble>
+	
+	<not_enough_money_mine  x="100" y="100" width="800" height="60">
+		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">st_not_enough_money</text>
+	</not_enough_money_mine>
+
+	<not_enough_money_other  x="100" y="100" width="800" height="60">
+		<text font="graffiti32"  r="240" g="217" b="182" a="255" align="c">st_not_enough_money_npc</text>
+	</not_enough_money_other>
+
+	<cs_debug  x="200" y="10" width="600" height="100" complex_mode="1">
+		<text font="graffiti22"  r="240" g="217" b="182" a="255" align="l"/>
+	</cs_debug>
+
+<!-- Geiger on HUD -->	
+
+	<hud_rad_back x="1" y="1" width="1" height="1" stretch="1" complex_mode="1">
+		<texture x="650" y="100" width="156" height="36">ui\ui_hud</texture>
+	</hud_rad_back>
+	<hud_rad_level x="1" y="1" width="1" height="1" stretch="1" complex_mode="1">
+		<texture x="650" y="150" width="110" height="10">ui\ui_hud</texture>
+	</hud_rad_level>
+
+<!-- Fuel on HUD -->	
+
+	<hud_fuel_back x="1" y="1" width="1" height="1" stretch="1" complex_mode="1">
+		<texture x="820" y="100" width="156" height="48">ui\ui_hud</texture>
+	</hud_fuel_back>
+	<hud_fuel_level x="1" y="1" width="1" height="1" stretch="1" complex_mode="1">
+		<texture x="347" y="197" width="110" height="10">ui\ui_hud</texture>
+	</hud_fuel_level>
+	
+	
+<!-- sleep icon -->	
+
+	<shelter_static x="973" y="555" width="38" height="40" stretch="1">
+		<texture>ui_hud_icon_shelter</texture>
+	</shelter_static>
+	<shelter_static_16 x="985" y="505" width="38" height="50" stretch="1">
+		<texture>ui_hud_icon_shelter</texture>
+	</shelter_static_16>
+	
+	<need_sleep_static x="973" y="450" width="50" height="50" stretch="1">
+		<texture>ui_hud_icon_need_sleep</texture>
+	</need_sleep_static>
+	<need_sleep_static_16 x="985" y="450" width="38" height="50" stretch="1">
+		<texture>ui_hud_icon_need_sleep</texture>
+	</need_sleep_static_16>
+
+	<can_not_sleep_static x="973" y="450" width="50" height="50" stretch="1">
+		<texture>ui_hud_icon_can_not_sleep</texture>
+	</can_not_sleep_static>
+	<can_not_sleep_static_16 x="985" y="450" width="38" height="50" stretch="1">
+		<texture>ui_hud_icon_can_not_sleep</texture>
+	</can_not_sleep_static_16>
+	
+<!-- clock on HUD -->
+
+    <hud_time_tex  x="10" y="200" width="157" height="67">
+        <texture>ui_hud_frame_clock</texture>
+    </hud_time_tex>
+
+    <hud_timer_text1 x="100" y="220" width="18" height="67" light_anim="ui_slow_blinking_alpha" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="graffiti22" r="240" g="217" b="182" a="255" align="c"/>
+    </hud_timer_text1>
+	
+<!-- BTR HUD -->	
+    <btr_hud_background x="0" y="0" width="1024" height="768"/>
+    <car_hud_background x="0" y="0" width="1024" height="768"/>
+
+
+	<btr_hud_target x="0" y="0" width="64" height="64" stretch="1">
+		<texture>ui\target_mark</texture>
+		<text x="0" y="-5" width="200" font="arial_14" r="50" g="200" b="50" a="255" align="r" complex_mode="1"/>
+	</btr_hud_target>
+
+    <btr_target x="360" y="280" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica18" r="0" g="255" b="117" a="200" align="c"/>
+    </btr_target>
+	
+    <btr_zoom x="134" y="200" width="50" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica16" r="0" g="255" b="117" a="200" align="l"/>
+    </btr_zoom>	
+
+    <btr_armor x="600" y="200" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica16" r="0" g="255" b="117" a="200" align="r"/>
+    </btr_armor>	
+	
+    <btr_critical x="360" y="230" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica25" r="255" g="0" b="0" a="200" align="c"/>
+    </btr_critical>	
+	
+    <companion_hud x="360" y="150" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica18" r="255" g="255" b="0" a="200" align="c"/>
+    </companion_hud>
+	
+    <btr_recognition_mode x="600" y="220" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica16" r="0" g="255" b="117" a="200" align="r"/>
+    </btr_recognition_mode>
+	
+    <btr_firing_mode x="600" y="240" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica16" r="0" g="255" b="117" a="200" align="r"/>
+    </btr_firing_mode>
+	
+    <btr_target_select x="360" y="260" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="1" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica18" r="0" g="255" b="117" a="200" align="c"/>
+    </btr_target_select>
+	
+    <btr_target_obstacle x="360" y="300" width="300" height="100" light_anim="ui_slow_blinking_alpha" stretch="1" la_cyclic="0" la_texture="0" la_text="1" la_alpha="1">
+        <text x="0" y="0" font="letterica18" r="0" g="255" b="117" a="200" align="c"/>
+    </btr_target_obstacle>
+	
+    <car_trunk x="405" y="550" width="200" height="67">
+        <text x="0" y="0" font="graffiti22" r="255" g="255" b="255" a="200" align="c"/>
+    </car_trunk>	
+
+<!-- QUICK_LAUNCH_PANEL -->	
+
+    <quicklaunch_hint_1 x="10" y="300" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_1>		
+	
+    <quicklaunch_hint_2 x="10" y="335" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_2>	
+
+    <quicklaunch_hint_3 x="10" y="370" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_3>	
+
+    <quicklaunch_hint_4 x="10" y="405" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_4>	
+
+    <quicklaunch_hint_5 x="10" y="440" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_5>	
+
+    <quicklaunch_hint_6 x="10" y="475" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_6>	
+
+    <quicklaunch_hint_7 x="10" y="510" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_7>		
+	
+    <quicklaunch_hint_8 x="10" y="545" width="320" height="45" stretch="1">
+        <text x="0" y="0" font="graffiti32" r="216" g="186" b="140" a="200" align="l"/>
+    </quicklaunch_hint_8>
+	
+
+
+
+
+
+
+	
+<hunger1 x="28" y="210" width="22" height="34" stretch="1">
+	<texture>ui\hunger1</texture>
+</hunger1>
+
+<hunger2 x="28" y="210" width="22" height="34" stretch="1">
+	<texture>ui\hunger2</texture>
+</hunger2>
+
+<hunger3 x="28" y="210" width="22" height="34" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\hunger3</texture>
+</hunger3>
+
+
+
+<thirst1 x="23" y="270" width="32" height="44" stretch="1">
+	<texture>ui\thirst1</texture>
+</thirst1>
+
+<thirst2 x="23" y="270" width="32" height="44" stretch="1">
+	<texture>ui\thirst2</texture>
+</thirst2>
+
+<thirst3 x="23" y="270" width="32" height="44" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\thirst3</texture>
+</thirst3>
+
+
+
+<sick x="22" y="330" width="32" height="44" stretch="1">
+	<texture>ui\sick2</texture>
+	 <text x="-6" y="42" r="255" g="0" b="0" a="80" font="letterica16">Infection</text>
+</sick>
+
+<pain x="27" y="400" width="22" height="34" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\pain</texture>
+	 <text x="0" y="32" r="255" g="0" b="0" a="80" font="letterica16">Pain</text>
+</pain>
+
+<bonebreak x="27" y="470" width="22" height="34" stretch="1">
+	<texture>ui\bonebreak</texture>
+	 <text x="-2" y="32" r="255" g="0" b="0" a="80" font="letterica16">Break</text>
+</bonebreak>
+
+<danger x="63" y="470" width="22" height="34" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\danger</texture>
+</danger>
+
+
+
+
+<achievement_1 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_1</texture>
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">weapons_fast_achievement</text>
+</achievement_1>
+
+<achievement_2 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_2</texture>
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">artefacts_better_achievement</text>
+</achievement_2>
+
+<achievement_3 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_3</texture>
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">za_rodinu_achievement</text>
+</achievement_3>
+
+<achievement_4 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_4</texture>
+	 <text x="-20" y="160" r="255" g="225" b="118" a="158" font="graffiti22">za_rodinu_achievement</text>
+</achievement_4>
+
+<achievement_5 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_5</texture>
+	 <text x="20" y="160" r="255" g="225" b="118" a="158" font="graffiti22">knife_achievement</text>
+</achievement_5>
+
+<achievement_6 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_6</texture>
+	 <text x="20" y="160" r="255" g="225" b="118" a="158" font="graffiti22">sniper_achievement</text>
+</achievement_6>
+
+<achievement_7 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_7</texture>
+	 <text x="20" y="160" r="255" g="225" b="118" a="158" font="graffiti22">buckshoot_achievement</text>
+</achievement_7>
+
+<achievement_8 x="450" y="10" width="105" height="160" stretch="1">
+	<texture>ui\achievement_8</texture>
+	 <text x="20" y="160" r="255" g="225" b="118" a="158" font="graffiti22">stelth_achievement</text>
+</achievement_8>
+
+
+
+
+<stolen_aftefact x="400" y="40" width="105" height="160" stretch="1">
+	 <text x="10" y="30" r="255" g="225" b="118" a="158" font="graffiti22">stolen_aftefact</text>
+</stolen_aftefact>
+
+
+
+<village_house1_task_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">village_house1_task_think</text>
+</village_house1_task_think>
+
+<village_house2_task_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">village_house2_task_think</text>
+</village_house2_task_think>
+
+
+<post_kazarma_door_shans_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">post_kazarma_door_shans_think</text>
+</post_kazarma_door_shans_think>
+
+<vagon_ambush_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">vagon_ambush_think</text>
+</vagon_ambush_think>
+
+<blokpost_stels_task_alarm_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="118" b="118" a="158" font="graffiti22">blokpost_stels_task_alarm_think</text>
+</blokpost_stels_task_alarm_think>
+
+<esc_tunnel_skafandr_breaking_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">esc_tunnel_skafandr_breaking_think</text>
+</esc_tunnel_skafandr_breaking_think>
+
+<deadman_head_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">deadman_head_think</text>
+</deadman_head_think>
+
+
+
+<dolltip1 x="145" y="630" width="30" height="34" stretch="1">
+	<texture>ui\dolltip1</texture>
+	<text x="-30" y="40" r="255" g="155" b="155" a="110" font="letterica16">Doll</text>
+</dolltip1>
+
+<dolltip2 x="145" y="630" width="30" height="34" stretch="1">
+	<texture>ui\dolltip2</texture>
+	<text x="-30" y="40" r="255" g="155" b="155" a="110" font="letterica16">Doll</text>
+</dolltip2>
+
+<dolltip3 x="145" y="630" width="30" height="34" stretch="1">
+	<texture>ui\dolltip2</texture>
+	<text x="-30" y="40" r="155" g="255" b="155" a="110" font="letterica16">doll_secret</text>
+</dolltip3>
+
+
+<btr_minefield_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">btr_minefield_think</text>
+</btr_minefield_think>
+
+
+
+
+
+
+<karma1 x="960" y="20" width="32" height="44" stretch="1">
+	<texture>ui\karma1</texture>
+	<!--text x="0" y="50" r="118" g="255" b="118" a="190" font="arial_14">good_karma</text-->
+</karma1>
+
+<karma2 x="960" y="20" width="32" height="44" stretch="1">
+	<texture>ui\karma2</texture>
+	<!--text x="-5" y="50" r="255" g="255" b="118" a="190" font="arial_14">norm_karma</text-->
+</karma2>
+
+<karma3 x="960" y="20" width="32" height="44" stretch="1">
+	<texture>ui\karma3</texture>
+	<!--text x="-10" y="50" r="255" g="50" b="50" a="190" font="arial_14">bad_karma</text-->
+</karma3>
+
+<karma4 x="960" y="20" width="32" height="44" stretch="1">
+	<texture>ui\karma4</texture>
+	<!--text x="-10" y="50" r="255" g="20" b="20" a="190" font="arial_14">dreadfull_karma</text-->
+</karma4>
+
+
+<addiction x="900" y="20" width="32" height="44" stretch="1">
+	<texture>ui\addiction</texture>
+	<text x="0" y="40" r="255" g="20" b="20" a="190" font="arial_14">addiction</text>
+</addiction>
+
+
+
+
+<dar_podval_door_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_podval_door_think</text>
+</dar_podval_door_think>
+
+<dar_ovrag_woman_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_ovrag_woman_think</text>
+</dar_ovrag_woman_think>
+
+<vorpal_diary1_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">vorpal_diary1_think</text>
+</vorpal_diary1_think>
+
+<dar_deadzone_uncharge_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_deadzone_uncharge_think</text>
+</dar_deadzone_uncharge_think>
+
+<dar_btr_soldiers_chimeras_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_btr_soldiers_chimeras_think</text>
+</dar_btr_soldiers_chimeras_think>
+
+<dar_trap_lostbag_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_trap_lostbag_think</text>
+</dar_trap_lostbag_think>
+
+<dar_trap_teleport_af_lost_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_trap_teleport_af_lost_think</text>
+</dar_trap_teleport_af_lost_think>
+
+
+<garb_angar_burers_see_me_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="118" b="118" a="158" font="graffiti22">garb_angar_burers_see_me_think</text>
+</garb_angar_burers_see_me_think>
+
+<dyatlovs_group_zapis2_info_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dyatlovs_group_zapis2_info_think</text>
+</dyatlovs_group_zapis2_info_think>
+
+<af_likvidator_empty_think x="350" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">af_likvidator_empty_think</text>
+</af_likvidator_empty_think>
+
+<af_guider_uncharged_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">af_guider_uncharged_think</text>
+</af_guider_uncharged_think>
+
+<agr_fabrik_power_box_think x="380" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">agr_fabrik_power_box_think</text>
+</agr_fabrik_power_box_think>
+
+<hunter3_sniper_death_think x="420" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">hunter3_sniper_death_think</text>
+</hunter3_sniper_death_think>
+
+<agrund_suit_damaged_think x="300" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">agrund_suit_damaged_think</text>
+</agrund_suit_damaged_think>
+
+<you_are_zombied_think x="400" y="400" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="1" b="1" a="158" font="graffiti32">you_are_zombied_think</text>
+</you_are_zombied_think>
+
+<garb_ochkaric_pda_think x="350" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">garb_ochkaric_pda_think</text>
+</garb_ochkaric_pda_think>
+
+<agrund_virus_konteyner_opened_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">agrund_virus_konteyner_opened_think</text>
+</agrund_virus_konteyner_opened_think>
+
+<agrund_hunter_jump_think x="250" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">agrund_hunter_jump_think</text>
+</agrund_hunter_jump_think>
+
+<agrund_virus_killing_think x="400" y="400" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="1" b="1" a="158" font="graffiti32">agrund_virus_killing_think</text>
+</agrund_virus_killing_think>
+
+<mixture_bad_work_think x="200" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="125" b="118" a="158" font="graffiti22">mixture_bad_work_think</text>
+</mixture_bad_work_think>
+
+<x18food_rats_think x="250" y="600" width="30" height="34" stretch="1">
+	<texture>act\act_controller_hit</texture>
+	<text x="-30" y="40" r="255" g="155" b="155" a="80" font="letterica16">x18food_rats_think_text</text>
+</x18food_rats_think>
+
+<x18pray_think x="420" y="10" width="105" height="160" stretch="1">
+	<texture>act\act_controller_hit</texture>
+	 <text x="-200" y="160" r="255" g="125" b="118" a="158" font="graffiti22">x18pray_think_text</text>
+</x18pray_think>
+
+<x18_freezer_door_think x="370" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">x18_freezer_door_think</text>
+</x18_freezer_door_think>
+
+<subj4remoralization_tip1 x="250" y="600" width="30" height="34" stretch="1">
+	<texture>act\act_controller_hit</texture>
+	<text x="-30" y="40" r="255" g="155" b="155" a="80" font="letterica16">subj4remoralization_tip1_text</text>
+</subj4remoralization_tip1>
+
+<subj4remoralization_tip2 x="250" y="600" width="30" height="34" stretch="1">
+	<texture>act\act_controller_hit</texture>
+	<text x="-30" y="40" r="255" g="155" b="155" a="80" font="letterica16">subj4remoralization_tip2_text</text>
+</subj4remoralization_tip2>
+
+<x18_remoral_blow_think x="370" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">x18_remoral_blow_think</text>
+</x18_remoral_blow_think>
+
+<dar_build_guard_alarm_think x="650" y="10" width="105" height="160" stretch="1">
+	 <text x="-200" y="160" r="255" g="125" b="118" a="158" font="graffiti22">dar_build_guard_alarm_think_text</text>
+</dar_build_guard_alarm_think>
+
+<reketirs_zuda_ready_to_use_think x="650" y="10" width="105" height="160" stretch="1">
+	 <text x="-200" y="160" r="255" g="125" b="118" a="158" font="graffiti22">reketirs_zuda_ready_to_use_think_text</text>
+</reketirs_zuda_ready_to_use_think>
+
+<bar_raciya_connect_off_think x="450" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_raciya_connect_off_think_text</text>
+</bar_raciya_connect_off_think>
+
+<bar_karlik_talk1_think x="550" y="10" width="105" height="160" stretch="1">
+	<!--texture x="0" y="0" width="168" height="180">ui\karlik_dialog_face</texture-->
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_karlik_talk1_think_text</text>
+</bar_karlik_talk1_think>
+
+<bar_karlik_talk2_think x="500" y="10" width="105" height="160" stretch="1">
+	<!--texture x="0" y="0" width="168" height="180">ui\karlik_dialog_face</texture-->
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_karlik_talk2_think_text</text>
+</bar_karlik_talk2_think>
+
+<bar_karlik_talk3_think x="500" y="10" width="105" height="160" stretch="1">
+	<!--texture x="0" y="0" width="168" height="180">ui\karlik_dialog_face</texture-->
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_karlik_talk3_think_text</text>
+</bar_karlik_talk3_think>
+
+<bar_karlik_talk4_think x="500" y="10" width="105" height="160" stretch="1">
+	<!--texture x="0" y="0" width="168" height="180">ui\karlik_dialog_face</texture-->
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_karlik_talk4_think_text</text>
+</bar_karlik_talk4_think>
+
+<bar_arena_pseudogig_bulletproof_think x="350" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="225" b="118" a="158" font="graffiti22">bar_arena_pseudogig_bulletproof_think_text</text>
+</bar_arena_pseudogig_bulletproof_think>
+
+<bar_arena_pseudogig_bulletproof_think2 x="350" y="10" width="105" height="160" stretch="1">
+	 <text x="10" y="160" r="255" g="125" b="108" a="158" font="graffiti22">bar_arena_pseudogig_bulletproof_think_text2</text>
+</bar_arena_pseudogig_bulletproof_think2>
+
+
+<habar_pickup_think x="500" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">habar_pickup_think_text</text>
+</habar_pickup_think>
+
+<agr_nii_buttons_power_on_think x="500" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">agr_nii_buttons_power_on_think_text</text>
+</agr_nii_buttons_power_on_think>
+
+<obelisk_find_nothing_think x="500" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">obelisk_find_nothing_think_text</text>
+</obelisk_find_nothing_think>
+
+<dar_fabrik_burers_see_me_think x="500" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">dar_fabrik_burers_see_me_think_text</text>
+</dar_fabrik_burers_see_me_think>
+
+
+<binder x="127" y="400" width="22" height="34" stretch="1">
+	<texture>ui\danger</texture>
+	 <text x="-8" y="32" r="255" g="0" b="0" a="80" font="letterica16">Binder</text>
+</binder>
+
+<intoxication x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">intoxication_text</text>
+</intoxication>
+
+	<timer_hud_caption  x="852" y="15" width="157" height="67">
+		<text x="-15" y="23it" font="graffiti32" r="238" g="155" b="23" a="255" align="r"/>
+		<texture>ui\clear</texture>
+	</timer_hud_caption>
+
+<atp_controler_agress_texture x="400" y="230" width="256" height="266" stretch="1">
+	<texture>act\act_controller_hit</texture>
+</atp_controler_agress_texture>
+
+
+
+
+
+
+<ros_master_talk1_think x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="1" b="1" a="158" font="graffiti22">ros_master_talk1_think_text</text>
+</ros_master_talk1_think>
+
+
+<ros_master_talk21_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="520" height="520">ui\dont_watch\bad_face_1</texture>
+	 <text x="60" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk2_think_text</text>
+</ros_master_talk21_think>
+
+<ros_master_talk22_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="520" height="520">ui\dont_watch\bad_face_2</texture>
+	 <text x="60" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk2_think_text</text>
+</ros_master_talk22_think>
+
+<ros_master_talk23_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="520" height="520">ui\dont_watch\bad_face_3</texture>
+	 <text x="60" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk2_think_text</text>
+</ros_master_talk23_think>
+
+<ros_master_talk24_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="520" height="520">ui\dont_watch\bad_face_4</texture>
+	 <text x="60" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk2_think_text</text>
+</ros_master_talk24_think>
+
+<ros_master_talk25_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="620" height="920">ui\dont_watch\bad_face_5</texture>
+	 <text x="60" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk2_think_text</text>
+</ros_master_talk25_think>
+
+
+<ros_master_talk3_think x="300" y="200" width="380" height="380" stretch="1">
+	 <text x="160" y="-130" r="255" g="1" b="1" a="158" font="graffiti32">ros_master_talk3_think_text</text>
+</ros_master_talk3_think>
+
+
+
+
+<ros_house_case_think x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">ros_house_case_think_text</text>
+</ros_house_case_think>
+
+<ros_garage_door_think x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">ros_garage_door_think_text</text>
+</ros_garage_door_think>
+
+<ros_after_lenin_think x="380" y="200" width="280" height="280" stretch="1">
+	<texture x="0" y="0" width="620" height="920">ui\dont_watch\7777</texture>
+	 <text x="10" y="-110" r="255" g="1" b="1" a="158" font="graffiti32">ros_after_lenin_think_text</text>
+</ros_after_lenin_think>
+
+<yan_zavod_guard_burers_see_actor_think x="380" y="200" width="280" height="280" stretch="1">
+	 <text x="10" y="-110" r="255" g="1" b="1" a="158" font="graffiti32">yan_zavod_guard_burers_see_actor_think_text</text>
+</yan_zavod_guard_burers_see_actor_think>
+
+<yan_zavod_guard_burers_search_actor_think x="380" y="200" width="280" height="280" stretch="1">
+	 <text x="10" y="-110" r="255" g="1" b="1" a="158" font="graffiti32">yan_zavod_guard_burers_search_actor_think_text</text>
+</yan_zavod_guard_burers_search_actor_think>
+
+
+
+<actor_arms_blocked_think x="140" y="15" width="120" height="112" stretch="1">
+	<texture x="0" y="0" width="255" height="235">ui\arms_blocked</texture>
+	 <text x="10" y="120" r="255" g="1" b="1" a="158" font="graffiti22">actor_arms_blocked_think_text</text>
+</actor_arms_blocked_think>
+
+
+
+
+<x16burers_door_break_think x="380" y="200" width="280" height="280" stretch="1">
+	 <text x="10" y="-110" r="255" g="1" b="1" a="158" font="graffiti32">x16burers_door_break_think_text</text>
+</x16burers_door_break_think>
+
+
+<x16brain_goodbye_think x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">x16brain_goodbye_think_text</text>
+</x16brain_goodbye_think>
+
+
+<yan_lost_camp_pribor_think x="550" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">yan_lost_camp_pribor_think_text</text>
+</yan_lost_camp_pribor_think>
+
+
+<ros_rescuers_robbery_think x="480" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">ros_rescuers_robbery_think_text</text>
+</ros_rescuers_robbery_think>
+
+
+<ros_old_spirit_think1 x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">ros_old_spirit_think1_text</text>
+</ros_old_spirit_think1>
+
+<ros_old_spirit_think2 x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">ros_old_spirit_think2_text</text>
+</ros_old_spirit_think2>
+
+
+
+<enemy_armor_pierced x="200" y="110" width="22" height="32" stretch="1">
+	<texture>ui\enemy_armor_pierced</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">enemy_armor_pierced_text</text>
+</enemy_armor_pierced>
+
+<enemy_armor_hold x="200" y="110" width="22" height="32" stretch="1">
+	<texture>ui\enemy_armor_hold</texture>
+	<text x="-2" y="40" r="225" g="225" b="118" a="90" font="graffiti19">enemy_armor_hold_text</text>
+</enemy_armor_hold>
+
+
+
+<mob_health1 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\mob_health1</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">mob_health1_text</text>
+</mob_health1>
+
+<mob_health2 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\mob_health2</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">mob_health2_text</text>
+</mob_health2>
+
+<mob_health3 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\mob_health3</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">mob_health3_text</text>
+</mob_health3>
+
+<mob_health4 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\mob_health4</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">mob_health4_text</text>
+</mob_health4>
+
+<mob_health5 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\mob_health5</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">mob_health5_text</text>
+</mob_health5>
+
+
+
+<stalker_health1 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\stalker_health1</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">stalker_health1_text</text>
+</stalker_health1>
+
+<stalker_health2 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\stalker_health2</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">stalker_health2_text</text>
+</stalker_health2>
+
+<stalker_health3 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\stalker_health3</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">stalker_health3_text</text>
+</stalker_health3>
+
+<stalker_health4 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\stalker_health4</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">stalker_health4_text</text>
+</stalker_health4>
+
+<stalker_health5 x="200" y="110" width="24" height="32" stretch="1">
+	<texture>ui\stalker_health5</texture>
+	<text x="-1" y="40" r="10" g="150" b="50" a="90" font="graffiti19">stalker_health5_text</text>
+</stalker_health5>
+
+
+
+<mil_actor_undream x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">mil_actor_undream_text</text>
+</mil_actor_undream>
+
+
+<rad_abdul_lost_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">rad_abdul_lost_think_text</text>
+</rad_abdul_lost_think>
+
+<rad_fenix_teleport_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">rad_fenix_teleport_think_text</text>
+</rad_fenix_teleport_think>
+
+<rad_abdul_lost_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">rad_abdul_lost_think_text</text>
+</rad_abdul_lost_think>
+
+
+
+
+<arts_firepower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_firepower</texture>
+	<text x="-13" y="40" r="200" g="50" b="50" a="190" font="graffiti19">arts_firepower_text</text>
+</arts_firepower>
+
+<arts_stonepower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_stonepower</texture>
+	<text x="-3" y="40" r="10" g="150" b="50" a="190" font="graffiti19">arts_stonepower_text</text>
+</arts_stonepower>
+
+<arts_steelpower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_steelpower</texture>
+	<text x="-3" y="40" r="10" g="150" b="50" a="190" font="graffiti19">arts_steelpower_text</text>
+</arts_steelpower>
+
+<arts_vegetpower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_vegetpower</texture>
+	<text x="-3" y="40" r="10" g="150" b="50" a="190" font="graffiti19">arts_vegetpower_text</text>
+</arts_vegetpower>
+
+<arts_glasspower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_glasspower</texture>
+	<text x="-3" y="40" r="10" g="150" b="50" a="190" font="graffiti19">arts_glasspower_text</text>
+</arts_glasspower>
+
+<arts_neutralpower x="780" y="20" width="22" height="24" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	<texture>ui\arts_neutralpower</texture>
+	<text x="-3" y="40" r="10" g="150" b="50" a="190" font="graffiti19">arts_neutralpower_text</text>
+</arts_neutralpower>
+
+<arts_powerup_denied x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">arts_powerup_denied_text</text>
+</arts_powerup_denied>
+
+<teleport_to_vis_obj_denied x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">teleport_to_vis_obj_denied_text</text>
+</teleport_to_vis_obj_denied>
+
+
+<af_pult_destroyed x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">af_pult_destroyed_text</text>
+</af_pult_destroyed>
+
+<rad_tunnel_door_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">rad_tunnel_door_think_text</text>
+</rad_tunnel_door_think>
+
+
+<pri_detsad_help_think1 x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_detsad_help_think1_text</text>
+</pri_detsad_help_think1>
+
+<pri_detsad_help_think2 x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_detsad_help_think2_text</text>
+</pri_detsad_help_think2>
+
+<pri_detsad_help_think3 x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_detsad_help_think3_text</text>
+</pri_detsad_help_think3>
+
+
+<pri_agents_meet_task_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_agents_meet_task_think_text</text>
+</pri_agents_meet_task_think>
+
+<pri_timecapsula_not_finded_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_timecapsula_not_finded_think_text</text>
+</pri_timecapsula_not_finded_think>
+
+<pri_timecapsula_finded_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_timecapsula_finded_think_text</text>
+</pri_timecapsula_finded_think>
+
+<pri_no_abdul_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_no_abdul_think_text</text>
+</pri_no_abdul_think>
+
+
+<aes_suit_damaged_think x="530" y="40" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">aes_suit_damaged_think_text</text>
+</aes_suit_damaged_think>
+
+
+<spec_gun_aiming_think x="580" y="40" width="105" height="160" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	 <text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">spec_gun_aiming_think_text</text>
+</spec_gun_aiming_think>
+
+
+<goldsphere_destroyed_think x="560" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">goldsphere_destroyed_think_text</text>
+</goldsphere_destroyed_think>
+
+
+<predb_village_polter_alarm_think x="530" y="40" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">predb_village_polter_alarm_think_text</text>
+</predb_village_polter_alarm_think>
+<predb_village_polter_kill_think x="530" y="40" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">predb_village_polter_kill_think_text</text>
+</predb_village_polter_kill_think>
+
+
+<predb_firest_undegr_door_think x="560" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_firest_undegr_door_think_text</text>
+</predb_firest_undegr_door_think>
+
+
+<actor_cant_sleep_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">actor_cant_sleep_think_text</text>
+</actor_cant_sleep_think>
+
+
+<predb_firest_vishka_radio_use_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_firest_vishka_radio_use_think_text</text>
+</predb_firest_vishka_radio_use_think>
+
+<predb_heli_crash_use_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_heli_crash_use_think_text</text>
+</predb_heli_crash_use_think>
+
+<predb_base_generator_use_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_base_generator_use_think_text</text>
+</predb_base_generator_use_think>
+
+<predb_firest_arsenal_door_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_firest_arsenal_door_think_text</text>
+</predb_firest_arsenal_door_think>
+
+
+<quicksave_message x="360" y="700" width="105" height="160" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	 <text x="0" y="0" r="10" g="150" b="10" a="80" font="graffiti22">quicksave_message_text</text>
+</quicksave_message>
+
+<no_save_message x="360" y="700" width="105" height="160" stretch="1" light_anim="ui_slow_blinking_alpha" la_cyclic="1" la_texture="1" la_text="1" la_alpha="1">
+	 <text x="0" y="0" r="255" g="225" b="118" a="158" font="graffiti22">no_save_message_text</text>
+</no_save_message>
+
+
+<headtorch_broken_think x="560" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">headtorch_broken_think_text</text>
+</headtorch_broken_think>
+
+
+<rad_crossbow_seek_think x="530" y="40" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="125" b="118" a="158" font="graffiti22">rad_crossbow_seek_think_text</text>
+</rad_crossbow_seek_think>
+
+<predb_megaboar_health_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_megaboar_health_think_text</text>
+</predb_megaboar_health_think>
+
+<predb_good_izlom_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">predb_good_izlom_think_text</text>
+</predb_good_izlom_think>
+
+<fallen_star_lost_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">fallen_star_lost_think_text</text>
+</fallen_star_lost_think>
+
+
+<hud_items_hint1 x="200" y="10" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="240" g="217" b="182" a="190" font="letterica16">hud_items_hint1</text>
+</hud_items_hint1>
+
+<hud_items_hint2 x="200" y="25" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="240" g="217" b="182" a="190" font="letterica16">hud_items_hint2</text>
+</hud_items_hint2>
+
+<hud_items_hint3 x="200" y="40" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="240" g="217" b="182" a="190" font="letterica16">hud_items_hint3</text>
+</hud_items_hint3>
+
+<hud_items_hint4 x="200" y="55" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="240" g="217" b="182" a="190" font="letterica16">hud_items_hint4</text>
+</hud_items_hint4>
+
+<hud_items_hint5 x="200" y="70" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="200" g="117" b="182" a="190" font="letterica16">hud_items_hint5</text>
+</hud_items_hint5>
+
+<hud_items_hint6 x="200" y="85" width="600" height="100" complex_mode="1">
+	<text x="0" y="0" r="200" g="117" b="182" a="190" font="letterica16">hud_items_hint6</text>
+</hud_items_hint6>
+
+
+<pri_sold_tomb_think x="530" y="10" width="105" height="160" stretch="1">
+	<text x="-130" y="160" r="255" g="225" b="118" a="158" font="graffiti22">pri_sold_tomb_think_text</text>
+</pri_sold_tomb_think>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</header>

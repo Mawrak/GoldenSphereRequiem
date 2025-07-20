@@ -1,0 +1,20 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+predb_village_quest_mob1_dead +predb_village_quest_mob2_dead +predb_village_quest_mob3_dead +predb_village_quest_mob4_dead +predb_village_quest_mob5_dead} sr_idle@2
+
+[sr_idle@2]
+on_timer = 5000|sr_particle@1 %=predb_village_trap_action%
+
+[sr_particle@1]
+name = monsters\group\phantom_trail
+path = predb_village_art_particle_point
+mode = 2
+looped = false
+on_info    = {=actor_has_item(quest_village_art)} nil %=predb_village_trap_action2%
+
+
+
+
+

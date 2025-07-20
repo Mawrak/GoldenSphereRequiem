@@ -1,0 +1,68 @@
+local con = nil
+local con_command = "mm_net_player_name"
+
+local tbinding = {
+n = "addon_pnv.change_state",
+--k = "addon_dialogs.faint_bodies_check",
+t = "addon.teleport_to_vis_obj",
+f1 = "addon_2.eat_antirad",
+f2 = "addon_2.eat_flyaga",
+f3 = "addon_2.eat_ibuprophen",
+f4 = "addon_2.eat_vodka",
+f5 = "addon.arts_activation_interface_start",
+f10 = "addon_2.use_doll",
+tab = "addon_2.wonderdoll_target_check",
+f7 = "addon.shovel_use",
+f11 = "addon_keylogger.afscanner_use",
+}
+
+function update()
+	if not con then
+		con = get_console()
+		con:execute(con_command .. " _")
+		for k,v in pairs(tbinding) do
+			bind_key(k,v)
+		end
+	end
+
+	local str = con:get_string(con_command)
+	if str~="_" then
+		if tbinding[str] then tbinding[str]() end
+		con:execute(con_command.." _")
+	end
+end
+
+function bind_key(key,action)
+	local p = string.find(action,"%.")
+	local f = nil
+	if p then
+		local mod = _G[string.sub(action,1,p-1)]
+		if type(mod)=='table' then
+			f = mod[string.sub(action,p+1)]
+		end
+	else
+		f = _G[action]
+	end
+	if type(f)=="function" then
+		if DIK_keys["DIK_"..string.upper(key)] then
+			tbinding[key] = f
+			con:execute("bind_console "..con_command.." "..key.." k"..key)
+		elseif DIK_keys[string.upper(key)] then -- mouse btns
+			tbinding[key] = f
+			con:execute("bind_console "..con_command.." "..key.." "..string.gsub(key,"_",""))
+		end
+	end
+end
+
+function unbind_key(key)
+	tbinding[key] = nil
+	if DIK_keys["DIK_"..string.upper(key)] then
+		con:execute("unbind_console k"..key)
+	elseif DIK_keys[string.upper(key)] then -- mouse btns
+		con:execute("unbind_console "..string.gsub(key,"_",""))
+	end
+end
+
+function afscanner_use()
+	db.actor:eat(db.actor:object("afscanner"))
+end

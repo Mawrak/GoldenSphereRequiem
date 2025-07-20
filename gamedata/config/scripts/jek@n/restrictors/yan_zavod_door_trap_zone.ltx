@@ -1,0 +1,23 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+yan_burer_sold9_dead +yan_burer_sold10_dead +yan_burer_sold11_dead} sr_idle@2
+
+[sr_idle@2]
+on_actor_inside = sr_idle@3 %=play_snd_from_obj(8702:monsters\burer2\burer_attacking_) =disable_input%
+
+[sr_idle@3]
+on_timer = 700|sr_cutscene %=spawn_yan_zavod_trap_obj%
+
+[sr_cutscene]
+point = yan_zavod_door_point1
+look = yan_zavod_door_point1
+cam_effector = yan_zavod_door_trap_look_up
+on_signal = cameff_end | sr_idle@4 %+actor_in_yan_zavod_trap =run_postprocess(deadcity_wake) =actor_goto_yan_zavod_trap =play_snd(characters_voice\human_01\newbie\fight\hit\hit_9) =enable_ui%
+
+[sr_idle@4]
+on_timer = 200|sr_idle@5 %=hide_weapon%
+
+[sr_idle@5]
+;on_actor_in_zone = yan_zavod_zone|%=yan_zavod_zone_hands_effect%

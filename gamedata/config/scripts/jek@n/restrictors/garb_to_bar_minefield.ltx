@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+garb_btr_task_done} nil
+on_actor_inside = {!is_in_garbage_btr} %=garb_to_bar_minefield_blow% nil, {=is_in_garbage_btr} %=garb_to_bar_minefield_blow_nohit =btr_minefield_think% sr_idle@2
+
+[sr_idle@2]
+on_actor_outside = sr_idle@1

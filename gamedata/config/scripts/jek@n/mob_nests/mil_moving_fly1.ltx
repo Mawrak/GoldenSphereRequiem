@@ -1,0 +1,23 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@norm
+
+[mob_walker@norm]
+path_walk = mil_base_entry_smokes_point1
+path_look = mil_base_entry_smokes_point1
+home_min_radius = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 20 | mob_home@agress
+
+[mob_home@agress]
+path_home = mil_base_entry_smokes_point2
+home_min_radius = 2
+home_max_radius = 7
+braindead = true
+on_actor_dist_le_nvis = 2 | %=hit_obj(37:bip01_spine:0.01:10) =run_postprocess(fire_hit) =mil_flies1steal_artefacts%
+on_timer = 10000 | mob_walker@norm
+
+

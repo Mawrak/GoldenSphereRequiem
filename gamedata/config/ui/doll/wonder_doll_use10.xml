@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<wonder_doll_use10>	
+	<face x="380" y="85" width="312" height="212" stretch="1">
+		<texture x="0" y="0" width="932" height="512">ui\doll\doll_face</texture>
+	</face>
+
+	<dialog_table x="150" y="280" width="550" height="900" stretch="1">
+		<texture x="0" y="0" width="1032" height="912">ui\doll\doll_dialog_screen</texture>
+	</dialog_table>
+
+
+
+	<doll_talk_text x="180" y="310" width="480" height="500" stretch="1" complex_mode="1">
+		<text x="0" y="0" r="235" g="235" b="118" a="158" font="letterica16">Во первых, я умею читать мысли. Не все, а только плохие. Если, допустим, тебе повстречается человек, который захочет тебе зла, я обязательно дам знать. У меня очень хорошее зрение! Посмотри на живое существо перед собой, затем нажми Tab и я скажу тебе, что это такое и какую опасность для тебя представляет. Я чувствую на расстоянии секретные места и схроны... Если кто-то что-то припрятал и оно находится рядом, то я могу намекнуть об этом! Также могу находить ответы на разные сложные вопросы. Если кто-то дал тебе задание, которое ты не в силах выполнить, - обратись ко мне и я подскажу тебе способ, как с ним справиться. И последнее: если ты попадешь в серьезную передрягу и кто-то сильно попортит тебе здоровье, я могу тебя немножко подлечить. Что скажешь?</text>
+	</doll_talk_text>
+
+
+
+
+	<btn_1 x="210" y="580" width="200" height="20">
+		<texture_e>ui\doll\button_invisible</texture_e>
+		<texture_t>ui\doll\button_invisible</texture_t>
+		<texture_h>ui\doll\button_invisible</texture_h>
+		<text>1) Ну что же, я готов тебе помочь.</text>
+	</btn_1>
+	<btn_2 x="255" y="600" width="200" height="20">
+		<texture_e>ui\doll\button_invisible</texture_e>
+		<texture_t>ui\doll\button_invisible</texture_t>
+		<texture_h>ui\doll\button_invisible</texture_h>
+		<text>2) Я понял - всё это просто сон. Надо просыпаться.</text>
+	</btn_2>
+
+</wonder_doll_use10>
+

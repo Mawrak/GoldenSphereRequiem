@@ -1,0 +1,130 @@
+; Двадцатый(занимается документами и сейфами)
+
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = subject_weak_1_walk1
+path_look = subject_weak_1_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable =disable_trading%
+
+[walker@1]
+path_walk = subject_weak_1_walk1
+path_look = subject_weak_1_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subject_weak_3_first_talk} walker@2
+
+[walker@2]
+path_walk = subject_weak_1_walk2
+path_look = subject_weak_1_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subjects_goto_pray} walker@pray
+on_info2 = {+subject4_dead} walker@3
+
+
+; Молитва:
+[walker@pray]
+path_walk = subject_weak_1_walk_pray
+path_look = subjects_look_pray
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-subjects_goto_pray} walker@2
+
+
+; Бунт:
+[walker@3]
+path_walk = subject_weak_1_walk3
+path_look = subject_weak_1_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+x18_door1_open} walker@4
+
+[walker@4]
+path_walk = subject_weak_1_walk4
+path_look = subject_weak_1_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_info = {+subject_strong1_dead} walker@5
+
+[walker@5]
+path_walk = subject_weak_1_walk5
+path_look = subject_weak_1_look5
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_info = {+x18_codedoor2_open} walker@6
+
+[walker@6]
+path_walk = subject_weak_1_walk5
+path_look = subject_weak_1_look5
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_timer      = 5000 | walker@7
+
+[walker@7]
+path_walk = subject_weak_1_walk6
+path_look = subject_weak_1_look6
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+
+
+
+
+
+
+[meet]
+meet_state = 5| idle
+meet_state = 5| idle
+victim = 5| nil
+victim_wpn = 5| nil
+use = true
+use_wpn = true
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject_weak_1_dead%

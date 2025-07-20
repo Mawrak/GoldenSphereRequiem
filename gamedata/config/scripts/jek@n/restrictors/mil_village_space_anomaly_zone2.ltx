@@ -1,0 +1,14 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {=actor_has_item(icon_part1) =actor_has_item(icon_part2) =actor_has_item(icon_part3) =actor_has_item(icon_part4)} sr_idle@2 %=remove_mil_icon_parts +mil_icon_finded%
+
+[sr_idle@2]
+on_timer = 1000|sr_idle@3 %=play_snd(soundtrack\horror_time\64)%
+
+[sr_idle@3]
+on_timer = 17000|nil %=play_snd(soundtrack\horror_time\112)%
+
+
+

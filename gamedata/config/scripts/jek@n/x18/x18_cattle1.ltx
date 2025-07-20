@@ -1,0 +1,61 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = x18_cattle1_walk1
+path_look = x18_cattle1_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable%
+
+
+[walker@1]
+path_walk = x18_cattle1_walk1
+path_look = x18_cattle1_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+;meet = no_meet
+on_timer      = 37000 | walker@2 %=play_snd_from_obj(8456:monsters\zombie\zombie_idle_7)%
+on_info = {+x18_ratfarm_door_open} nil
+
+[walker@2]
+path_walk = x18_cattle1_walk1
+path_look = x18_cattle1_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+;meet = no_meet
+on_timer      = 19000 | walker@1 %=play_snd_from_obj(8456:monsters\zombie\zombie_idle_15)%
+on_info = {+x18_ratfarm_door_open} nil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+x18_cattle1_dead%

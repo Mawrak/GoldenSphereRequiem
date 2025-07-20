@@ -1,0 +1,35 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home1
+
+[mob_remark@1]
+anim = lie_sleep_0
+target = actor
+npc_friendly = true
+on_timer = 10 | mob_remark@2 %=hit_test_mob%
+
+[mob_remark@2]
+anim = lie_sleep_0
+target = actor
+npc_friendly = true
+on_timer = 10 | mob_remark@1 %=hit_test_mob%
+
+
+[mob_home1]
+path_home = test_mob_point_escape
+home_min_radius = 5
+home_max_radius = 800
+;on_timer = 10 | mob_home2 %=hit_test_mob =send_tip(test_tip:default:8116)%
+
+[mob_home2]
+path_home = test_mob_point_escape
+home_min_radius = 5
+home_max_radius = 800
+;on_timer = 10 | mob_home1 %=hit_test_mob =send_tip(test_tip:default:8116)%
+
+
+
+
+

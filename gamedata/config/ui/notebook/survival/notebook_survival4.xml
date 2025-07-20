@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_survival4>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="440" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Черонобыльская чума</text>
+</system_logo>
+<survival_icon_1 x="450" y="340" width="130" height="100" stretch="1">
+	<texture x="0" y="0" width="255" height="260">ui\notebook\survival_icon_4</texture>
+</survival_icon_1>
+<description1 x="330" y="450" width="380" height="500" stretch="1" complex_mode="1">
+		<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Распостраненная только в Зоне Отчуждения болезнь верхних дыхательных путей. Передается контактным путем от животных к человеку, а также через продукты и воду. Лекарство от нее существует, но оно редкое и дрогое. Подцепть эту заразу можно от Чумных крыс ,Чумных зомби или выпив грязной воды. Характеризуется острыми симптомами(головокружение, тошнота, кашель) и крайне быстрым протеканием. В организме человека не существует антител, способных бороться с Чернобыльской чумой, поэтому без лечения летальный исход гарантирован. В качестве лекарства используется Микстура, приобрести ее можно у торговцев. Обратите внимание: если вирус Чумы находится в организме ГГ, то в левой части экрана будет гореть предупредительный индикатор в виде черепа с костями.</text>
+</description1>
+
+
+
+	<btn_1 x="600" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Далее</text>
+	</btn_1>
+	<btn_2 x="335" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Назад</text>
+	</btn_2>
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_survival4>
+

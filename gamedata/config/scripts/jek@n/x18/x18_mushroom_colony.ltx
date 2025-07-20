@@ -1,0 +1,16 @@
+[logic]
+active = ph_sound
+
+[ph_sound]
+snd = mushroom_colony_bul_bul
+looped = true
+on_info = {+x18_mashroom_sucess} ph_idle@1
+
+
+[ph_idle@1]
+tips      = x18mashroom_colony_use1
+on_use    = ph_idle@2 %-x18_mashroom_recharge -x18_mashroom_sucess =give_items_to_actor(rad_mashroom:rad_mashroom:rad_mashroom) =play_snd(monsters\zombie_s\zombie_attack_4) =play_particle_on_path(amk\blow_body:x18_mushrooms_bath_zone_point) =start_x18mashroom_timer%
+
+[ph_idle@2]
+tips      = x18mashroom_colony_use2
+on_info = {+x18_mashroom_recharge} ph_sound

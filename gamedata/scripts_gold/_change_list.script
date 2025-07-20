@@ -1,0 +1,710 @@
+local levels  =
+{
+l01_escape =
+    {
+        {
+            pic = "level_change\\escape\\l01_escape_1",
+            pos_x = -189.982,
+            pos_y = -22.867,
+            pos_z = -431.751,
+            lvid  = 61320,
+            gvid  = 13
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_2",
+            pos_x = -128.435,
+            pos_y = -9.366,
+            pos_z = -147.685,
+            lvid  = 123908,
+            gvid  = 44
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_3",
+           pos_x = 17.05,
+          pos_y = 0.9,
+         pos_z = 21.035,
+         lvid  = 294530,
+          gvid  = 90
+
+           -- pos_x = 159.27,
+           -- pos_y = 6.35,
+          --  pos_z = 77.80,
+          --  lvid  = 463792,
+          --  gvid  = 155
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_4",
+            pos_x = 301.793,
+            pos_y = 18.094,
+            pos_z = 32.771,
+            lvid  = 565462,
+            gvid  = 139
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_5",
+            pos_x = -26.372,
+            pos_y = 1.32,
+            pos_z = 233.8,
+            lvid  = 250834,
+            gvid  = 177
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_6",
+            pos_x = 201.654,
+            pos_y = 9.62,
+            pos_z = 312.994,
+            lvid  = 495211,
+            gvid  = 238
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_7",
+            pos_x = 92.749,
+            pos_y = 3.965,
+            pos_z = 383.52,
+            lvid  = 390438,
+            gvid  = 227
+        },
+	    {
+            pic ="level_change\\escape\\l01_escape_8",
+            pos_x = 15.063,
+            pos_y = 16.511,
+            pos_z = 685.811,
+            lvid  = 293569,
+            gvid  = 209
+        },
+    },
+
+l02_garbage =
+    {
+        {
+            pic = "level_change\\garbage\\l02_garbage_1",
+            pos_x = 36.412,
+            pos_y = 0.483,
+            pos_z = -305.825,
+            lvid  = 209876,
+            gvid  = 253
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_2",
+            pos_x = -83.376,
+            pos_y = 0.1,
+            pos_z = -240.755,
+            lvid  = 123168,
+            gvid  = 271
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_3",
+            pos_x = 242.754,
+            pos_y = -2.635,
+            pos_z = -148.246,
+            lvid  = 364972,
+            gvid  = 404
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_4",
+            pos_x = 199.201,
+            pos_y = -3.712,
+            pos_z = -11.733,
+            lvid  = 342792,
+            gvid  = 386
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_5",
+            pos_x = 6.907,
+            pos_y = 1.9,
+            pos_z = 69.102,
+            lvid  = 181015,
+            gvid  = 332
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_6",
+            pos_x = -195.847,
+            pos_y = 7.9,
+            pos_z = 8.566,
+            lvid  = 32579,
+            gvid  = 308
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_7",
+            pos_x = -196.326,
+            pos_y = 0,
+            pos_z = 134.315,
+            lvid  = 32293,
+            gvid  = 342
+        },
+        {
+            pic ="level_change\\garbage\\l02_garbage_8",
+            pos_x = 111.333,
+            pos_y = 7.113,
+            pos_z = 223.752,
+            lvid  = 275630,
+            gvid  = 366
+        },
+    },
+
+l03_agroprom =
+    {
+	    {
+        --      pic ="level_change\\agroprom\\l03_agroprom_1", -- на фабрике
+        --     pos_x = -14.57,
+        --   pos_y = -0.20,
+        --     pos_z = -5.03,
+         --    lvid  = 225530,
+         --    gvid  = 466
+
+          --  pic ="level_change\\agroprom\\l03_agroprom_1",
+          --  pos_x = 271.575,
+          --  pos_y = 0.3,
+         --   pos_z = -0.25,
+         --   lvid  = 432382,
+         --   gvid  = 693
+
+           -- pic ="level_change\\agroprom\\l03_agroprom_1", -- на фабрике в запертом корпусе
+           --  pos_x = 41.19,
+           --  pos_y = 2.49,
+          --   pos_z = -17.79,
+          --   lvid  = 279269,
+          --   gvid  = 663
+
+            pic ="level_change\\agroprom\\l03_agroprom_1", -- Территория НИИ
+            pos_x = -155.69,
+            pos_y = -0.00,
+            pos_z = -159.44,
+            lvid  = 81997,
+            gvid  = 560
+
+          --  pic ="level_change\\agroprom\\l03_agroprom_1", -- рядом с убежищем-вагончиком
+          --  pos_x = -21.30,
+          --  pos_y = -1.95,
+          --  pos_z = -175.64,
+          --  lvid  = 219202,
+          --  gvid  = 676
+
+          --  pic ="level_change\\agroprom\\l03_agroprom_1", -- крыша НИИ
+          --  pos_x = -147.43,
+          --  pos_y = 14.99,
+          --  pos_z = -192.74,
+          --  lvid  = 90270,
+          --  gvid  = 644
+
+          --  pic ="level_change\\agroprom\\l03_agroprom_1", -- у захоронения 74
+          --  pos_x = 86.79,
+         --  pos_y = -0.04,
+         --   pos_z = -136.96,
+         --   lvid  = 321577,
+          --  gvid  = 611
+
+        },
+    },
+
+l03u_agr_underground =
+    {
+	    {
+         --   pic ="level_change\\agr_underground\\l03u_agr_underground_1",
+         --   pos_x = -38.98,
+         --   pos_y = -3.9,
+         --   pos_z = 39.395,
+         --   lvid  = 4724,
+          --  gvid  = 724
+
+            pic ="level_change\\agr_underground\\l03u_agr_underground_1",
+            pos_x = -49.15,
+            pos_y = -16.46,
+            pos_z = -37.33,
+            lvid  = 4265,
+            gvid  = 742
+
+          --  pic ="level_change\\agr_underground\\l03u_agr_underground_1",
+          --  pos_x = -103.19,
+         --   pos_y = -16.21,
+         --   pos_z = -44.65,
+         --  lvid  = 1320,
+          --  gvid  = 755
+        },
+    },
+
+l04_darkvalley =
+    {
+	    {
+        --    pic ="level_change\\darkvalley\\l04_darkvalley_1",
+        --    pos_x = -50.73,
+        --    pos_y = -0.05,
+        --    pos_z = -198.58,
+        --    lvid  = 114141,
+        --    gvid  = 882
+
+        --    pic ="level_change\\darkvalley\\l04_darkvalley_1", -- домик на заправке
+        --    pos_x = 105.11,
+        --    pos_y = 0.70,
+        --    pos_z = -13.66,
+        --    lvid  = 300910,
+        --    gvid  = 982
+
+          -- pic ="level_change\\darkvalley\\l04_darkvalley_1", -- у вагончика разведчика
+          --  pos_x = 42.56,
+          --  pos_y = 0.05,
+         --   pos_z = -211.19,
+         --   lvid  = 227897,
+         --   gvid  = 856
+
+          --  pic ="level_change\\darkvalley\\l04_darkvalley_1", -- лагерь у холма
+          --  pos_x = 119.73,
+          --  pos_y = 5.14,
+          --  pos_z = -416.94,
+          --  lvid  = 315597,
+          --  gvid  = 942
+
+          --  pic ="level_change\\darkvalley\\l04_darkvalley_1", -- у болота, ближе к ферме
+          --  pos_x = -70.88,
+          --  pos_y = -0.26,
+          --  pos_z = -284.31,
+          --  lvid  = 91393,
+         --   gvid  = 849
+
+            pic ="level_change\\darkvalley\\l04_darkvalley_1", -- у фермы, рядом с ренегатами
+            pos_x = -118.62,
+            pos_y = -0.23,
+            pos_z = -445.53,
+            lvid  = 39465,
+            gvid  = 827
+
+           -- pic ="level_change\\darkvalley\\l04_darkvalley_1", -- у старого вагончика возле фабрики
+          -- pos_x = 123.39,
+          -- pos_y = 0.17,
+          --  pos_z = -198.89,
+          --  lvid  = 320241,
+          --  gvid  = 928
+
+          --  pic ="level_change\\darkvalley\\l04_darkvalley_1", -- в недостройке
+         --  pos_x = 35.68,
+         --   pos_y = 1.80,
+         --   pos_z = -71.05,
+         --   lvid  = 218585,
+         --   gvid  = 1080
+
+        --    pic ="level_change\\darkvalley\\l04_darkvalley_1", -- в коридоре перед растяжкой
+        --    pos_x = -7.03,
+        --    pos_y = 3.68,
+        --    pos_z = -80.79,
+        --    lvid  = 165862,
+        --    gvid  = 1042
+
+          --  pic ="level_change\\darkvalley\\l04_darkvalley_1", -- перед входом в Х-18
+          --  pos_x = 122.96,
+          --  pos_y = -2.87,
+          --  pos_z = -255.40,
+          --  lvid  = 320182,
+          --  gvid  = 812
+
+	},
+    },
+
+l04u_labx18 =
+    {
+	    {
+            pic ="level_change\\labx18\\l04u_labx18_1", -- на входе
+            pos_x = -3.26,
+            pos_y = 9.30,
+            pos_z = -10.18,
+            lvid  = 2239,
+            gvid  = 1167
+
+         --   pic ="level_change\\labx18\\l04u_labx18_1", -- у реморализатора
+         --   pos_x = -13.79,
+         --   pos_y = 5.10,
+         --   pos_z = 15.30,
+         --   lvid  = 1117,
+          --  gvid  = 1126
+
+          --  pic ="level_change\\labx18\\l04u_labx18_1", -- в комнате Доктора
+          --  pos_x = 20.17,
+          --  pos_y = -6.61,
+          --  pos_z = -15.03,
+          --  lvid  = 5850,
+          --  gvid  = 1140
+
+		},
+    },
+
+l05_bar =
+    {
+	    {
+          --  pic ="level_change\\bar\\l05_bar_1",    -- в ангаре
+          --  pos_x = 166.96,
+          --  pos_y = 0.09,
+          --  pos_z = 52.23,
+          --  lvid  = 43005,
+          --  gvid  = 1258
+
+          --  pic ="level_change\\bar\\l05_bar_1", -- на вышке
+          --  pos_x = 182.35,
+         --  pos_y = 3.57,
+         --   pos_z = 94.26,
+          --  lvid  = 45241,
+          --  gvid  = 1186
+
+           pic ="level_change\\bar\\l05_bar_1", -- в начале дороги
+            pos_x = 388.72,
+           pos_y = 10.90,
+            pos_z = -425.01,
+            lvid  = 87572,
+            gvid  = 1289
+
+         --   pic ="level_change\\bar\\l05_bar_1", -- в башне
+         --   pos_x = 151.16,
+         --   pos_y = 10.20,
+        --   pos_z = 108.19,
+         --  lvid  = 40359,
+        --    gvid  = 1209
+
+         --   pic ="level_change\\bar\\l05_bar_1", -- на арене
+         --  pos_x = 141.83,
+         --   pos_y = -15.10,
+        --   pos_z = 90.23,
+        --    lvid  = 38240,
+        --   gvid  = 1184
+
+         --   pic ="level_change\\bar\\l05_bar_1", -- у перехода на Росток
+         --   pos_x = 55.06,
+         --   pos_y = -0.00,
+         --   pos_z = 141.49,
+         --  lvid  = 25884,
+          --  gvid  = 1240
+
+          --  pic ="level_change\\bar\\l05_bar_1", -- у перехода на склады
+          --  pos_x = 53.74,
+           -- pos_y = -0.93,
+          --  pos_z = 265.74,
+          --  lvid  = 25497,
+          --  gvid  = 1244
+			
+		--	 pic ="level_change\\bar\\l05_bar_1", -- в котельной
+          --  pos_x = 150.04,
+         --   pos_y = 0.10,
+         --   pos_z = 76.75,
+         --   lvid  = 40045,
+         --   gvid  = 1181
+			
+		--	pic ="level_change\\bar\\l05_bar_1", -- возле домика петренки
+         --   pos_x = 211.16,
+         --   pos_y = 0.03,
+        --   pos_z = 72.93,
+         --   lvid  = 51742,
+         --   gvid  = 1202
+
+        },
+    },
+
+l06_rostok =
+    {
+	    {
+        --    pic ="level_change\\rostok\\l06_rostok_1", -- в начале
+        --   pos_x = 31.43,
+        --   pos_y = -0.63,
+        --    pos_z = 140.40,
+        --    lvid  = 67363,
+        --    gvid  = 1412
+			
+			pic ="level_change\\rostok\\l06_rostok_1", -- снайперская галлерея
+            pos_x = -88.77,
+            pos_y = -0.00,
+            pos_z = 122.74,
+            lvid  = 46678,
+            gvid  = 1421
+		 
+		 --	pic ="level_change\\rostok\\l06_rostok_1", -- в заколоченном доме
+         --   pos_x = -210.84,
+         --   pos_y = 1.89,
+         --   pos_z = 103.01,
+         --   lvid  = 23935,
+         --   gvid  = 1370
+		 
+		 
+		--	pic ="level_change\\rostok\\l06_rostok_1", -- у туннеля с жарками
+        --    pos_x = -196.06,
+        --    pos_y = -4.95,
+        --   pos_z = -66.52,
+        --    lvid  = 27555,
+        --   gvid  = 1403
+		 
+		--	pic ="level_change\\rostok\\l06_rostok_1", -- возле вертолёта
+         --   pos_x = -271.44,
+         --   pos_y = 0.00,
+         --   pos_z = 152.01,
+         --   lvid  = 3852,
+         --   gvid  = 1349
+		 
+        },
+    },
+
+l08_yantar =
+    {
+	    {
+            pic ="level_change\\yantar\\l08_yantar_1",	--	в начале
+            pos_x = 190.38,
+            pos_y = 5.44,
+            pos_z = -245.3,
+            lvid  = 136073,
+            gvid  = 1459
+			
+			
+		--	pic ="level_change\\rostok\\l06_rostok_1", -- завод, у двери с ловушкой
+        --    pos_x = -16.15,
+        --    pos_y = 0.27,
+        --    pos_z = -8.86,
+        --    lvid  = 32890,
+        --    gvid  = 1500
+			
+		--	pic ="level_change\\rostok\\l06_rostok_1", -- в туннеле после побега
+        --    pos_x = -237.75,
+        --    pos_y = -19.06,
+        --    pos_z = -42.70,
+        --    lvid  = 190,
+        --    gvid  = 1458
+			
+		--	pic ="level_change\\rostok\\l06_rostok_1", -- в бункере Сахарова
+        --    pos_x = 31.82,
+        --    pos_y = -11.77,
+         --   pos_z = -272.51,
+        --    lvid  = 54643,
+        --    gvid  = 1480
+			
+        },
+    },
+
+l08u_brainlab =
+    {
+	    {
+            pic ="level_change\\brainlab\\l08u_brainlab_1",	--	на входе
+            pos_x = 147.777,
+            pos_y = 32,
+            pos_z = -13.244,
+            lvid  = 7789,
+            gvid  = 1541
+			
+			
+		--	pic ="level_change\\brainlab\\l08u_brainlab_1",	--	пункт управления Мозгом
+        --    pos_x = -47.58,
+        --    pos_y = 19.17,
+        --    pos_z = 3.01,
+        --    lvid  = 2221,
+        --    gvid  = 1530
+			
+        },
+    },
+
+l07_military =
+    {
+	    {
+		
+		--	pic ="level_change\\military\\l07_military_1",	--	в начале дороги
+        --    pos_x = -334.578,
+        --    pos_y = -25.5,
+        --    pos_z = 45,
+        --    lvid  = 16231,
+        --    gvid  = 1546
+		
+         --   pic ="level_change\\radar\\l10_radar_2",  --  возле перехода на Радар
+         --   pos_x = 53.49,
+         --   pos_y = -18.379,
+         --   pos_z = 361.55,
+         --   lvid  = 353414,
+         --   gvid  = 1807
+			
+			pic ="level_change\\military\\l07_military_1",  --  на базе Свободы
+            pos_x = -7.93,
+            pos_y = -6.14,
+           pos_z = 42.65,
+            lvid  = 299529,
+            gvid  = 1584
+			
+			
+		--	pic ="level_change\\military\\l07_military_1",  --  деревня, домик Деда
+        --    pos_x = -293.38,
+        --    pos_y = -22.19,
+        --   pos_z = 292.40,
+        --    lvid  = 48751,
+        --    gvid  = 1833
+		
+        },
+    },
+
+l10_radar =
+    {
+	    {
+            pic ="level_change\\radar\\l10_radar_1",
+            pos_x = 569,
+            pos_y = -53.485,
+            pos_z = -408,
+            lvid  = 199917,
+            gvid  = 1868
+        },
+		{
+            pic ="level_change\\radar\\l10_radar_2",
+            pos_x = 382.4,
+            pos_y = -33.885,
+            pos_z = 143.4,
+            lvid  = 112676,
+            gvid  = 1926
+        },
+    },
+
+l10u_bunker =
+    {
+	    {
+            pic ="level_change\\bunker\\l10u_bunker_1",
+            pos_x = 0,
+            pos_y = -7.45,
+            pos_z = -79.8,
+            lvid  = 5828,
+            gvid  = 2790
+        },
+		{
+            pic ="level_change\\bunker\\l10u_bunker_2",
+            pos_x = -20.175,
+            pos_y = -9.552,
+            pos_z = -5.8,
+            lvid  = 3449,
+            gvid  = 2666
+        },
+		{
+            pic ="level_change\\bunker\\l10u_bunker_3",
+            pos_x = -5.743,
+            pos_y = -9.974,
+            pos_z = 32.37,
+            lvid  = 4727,
+            gvid  = 2681
+        },
+    },
+
+l11_pripyat =
+    {
+	    {
+            pic ="level_change\\pripyat\\l11_pripyat_1",	--	в начале
+            pos_x = 34.2,
+            pos_y = -2.26,
+            pos_z = -290.536,
+            lvid  = 144647,
+            gvid  = 2269
+			
+			
+		--	pic ="level_change\\pripyat\\l11_pripyat_1",	--	перед местом встречи с Апостолом
+        --    pos_x = -75.93,
+        --    pos_y = -0.68,
+        --    pos_z = 169.11,
+         --   lvid  = 31114,
+        --    gvid  = 2213
+			
+        },
+    },
+
+l12_stancia =
+    {
+	    {
+            pic ="level_change\\stancia\\l12_stancia_1",
+            pos_x = 919,
+            pos_y = 0,
+            pos_z = -289.34,
+            lvid  = 404962,
+            gvid  = 2401
+        },
+    },
+
+l12u_sarcofag =
+    {
+	    {
+            pic ="level_change\\sarcofag\\l12u_sarcofag_1",
+            pos_x = -31.49,
+            pos_y = 0.26,
+            pos_z = 46.757,
+            lvid  = 27,
+            gvid  = 2403
+        },
+		{
+            pic ="level_change\\sarcofag\\l12u_sarcofag_2",
+            pos_x = 14.81,
+            pos_y = 56,
+            pos_z = 26.45,
+            lvid  = 4115,
+            gvid  = 2464
+        },
+    },
+
+l12u_control_monolith =
+    {
+		{
+            pic ="level_change\\control_monolith\\l12u_control_monolith_1",
+            pos_x = -11.416,
+            pos_y = -34.578,
+            pos_z = -7.65,
+            lvid  = 1439,
+            gvid  = 2484
+        },
+    },
+
+l12_stancia_2 =
+    {
+		{
+            pic ="level_change\\stancia_2\\l12_stancia_2_1",
+            pos_x = 1.24,
+            pos_y = 5.12,
+            pos_z = 69.07,
+            lvid  = 24842,
+            gvid  = 2659
+        },
+    },
+	
+predbannik =
+    {
+		{
+            pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	блокпост на въезде
+            pos_x = -569.79,
+            pos_y = 18.84,
+            pos_z = 413.78,
+            lvid  = 75988,
+            gvid  = 2799
+			
+		--	pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	каморка барыги(хутор)
+        --    pos_x = -21.537223815918,
+        --    pos_y = -4.34757232666016,
+        --    pos_z = 329.576171875,
+        --    lvid  = 909931,
+        --    gvid  = 2911
+			
+			
+		--	pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	пожарная часть
+        --    pos_x = -475.96,
+        --    pos_y = -0.43,
+        --    pos_z = -147.04,
+        --   lvid  = 215202,
+        --    gvid  = 2823
+		
+		--	pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	армейская часть
+        --    pos_x = -246.98,
+        --    pos_y = 28.00,
+        --    pos_z = -141.71,
+        --   lvid  = 559476,
+        --    gvid  = 2866
+		
+		--	pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	фабрика
+        --    pos_x = -40.03,
+        --    pos_y = -3.25,
+        --    pos_z = -251.72,
+        --    lvid  = 880077,
+        --    gvid  = 2906
+		
+		--	pic ="level_change\\stancia_2\\l12_stancia_2_1",	--	деревня
+         --   pos_x = 48.04,
+        --    pos_y = 2.35,
+        --    pos_z = -2.08,
+        --    lvid  = 1018876,
+        --    gvid  = 2930
+        },
+    }
+
+}
+
+function jump_to_level(level, index)
+    return levels[level][index]
+end
+

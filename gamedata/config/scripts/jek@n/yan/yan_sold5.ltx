@@ -1,0 +1,50 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+threshold = threshold@yan_sold5
+on_death = death
+trade = misc\trade_nothing.ltx
+
+
+[walker@start]
+path_walk = yan_sold5_walk1
+path_look = yan_sold5_look1
+on_timer = 1 | walker@1 %=make_invulnerable%
+
+[walker@1]
+path_walk = yan_sold5_walk1
+path_look = yan_sold5_look1
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+on_info = {+yan_bunker_atack_start} walker@defense
+
+[walker@defense]
+path_walk = yan_sold5_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-yan_bunker_atack_start} walker@1
+
+
+
+
+[threshold@yan_sold5]
+max_ignore_distance = 15
+ignore_monster = 0
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+yan_sold5_dead%

@@ -1,0 +1,64 @@
+local tSound ={
+medkit       = "addon\\inv_medkit",
+medkit_army       = "addon\\inv_medkit",
+medkit_scientic       = "addon\\inv_medkit",
+antirad      = "addon\\inv_pills",
+dix        = "addon\\inv_pills",
+bipsizon  = "addon\\inv_pills",
+yod      = "addon\\inv_pills",
+syrok      = "addon\\inv_food",
+syrok_bad      = "addon\\inv_food",
+kolbasa      = "addon\\inv_food",
+kolbasa_bad      = "addon\\inv_food",
+conserva      = "addon\\inv_food",
+conserva_bad      = "addon\\inv_food",
+salo     = "addon\\inv_food",
+salo_bad     = "addon\\inv_food",
+vodka      = "addon\\inv_vodka",
+voda      = "addon\\inv_softdrink",
+energy_drink      = "addon\\inv_softdrink",
+kefir      = "addon\\inv_softdrink",
+kefir_bad      = "addon\\inv_softdrink",
+kartoshka      = "addon\\inv_food",
+kartoshka_bad      = "addon\\inv_food",
+bread      = "addon\\inv_food",
+bread_bad      = "addon\\inv_food",
+bandage      = "addon\\inv_bandage",
+vint      = "characters_voice\\human_01\\stalker\\states\\idle\\idle_27",
+medkomplekt      = "interface\\inv_open",
+mre      = "addon\\inv_food",
+mre_bad      = "addon\\inv_food",
+pivo      = "addon\\inv_softdrink",
+mikstura      = "addon\\inv_softdrink",
+flyaga_full      = "addon\\inv_softdrink",
+flyaga_bad      = "addon\\inv_softdrink",
+redrik_vakcine      = "addon\\inv_softdrink",
+rad_mashroom      = "addon\\inv_food",
+suharik      = "addon\\inv_food",
+rat_meet      = "addon\\inv_food",
+boarleg_soup      = "addon\\inv_food",
+flesheye_soup      = "addon\\inv_food",
+pseudotail_soup      = "addon\\inv_food",
+krovosos_soup      = "addon\\inv_food",
+tushkano_soup      = "addon\\inv_food",
+pseudogig_soup      = "addon\\inv_food",
+conserva_soup      = "addon\\inv_food",
+salo_soup      = "addon\\inv_food",
+teapot_full      = "addon\\inv_softdrink",
+unic_flyaga_full      = "addon\\inv_softdrink",
+mil_freak_water      = "addon\\inv_softdrink",
+power_liquor      = "addon\\inv_softdrink",
+rage_liquor      = "addon\\inv_softdrink",
+brain_liquor      = "addon\\inv_softdrink",
+radiation_liquor      = "addon\\inv_softdrink",
+anomal_conserva			= "addon\\inv_food"
+}
+ 
+function use_snd(obj)
+   if obj and tSound[obj:section()]  then 
+      local snd = xr_sound.get_safe_sound_object(tSound[obj:section()])
+      if snd then 
+      snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 2.0)
+      end
+   end
+end    

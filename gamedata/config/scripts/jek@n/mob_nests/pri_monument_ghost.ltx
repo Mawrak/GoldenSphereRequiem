@@ -1,0 +1,83 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@sleep
+
+; Сидим:
+[mob_walker@sleep]
+path_walk = pri_monument_ghost_point1
+path_look = pri_monument_ghost_point1
+braindead = true
+on_actor_dist_le_nvis = 5|mob_camp@1_1 %=play_snd_on_me(characters_voice\scenario\jekan\predb_village_child_snd1) =remove_item(pri_medal) =karma_up +pri_child_finded%
+
+
+; Бегаем вокруг домика:
+[mob_camp@1_1]
+path_home = pri_monument_ghost_point2
+path_look = pri_monument_ghost_point2
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_timer = 6000|mob_camp@1
+
+[mob_camp@1]
+path_home = pri_monument_ghost_point2
+path_look = pri_monument_ghost_point2
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 4|mob_camp@2_1 %=play_snd_on_me(characters_voice\scenario\jekan\predb_village_child_snd2)%
+
+
+[mob_camp@2_1]
+path_home = pri_monument_ghost_point3
+path_look = pri_monument_ghost_point3
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_timer = 6000|mob_camp@2
+
+[mob_camp@2]
+path_home = pri_monument_ghost_point3
+path_look = pri_monument_ghost_point3
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 4|mob_camp@3_1 %=play_snd_on_me(characters_voice\scenario\jekan\predb_village_child_snd3)%
+
+
+[mob_camp@3_1]
+path_home = pri_monument_ghost_point4
+path_look = pri_monument_ghost_point4
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_timer = 6000|mob_camp@3
+
+[mob_camp@3]
+path_home = pri_monument_ghost_point4
+path_look = pri_monument_ghost_point4
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 4|mob_camp@4_1 %=play_snd_on_me(characters_voice\scenario\jekan\predb_village_child_snd4)%
+
+
+[mob_camp@4_1]
+path_home = pri_monument_ghost_point5
+path_look = pri_monument_ghost_point5
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_timer = 6000|mob_camp@4
+
+[mob_camp@4]
+path_home = pri_monument_ghost_point5
+path_look = pri_monument_ghost_point5
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 4|mob_camp@1_1 %=play_snd_on_me(characters_voice\scenario\jekan\predb_village_child_snd5)%
+
+

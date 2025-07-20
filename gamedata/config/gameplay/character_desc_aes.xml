@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<xml>
+
+<!--red_shuhart-->
+	<specific_character id="red_shuhart" team_default = "1">
+		<name>Дух Зоны</name>
+		<icon>ui_npc_missing</icon>
+		<bio>esc_killer_specnaz_bio</bio>
+
+		<class>red_shuhart</class>
+		<community>legend</community>
+
+		<rank>996</rank>
+		<reputation>0</reputation>
+		<money min="1" max="1000" infinitive="0"></money>
+
+    <snd_config>characters_voice\human_03\monolith\</snd_config>
+		<crouch_type>-1</crouch_type>
+
+		<visual>actors\contruch</visual>
+		<supplies>
+			[spawn] \n
+		</supplies>
+
+#include "gameplay\character_criticals_5.xml"
+	</specific_character>
+
+
+
+	
+</xml>

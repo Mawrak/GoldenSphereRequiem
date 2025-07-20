@@ -1,0 +1,830 @@
+------------------- Библиотека служебных скриптов для OGSM 2.x ----------------
+
+---------------------- Copyright 2007-2008 xStream & DEXXX --------------------
+----------------- Библиотека служебных скриптов для OGSE 0.6.9.x --------------
+------------------------- Copyright 2008-2010 OGSE Team -----------------------
+game_time_factor = 1
+local watchdog = 0
+local watchdog_max = 33
+local drug_timer = 0
+local string_find = string.find
+
+-- Переменные для типсов
+pda_news = xr_sound.get_safe_sound_object([[device\pda\pda_news]])
+pda_tips = xr_sound.get_safe_sound_object([[device\pda\pda_tip]])
+pda_task = xr_sound.get_safe_sound_object([[device\pda\pda_objective]])
+
+tips_icons = {
+	default  = { 82, 282},
+	trader   = { 332, 893},
+	dolg     = { 0, 658},
+	freedom  = { 0, 658},
+	ecolog   = { 498, 0},
+	arena    = { 332, 141},
+	stalker  = { 0, 658},
+	krot     = { 332, 47},
+	barman   = { 332, 235},
+	wolf	   = { 332, 940},
+	o_soznanie = { 498, 893},
+	monolith = { 0, 658},
+	saharov  = { 332, 470},
+	prizrak  = { 0, 658},
+	killer   = { 0, 658},
+	death    = { 0, 752}
+}
+
+local lastrand = 1
+
+-- Более адекватный рэндом - с более-менее нормальным кач-вом генерации
+-- внимание - работает медленно (правда не настолько как может подуматься 8))!
+-- Нежелательно пользовать для процессов критичных ко времени исполнения!
+function real_rand(first, second)--+
+	local vert = nil
+	local money = 97359
+	local out_rand = 0
+	if db.actor then
+		vert = db.actor:level_vertex_id()
+		money = db.actor:money()
+	else
+		vert = 168794
+	end
+	
+	local function reseed_rand(a, b)
+		math.randomseed(math.ceil(tonumber(time_global())/tonumber(vert)*math.random(5,75)+(money*out_rand)))
+		math.random()
+		if a and b then
+			out_rand = math.random(a, b)
+		elseif a then
+			out_rand = math.random(a)
+		else
+			out_rand = math.random()		
+		end
+		lastrand = out_rand
+	end
+	
+	if first and second then
+		math.random()
+		math.randomseed(math.ceil(tonumber(time_global())/tonumber(vert)*math.random(5,75)+money*lastrand))
+		math.random()
+		out_rand = math.random(first, second)
+		if out_rand == lastrand then
+			reseed_rand(first, second)
+		end
+		lastrand = out_rand
+		return out_rand
+	elseif first then
+		math.random()
+		math.randomseed(math.ceil(tonumber(time_global())/tonumber(vert)*math.random(5,75)+money*lastrand))
+		math.random()
+		if first > 1 then
+			out_rand = math.random(first)
+		else
+			return 1
+		end
+		if out_rand == lastrand then
+			reseed_rand(first)
+		end
+		lastrand = out_rand		
+		return out_rand
+	else
+		math.random()
+		math.randomseed(math.ceil(tonumber(time_global())/tonumber(vert)*math.random(5,75)+money*lastrand))
+		math.random()
+		out_rand = math.random()
+		if out_rand == lastrand then
+			reseed_rand()
+		end
+		if out_rand > 0 then
+			out_rand = math.random()
+		end
+		lastrand = out_rand				
+		return out_rand
+	end
+end
+
+function logf( fmt, ... )
+	--log1(string.format( fmt, ... ))
+end
+
+function g_start_timer(name, d, h, m, params)
+--start_game_timer(m+60*(h+24*d), )
+log1("warning!! >> start old amk game_timer with name: "..name)
+end
+
+function start_timer(name, sec, params)
+--start_game_timer(m+60*(h+24*d), )
+log1("warning!! >> start old amk timer with name: "..name)
+end
+
+-- Проверка уровня артефакта по имени левела
+function art_accesible(item)
+--[[	local section = item:section()
+	local level_name = level.name()
+	local art_level = art_levels[section]
+	local loc_level = loc_levels[level_name]
+	if art_level and loc_level then
+		if art_level <= loc_level then
+			return true 
+		else 
+			return false
+		end
+	else 
+		return true 
+	end]]
+	return false
+end
+
+--- Возвращает true если параметром передан квестовый непись
+function is_quest_npc(npc) --+
+	if npc then
+		local npc_name = npc:name()
+		if string_find(npc_name, "^esc_kamp_controler_good") or
+		   string_find(npc_name, "^esc_helicrash_survival") or
+		   string_find(npc_name, "^bridge_anomal_killer1") or
+		   string_find(npc_name, "^bridge_anomal_killer2") or
+		   string_find(npc_name, "^bridge_anomal_killer3") or
+		   string_find(npc_name, "^vagon_stranger1") or
+		   string_find(npc_name, "^vagon_stranger2") or
+		   string_find(npc_name, "^vagon_stranger3") or
+		   string_find(npc_name, "^miln_stranger1") or
+		   string_find(npc_name, "^miln_stranger2") or
+		   string_find(npc_name, "^miln_stranger3") or
+		   string_find(npc_name, "^stalker_volk") or
+		   string_find(npc_name, "^post_srochnik1") or
+		   string_find(npc_name, "^post_srochnik2") or
+		   string_find(npc_name, "^post_srochnik3") or
+		   string_find(npc_name, "^post_pilot") or
+		   string_find(npc_name, "^post_commander") or
+		   string_find(npc_name, "^post_oficer1") or
+		   string_find(npc_name, "^post_oficer2") or
+		   string_find(npc_name, "^post_soldier1") or
+		   string_find(npc_name, "^post_soldier2") or
+		   string_find(npc_name, "^post_soldier3") or
+		   string_find(npc_name, "^post_soldier4") or
+		   string_find(npc_name, "^post_soldier5") or
+		   string_find(npc_name, "^post_soldier6") or
+		   string_find(npc_name, "^post_soldier7") or
+		   string_find(npc_name, "^post_soldier8") or
+		   string_find(npc_name, "^post_soldier9") or
+		   string_find(npc_name, "^post_soldier10") or
+		   string_find(npc_name, "^stalker_malandrinus") or
+		   string_find(npc_name, "^bandit_abdul") or
+		   string_find(npc_name, "^bandit_shusrtila") or
+		   string_find(npc_name, "^bandit_tirsa") or
+		   string_find(npc_name, "^stalker_sanya") or
+		   string_find(npc_name, "^stalker_skidan") or
+		   string_find(npc_name, "^hunter_1") or
+		   string_find(npc_name, "^hunter_2") or
+		   string_find(npc_name, "^hunter_3") or
+		   string_find(npc_name, "^hunter_4") or
+		   string_find(npc_name, "^hunter_5") or
+		   string_find(npc_name, "^hunter_6") or
+		   string_find(npc_name, "^hunter_7") or
+		   string_find(npc_name, "^esc_stalker_izgoy") or
+		   string_find(npc_name, "^escape_trader") or
+		   string_find(npc_name, "^headhunter1") or
+		   string_find(npc_name, "^headhunter2") or
+		   string_find(npc_name, "^headhunter3") or
+		   string_find(npc_name, "^headhunter4") or
+		   string_find(npc_name, "^headhunter5") or
+		   string_find(npc_name, "^client_1") or
+		   string_find(npc_name, "^client_1_guard1") or
+		   string_find(npc_name, "^client_1_guard2") or
+		   string_find(npc_name, "^dar_renegade1") or
+		   string_find(npc_name, "^dar_renegade2") or
+		   string_find(npc_name, "^garb_survival") or
+		   string_find(npc_name, "^garb_hunter_1") or
+		   string_find(npc_name, "^client2_agent") or
+		   string_find(npc_name, "^client2_guard1") or
+		   string_find(npc_name, "^client2_guard2") or
+		   string_find(npc_name, "^client2_guard3") or
+
+		   string_find(npc_name, "^dar_suicider_man") or
+		   string_find(npc_name, "^dar_suicider_woman") or
+		   string_find(npc_name, "^esc_mad_hunter") or
+		   string_find(npc_name, "^stalker_bomzh") or
+		   string_find(npc_name, "^post_soldier10_new") or
+		   string_find(npc_name, "^dar_btr_zomb_oficer") or
+		   string_find(npc_name, "^dar_btr_zomb_soldier1") or
+
+		   string_find(npc_name, "^agr_body15") or
+		   string_find(npc_name, "^agr_fabrik_sniper") or
+		   string_find(npc_name, "^hunter_3_scient") or
+		   string_find(npc_name, "^redrik") or
+		   string_find(npc_name, "^esc_lathkey") or
+		   string_find(npc_name, "^dar_headhunter_boss") or
+		   string_find(npc_name, "^dar_headhunter_tehnik") or
+		   string_find(npc_name, "^dar_abdul") or
+		   string_find(npc_name, "^x18_general_doktor") or
+		   string_find(npc_name, "^hunter_4_2") or
+		   string_find(npc_name, "^reketirs_assistant") or
+		   string_find(npc_name, "^garb_shustriy") or
+		   string_find(npc_name, "^garb_tirsa") or
+		   string_find(npc_name, "^garb_abdul") or
+		   string_find(npc_name, "^bar_scientist") or
+		   string_find(npc_name, "^bar_bunkerzombie_boss") or
+		   string_find(npc_name, "^bar_bunkerzombie1") or
+		   string_find(npc_name, "^bar_bunkerzombie2") or
+		   string_find(npc_name, "^bar_bunkerzombie3") or
+		   string_find(npc_name, "^bar_bunkerzombie4") or
+		   string_find(npc_name, "^bar_bunkerzombie5") or
+		   string_find(npc_name, "^bar_bunkerzombie6") or
+		   string_find(npc_name, "^bar_bunkerzombie7") or
+		   string_find(npc_name, "^garb_ovrah2") or
+		   string_find(npc_name, "^hunter_1_2") or
+		   string_find(npc_name, "^hunter_2_2") or
+		   string_find(npc_name, "^garb_hunter2") or
+		   string_find(npc_name, "^garb_andrey2") or
+		   string_find(npc_name, "^esc_helicrash_survival2") or
+		   string_find(npc_name, "^agr_nii_ecolog1") or
+
+		   string_find(npc_name, "^subject_weak_1") or
+		   string_find(npc_name, "^subject_weak_2") or
+		   string_find(npc_name, "^subject_weak_3") or
+		   string_find(npc_name, "^subject_weak_4") or
+		   string_find(npc_name, "^subject_weak_5") or
+		   string_find(npc_name, "^subject_weak_6") or
+		   string_find(npc_name, "^subject_weak_7") or
+		   string_find(npc_name, "^x18_cattle1") or
+		   string_find(npc_name, "^x18_cattle2") or
+
+		   string_find(npc_name, "^dar_base_sniper1") then
+		return true else return false end
+	end
+end
+
+-- Показ типса
+function send_tip(news_text, header, timeout, showtime, sender, sound) --+
+	if news_text==nil then return end
+	if header==nil then header=game.translate_string("st_tip") end
+	if timeout == nil then timeout = 0 end
+	if showtime == nil then showtime = 5 end
+	
+	local player
+	if sound=="news" then
+		player=pda_news
+	elseif sound=="task" then
+		player=pda_task
+	else
+		player=pda_tips
+	end		
+	
+	--' Играем дефолтный звук
+	player:play(db.actor, timeout, sound_object.s2d)
+	
+	if sender == nil then
+		sender = "default"
+	end
+	local x = tips_icons[sender][1]
+	local y = tips_icons[sender][2]
+	
+	local news_text = "%c[255,160,160,160]"..header.."\\n".."%c[default]"..news_text
+	db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(x,y,83,47), timeout*1000, showtime*1000)
+	return true
+end
+
+-- Спавним объекты в инвентарь
+function spawn_item_in_inv(spawn_item,npc) --+
+	if npc==nil then 
+		npc=db.actor 
+	end
+	local sobj =  alife():create(spawn_item, vector(), 0, 0, npc:id())
+	if npc:id()~=0 then
+		level.add_call(
+			function() return level.object_by_id(sobj.id) end,
+			function() local obj = level.object_by_id(sobj.id) npc:transfer_item( obj, npc) end )
+	end
+	return sobj
+end
+
+-- Спавним патроны в инвентарь
+function spawn_ammo_in_inv(spawn_item,number,npc) --+
+	if npc==nil then 
+		npc=db.actor 
+	end
+	if number > 0 then
+		return se_respawn.create_ammo(spawn_item,
+				npc:position(),
+				npc:level_vertex_id(),	
+				npc:game_vertex_id(),
+				npc:id(),
+				number)
+	end
+end
+
+-- Удаляем объект из игры
+function remove_item(remove_item) --+
+	if remove_item~=nil then
+		local sobj = alife():object(remove_item:id())
+		if sobj then
+			alife():release(sobj, true)
+			return true
+		else
+			return false
+		end
+	end
+	return false
+end
+
+-- Узнаем отношение одного непися к другому
+function get_npc_relation(obj,target) --+
+	local rel = obj:relation(target)
+	local relation="neutral"
+	if rel==game_object.neutral then
+		relation="neutral"
+	elseif rel==game_object.friend then
+		relation="friend"
+	elseif rel==game_object.enemy then
+		relation="enemy"
+	end
+	return relation
+end
+
+-- Задаем отношение одного непися к другому
+function set_npc_relation(obj,target,relation) --+
+	local rel
+	if relation=="neutral" then
+		rel=game_object.neutral
+	elseif relation=="friend" then
+		rel=game_object.friend
+	elseif relation=="enemy" then
+		rel=game_object.enemy
+	else
+		return false
+	end	
+	obj:set_relation(rel,target)
+	return true
+end
+
+-- Выставляем группировку непися, можно ГГ
+function set_npc_community(npc,community_string) --+
+	--значения для community_string можно узнать в config\creatures\game_relations.ltx
+	return npc:set_character_community(community_string, 0, 0)
+end
+
+-- Удаляем предмет из инвентаря
+function remove_item_from_inventory_by_name(remove_item_name,npc) --+
+	remove_item_from_inventory(npc:object(remove_item_name),npc)
+end
+
+function remove_item_from_inventory(remove_item,npc) --+
+	if npc==nil then npc=db.actor end
+	if remove_item~=nil then
+	    npc:mark_item_dropped(remove_item)
+		local sobj = alife():object(remove_item:id())
+		if sobj then
+			alife():release(sobj, true)
+			return true
+		else	
+			return false
+		end
+	end
+	return false
+end
+
+-- Очищаем инвентарь непися, можно ГГ, использует следующую фунцию для удаления предмета
+function clear_npc_inventory(npc) --+
+npc:iterate_inventory(
+	function (npc, item)
+		local section = item:section()
+
+		if section == "bolt" or section == "device_torch" then
+			return
+		end
+		npc:mark_item_dropped(item)
+		local sobj = alife():object(item:id())
+		if sobj then
+			alife():release(sobj, true)
+		end
+	end, npc)
+end
+
+-- Проверка, запущена ли игра
+function check_game() --+
+	if level.present() and (db.actor ~= nil) and db.actor:alive() then
+		return true
+	end
+	return false
+end
+
+-- Записываем переменную
+function save_variable(variable_name, value) --+
+	-- xr_logic.pstor_store(db.actor, variable_name, value)
+	SetVar(variable_name, value)
+end
+
+-- Загружаем переменную
+function load_variable(variable_name, value_if_not_found) --+
+	-- return xr_logic.pstor_retrieve(db.actor, variable_name, value_if_not_found)
+	return GetVar(variable_name, value_if_not_found)
+end
+
+-- Удаляем переменную
+function del_variable(variable_name) --+
+--[[	if db.storage[db.actor:id()].pstor[variable_name] then
+		db.storage[db.actor:id()].pstor[variable_name] = nil
+	end]]
+	DelVar(variable_name)
+end
+
+-- Колбэк на появление предмета в инвентаре ГГ
+function on_item_take(obj) --+
+	addon.on_item_take(obj)
+	achievements.check_sssr_signs()
+		-- Невидимые арты
+	if obj:section():match("fake_art[123]") then addon.fake_arts_delete() end
+	
+	-- Самосъедаемые записки, блокноты, прочее:
+	addon.autoattachable_items(obj)
+end
+
+-- Колбэк на потерю предмета из инвентаря ГГ
+function on_item_drop(obj) --+
+	-- GPS-маячок
+	metka.check_beacon_drop(obj)
+	---sleep_manager.check_sleep_item(obj) --??
+	addon_pnv.on_drop(obj)
+end
+
+-- Колбэк на апдейт ГГ
+function on_actor_update() --+
+
+-- АПДЕЙТЫ С ВЫСОКИМ ПРИОРИТЕТОМ ПОМЕЩАТЬ СЮДА!
+
+-- Препараты (воздействие)
+	healing.achieve_all_preparation()
+	
+	addon_2.show_visual_health()
+	
+	
+-- КОНЕЦ АПДЕЙТОВ С ВЫСОКИМ ПРИОРИТЕТОМ
+
+if watchdog == 1 then
+-- Выводим время на HUD
+	show_time()
+-- Выводим время на HUD
+end
+
+if watchdog == 3 then
+-- Обновление инвентаря
+-- Не обновлять по ватчдогу во время разговора чтобы инвентарь не скакали вещи из торговли
+	-- if not db.actor:is_talking() and 
+	-- not inventory.inventory_open == true then
+		-- inventory.update()
+	-- end
+-- Обновление инвентаря
+end
+
+if watchdog == 2 then
+-- Порча еды
+-- Не портить еду во время разговора чтобы инвентарь не скакал и вещи из торговли
+	if not db.actor:is_talking() and not inventory.inventory_open and not inventory.belt["af_bottle"] then
+		inventory.spoilage_food()
+	end
+-- Порча еды
+end
+
+
+if watchdog == 4 then
+-- GPS-маячок
+	metka.check_metka()
+-- GPS-маячок
+end
+
+-- if watchdog == 6 then
+-- периодическая проверка количества идентификаторов
+	-- if id_cleaner and id_cleaner.check_ids_flag == 1 then 
+		-- local ids_check_timer = time_global()
+		-- if ids_check_timer > ids_timer then 
+			-- id_cleaner.check_ids()
+			-- ids_timer = ids_timer + math.random(30000, 60000) 
+		-- end 		
+	-- end	
+-- периодическая проверка количества идентификаторов
+-- end
+
+-- if watchdog == 7 then
+-- Периодическая энумерация аномалий
+	 -- if time_global() > anom_enum then 
+		-- anomaly_holder.enumerate_anoms()
+		-- if vertexes_checked == false then
+			-- clear_garbage.check_vertexes()
+			-- vertexes_checked = true
+		-- end
+		-- anom_enum = time_global() + math.random(600000, 800000) 
+	 -- end 	
+-- Периодическая энумерация аномалий
+-- end
+
+-- if watchdog == 9 then
+-- Сброс врагов для напарника по таймеру
+	--xr_companion.reset_enemy_by_time()
+-- Сброс врагов для напарника по таймеру	
+-- end
+
+-- if watchdog == 10 then
+-- Обновление динамических костров
+	--xr_kamp.kampfire_check()
+-- Обновление динамических костров
+-- end
+
+if watchdog == 11 then
+-- Препараты (проверка времени)
+	if healing then 
+		local drug_check_timer = time_global()
+		if drug_check_timer > drug_timer then 
+			healing.check_all_preparation()
+			drug_timer = drug_timer + math.random(5000, 8000) 
+		end 		
+	end
+-- Препараты (проверка времени)
+end
+
+if watchdog == 14 then
+-- Переломы, болезнь, боль
+	addon.bonebreak_effect()
+	addon.sickness_visual_effect()
+	addon.pain_visual_effect()
+end
+
+if watchdog == 15 then
+-- Оружие агентов и прочих
+	addon.remove_psy_gun_without_suit()
+	addon.change_psy_gun()
+	addon_2.npc_psy_weapon_fix()
+end
+
+if watchdog == 16 then
+-- Достижения:
+--[[	if db.actor:dont_has_info("weapon_powerup") then -- в on_info
+		achievements.all_weapons_info_collected()
+	end]]
+	achievements.change_addons()
+
+	if db.actor:dont_has_info("arts_powerup") then
+		achievements.check_arts()
+	end
+--[[	if db.actor:dont_has_info("arts_powerup") then --в on_info
+		achievements.all_arts_has_collected()
+	end]]
+
+	achievements.check_items_of_achiev3()
+	
+--[[	if db.actor:dont_has_info("deadman_head_powerup") then --в on_info
+		achievements.check_deadmans_head_portions()
+	end]]
+
+	achievements.check_knife_powerup_condition()
+		if has_alife_info("achievement5") then
+		achievements.change_knifes()
+		end
+
+	achievements.check_sniper_condition()
+
+	achievements.check_buck_condition()
+	
+	--achievements.check_sssr_signs() --item take
+end
+
+if watchdog == 17 then
+-- Воздействие скриптовых или сюжетных аномалий
+	addon.script_anomals_actor_hit()
+end
+
+if watchdog == 18 then
+-- Чудо-кукла
+	if db.actor:object("wonder_doll") ~= nil  and db.actor:dont_has_info("wonderdoll_founded") then
+		db.actor:give_info_portion ("wonderdoll_founded")
+		soundtrack.wonderdoll_cry1()
+		start_real_timer(15, "timer_actions.wonderdoll_meet_action1")
+		xr_effects.give_dolltip2()
+	end
+end
+
+if watchdog == 19 then
+-- Скриптовые артефакты:
+	addon.af_controler_scull_effect()
+	addon.deadman_head_effect()
+	addon.af_chamelleon_use()
+	addon.af_emerald_effect()
+	addon.af_flower_effect()
+	addon.af_bur_effect()
+	addon.af_spider_effect()
+	addon.af_pumice_effect()
+	addon.af_lamp_effect()
+	addon.af_fist_effect()
+	addon.af_baton_effect()
+	addon.af_deadmask_effect()
+	addon.af_homefire_effect()
+	addon.af_waste_effect()
+end
+
+if watchdog == 20 then
+end
+
+if watchdog == 21 then
+-- Эффект от чая:
+	addon.tea_effect()
+end
+
+if watchdog == 22 then
+-- Эффекты костюмов:
+	addon.outfit_effects()
+end
+
+if watchdog == 23 then
+-- Отображение индикатора боли:
+	addon.pain_hud_indication()
+end
+
+if watchdog == 24 then
+-- Медкоробка Сахарова:
+	addon.saharov_medbox_update()
+end
+
+if watchdog == 25 then
+-- Эффекты от распада артефактов:
+	addon.artefacts_activation_effects()
+end
+
+if watchdog == 26 then
+-- Прицеливание в Т-костюме:
+	addon.check_spec_gun_aiming()
+end
+
+if watchdog == 27 then
+-- Значок безопасных зон:
+	addon.camp_zones_indication()
+end
+
+if watchdog == 28 then
+-- Эффекты от повреждения конечностей:
+	addon.body_damage_effects()
+end
+
+if watchdog == 29 then
+-- Кукла периодически лечит нас:
+	addon_2.wonderdoll_healing()
+end
+
+if watchdog == 30 then
+-- Муки совести:
+	 addon_2.too_much_murders_effect()
+end
+
+if watchdog == 31 then
+-- Лучевая болезнь:
+	addon_2.rad_seek_effect()
+	addon_2.hud_items_hints()
+	addon_2.outfit_destruction()
+end
+
+if watchdog == 32 then
+-- Респавн аномалий:
+	--addon_2.level_anomaly_respawn()
+end
+
+-- НЕ ТРОГАТЬ!!! БИБЛИОТЕЧНАЯ КОНСТРУКЦИЯ! ДОЛЖНО ЗАМЫКАТЬ ФУНКЦИЮ!
+watchdog = watchdog + 1
+if watchdog >= watchdog_max then
+	watchdog = 0
+end
+
+end
+
+-- Колбэк на выдачу инфопоршена ГГ
+function on_info_update(info_id) --+
+	-- Достижения
+    if db.actor then
+	if db.actor:dont_has_info("weapon_powerup") then
+		achievements.all_weapons_info_collected()
+	end
+	if db.actor:dont_has_info("arts_powerup") then
+		achievements.all_arts_has_collected()
+	end
+	if db.actor:dont_has_info("deadman_head_powerup") then
+		achievements.check_deadmans_head_portions()
+	end
+    end
+end
+
+-- Загружаем все переменные, которые нужно, вызывается при загрузке игры автоматически
+
+function on_game_load() --+
+	-- Определяем текущий тайм-фактор
+	game_time_factor = level.get_time_factor()
+	
+	-- Чистим фантомов пси-собак при загрузке
+	local sim = alife()
+--[[	local tsobj_cnt = 0
+	for i=1,65534 do
+		local sobj = sim:object(i)
+		if sobj then
+			local sn = sobj:section_name()
+			if string_find(sn, "^psy_dog_phantom") then
+				-- amk.logf("phantom_release")
+				sim:release(sobj, true)
+			end
+		end
+	end]]
+	sim:iterate_objects(function(sobj)
+		local sn = sobj:section_name()
+		if string_find(sn, "^psy_dog_phantom") then
+			-- amk.logf("phantom_release")
+			sim:release(sobj, true)
+		end
+	end)
+	
+	addon_2.weight_control()
+	addon_2.jump_control()
+	addon_2.weapon_control()
+	addon_2.bad_ammo_exchange()
+		
+		
+	-- level.set_weather("ogsm",true)
+	game.start_tutorial("restore_sun")
+	
+	-- Создаем хранилище актора
+	if db.storage[db.actor:id()].pstor == nil then
+		db.storage[db.actor:id()].pstor = {}
+	end
+
+	-- Первый запуск мода
+	if db.actor:dont_has_info("storyline_actor_start") then
+		--db.actor:give_info_portion ("game_start")
+		db.actor:give_info_portion ("storyline_actor_start")
+		--level.add_pp_effector("deadcity_wake_old.ppe", 2007, false)
+		amk.save_variable("save_state", 0)
+		--start_real_timer(3, "timer_actions.start_spawn")
+	end
+	
+	---восстанавливаем время лекарств
+	healing.grug_time["yod_end"] 		= amk.load_variable("yod_end", 0)
+	healing.grug_time["vodka_end"] 		= amk.load_variable("vodka_end", 0)
+	healing.grug_time["dix_end"] 		= amk.load_variable("dix_end", 0)
+	healing.grug_time["bipsizon_end"]	= amk.load_variable("bipsizon_end", 0)
+	healing.grug_time["vint_end"]	= amk.load_variable("vint_end", 0)
+
+	addon.on_game_load()
+end
+
+-- Выводим время на HUD
+function show_time() --+
+	local hud = get_hud()
+	local cs = (hud:GetCustomStatic("hud_timer_text1") or hud:AddCustomStatic("hud_timer_text1", true)):wnd()
+	cs:SetText(string.format("%02d:%02d", level.get_time_hours(), level.get_time_minutes()))
+end
+
+function trim(str) return str:trim() end --+
+
+-- Парсинг ини-файла в массив
+function parse_ini_section_to_array(ini,section) --+
+	local tmp={}
+	if ini:section_exist(section) then
+		local result, id, value = nil, nil, nil
+		for a=0,ini:line_count(section)-1 do
+			result, id, value = ini:r_line(section,a,"","")
+			if id and trim(id)~="" then
+				tmp[trim(id)]=trim(value)
+			end
+		end
+	end
+	return tmp
+end
+
+function add_spot_on_map(obj_id,type,text) --+
+  --возможные типы type смотри в ui\map_spots.xml 
+  if obj_id then
+    if text==nil then text=" " end
+    -- Ставим метку на серверный объект чтобы её не пришлось обновлять
+    level.map_add_object_spot_ser(obj_id, type, text)
+  end
+end
+
+function remove_spot_from_map(obj_id,type) --+
+  if obj_id and level.map_has_object_spot(obj_id, type)~= 0 then
+    level.map_remove_object_spot(obj_id, type)
+  end
+end
+
+
+------------------- Библиотека служебных скриптов для OGSM 2.x ----------------
+
+---------------------- Copyright 2007-2008 xStream & DEXXX --------------------
+
+--[[
+
+If you're going to use the whole of this script or its parts in your own creative 
+developments for the S.T.A.L.K.E.R. game, please don't become such a goddamn 
+motherfucker like the notorious author of the ABC Mod - Carbrobro. Leave the 
+copyrights, note the real author(s) and don't claim others' ideas and their 
+realization to be your own ones. It's just simple Modmakers' Ethics. Thank you!
+
+Если вы собираетесь использовать данный скрипт целиком или частично в своих 
+разработках по игре S.T.A.L.K.E.R., пожалуйста не опускайтесь до уровня печально 
+известного автора ABC мода - Carbrobro. Не удаляйте копирайты, указывайте настоящего 
+автора(ов) и не выдавайте чужие идеи и их реализацию за свои. Ведь это элементарная 
+этика модостроителей! Спасибо за понимание.
+
+]]--
+

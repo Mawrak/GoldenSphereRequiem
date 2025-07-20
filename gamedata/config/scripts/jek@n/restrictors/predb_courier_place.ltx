@@ -1,0 +1,7 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_actor_inside = {+predb_courier1_dead =actor_has_item(predb_couriers_seif)} nil %+predb_courier_goodbye +predb_courier_on_place =remove_item(predb_couriers_seif)%
+
+

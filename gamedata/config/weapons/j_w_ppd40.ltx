@@ -1,0 +1,205 @@
+
+;--------------------------------------
+[wpn_ppd40]:identity_immunities
+GroupControlSection		= spawn_group
+discovery_dependency 	        = 
+$spawn                          = "weapons\ppsh41_sk1"					; option for Level Editor
+$npc			 	= on				; option for Level Editor
+$prefetch 		 	= 8
+scheduled                       = off              ; option for ALife Simulator
+cform                           = skeleton
+class                           = WP_LR300
+min_radius                      = 0
+max_radius                      = 75
+description			= wpn_ppd40_descr
+
+ef_main_weapon_type		= 2
+ef_weapon_type			= 6
+
+;-----------------------------------------------------------------------------------
+holder_range_modifier	= 0.9
+holder_fov_modifier		= 1.3
+;-----------------------------------------------------------------------------------
+
+
+weapon_class			= assault_rifle
+
+cost				= 15000
+
+ammo_elapsed			= 71
+ammo_mag_size		 	= 71
+ammo_class		 	= ammo_7.62x25_p, ammo_7.62x25_ps
+fire_modes			= 1, -1
+
+launch_speed			= 0
+
+hand_dependence		 	= 1
+single_handed			= 0
+
+inv_name			= inv_name_wpn_ppd40
+inv_name_short			= inv_name_wpn_ppd40
+inv_weight			= 3.9
+
+inv_grid_width			= 4
+inv_grid_height			= 2
+inv_grid_x			= 0
+inv_grid_y			= 12
+
+kill_msg_x			= 72
+kill_msg_y			= 82
+kill_msg_width		        = 56
+kill_msg_height		        = 23
+
+slot 				= 2		; // secondary
+animation_slot			= 2		; type of the animation that will be used
+
+;-----------------------------------------------------------------------------------
+;params of weapon recoil
+fire_dispersion_base			= 0.03		;угол (в градусах) базовой дисперсии оружия (оружия зажатого в тисках)
+control_inertion_factor			= 1.25f
+
+;отдача
+cam_relax_speed         		= 3		;скорость возврата в исходное положение
+cam_relax_speed_ai         	= 120.75
+cam_dispersion          		= 0.02		;увеличения угла (в градусах) с каждым выстрелом
+cam_dispersion_inc			= 0.25		;увеличениe cam_dispersion с каждым выстрелом
+cam_dispertion_frac			= 0.35		;ствол будет подыматься на cam_dispersion*cam_dispertion_frac +- cam_dispersion*(1-cam_dispertion_frac)
+cam_max_angle				= 2.0	    	;максимальный угол отдачи
+cam_max_angle_horz			= 3.0		;(degree) maximum shot horizontal degree 
+cam_step_angle_horz			= 1.1;1		;(degree) size of step camera moved in horizontal position while shooting
+
+fire_dispersion_condition_factor 	= 5	    	;увеличение дисперсии в процентах при максимальном износе 
+misfire_probability 		= 0.003	;вероятность осечки при максимальном износе 
+misfire_condition_k			= 0.05
+condition_shot_dec 			= 0.0004	;увеличение износа при каждом выстреле
+;-----------------------------------------------------------------------------------
+
+direction                       = 0, 0, 1
+
+fire_point             	        = 0,0.24,0.524
+flame_particles		        = weapons\generic_weapon05
+smoke_particles                 = weapons\generic_shoot_00
+shell_particles	 		= weapons\arsenal_shells1
+
+shell_point		 	= 0,0.256,0.192
+shell_dir		 	= 0.0, 1.0, 0.0
+
+rpm_empty_click 	 	= 200
+
+PDM_disp_base 			= 6.3
+PDM_disp_vel_factor 		= 2.0
+PDM_disp_accel_factor 		= 2.0
+PDM_crouch	 		= 1.2
+PDM_crouch_no_acc 		= 1.2
+
+; ttc
+hit_power        	= 0.05
+hit_impulse		 	= 15
+hit_type 			= fire_wound
+
+fire_distance       = 150
+bullet_speed		= 330
+rpm                     = 800
+; end ttc
+
+use_aim_bullet			= false		;Поддерживается ли первая суппер пуля
+time_to_aim			= 1.0
+
+silencer_hit_power       	= 0.05
+silencer_hit_impulse	 	= 15
+silencer_fire_distance   	= 150
+silencer_bullet_speed	 	= 210
+
+hud                         = wpn_ppd40_hud
+normal                      = 0, 1, 0
+position         	        = -0.026,-0.172,0
+orientation                 = 0, 0, 0
+
+;--STRAP PARAMETERS-----------------------------------------------------------------
+strap_position         				= -0.1,-0.45,0.2			
+strap_orientation      				= 1.57,0,0					
+strap_bone0					= bip01_spine2
+strap_bone1					= bip01_spine1
+
+startup_ammo        = 100
+visual              = weapons\ppsh41\wpn_ppsh41.ogf
+
+light_color		 	= 0.6,0.5,0.3
+light_range		 	= 5
+light_var_color		= 0.05
+light_var_range		= 0.1
+light_time 		 	= 0.2
+
+;addons
+scope_status			= 0
+silencer_status			= 0
+grenade_launcher_status	        = 0
+
+scope_name 			= wpn_addon_acog			; section name for the attachable scope
+scope_x 			= 64					; offset in inventory icon
+scope_y 			= 6
+
+silencer_name  		= wpn_addon_silencer
+silencer_x 			= 218
+silencer_y 			= 13
+
+;silencer_flame_particles 	= weapons\generic_weapon01
+silencer_smoke_particles 	= weapons\generic_shoot_00
+
+silencer_light_color		= 1.0, 0.1, 0.0
+silencer_light_range		= 0.01
+silencer_light_var_color	= 0.05
+silencer_light_var_range	= 0.5
+silencer_light_time 		= 0.2
+
+zoom_enabled			    = true
+scope_zoom_factor	        = 80
+
+;------------------------------ O.G.S.E. sound remake -----------------------
+;звуки
+snd_draw					= weapons\pps41\ppsh_draw
+snd_holster				= weapons\pps41\ppsh_holster
+snd_shoot					= weapons\pps41\ppsh_shoot
+snd_empty				= weapons\pps41\ppsh_empty, 0.7
+snd_reload				= weapons\pps41\ppsh_reload
+snd_close					= weapons\pps41\ppsh_close
+snd_silncer_shot				= weapons\gromoboi_shot
+;-----------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------
+;-- HUD DESCRIPTION
+;----------------------------------------------------------------------------- 
+[wpn_ppd40_hud]
+shell_point          				= 0.00, 0.00, -0.6
+shell_dir		 			= 0.0, 0.0, 0.0
+
+fire_point               			= 0,0,-0.5
+fire_bone                			= muzzle
+orientation              			= 0, 0, 0
+position            				= -0.11,-0.13,0.05
+visual                  = weapons\ppsh41\wpn_ppsh41_hud.ogf
+
+anim_idle					= idle
+anim_idle_aim					= aim
+anim_reload					= reload
+anim_draw					= draw
+anim_holster					= holster
+anim_shoot					= shoot
+anim_idle_sprint				= sprint
+anim_idle_moving				= moving
+
+;смещения HUD для режима приближения
+zoom_offset					= -0.116400,0.026100,-0.050000
+zoom_rotate_x					= -0.000700
+zoom_rotate_y					= 0.000100
+
+scope_zoom_offset				= -0.114400,-0.000600,-0.050000
+scope_zoom_rotate_x				= -0.008700
+scope_zoom_rotate_y				= -0.001300
+
+zoom_hide_crosshair	    = true
+zoom_rotate_time		= 0.2
+rotate_time			    = 0.2
+
+
+

@@ -1,0 +1,37 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+pri_agents_accept} sr_idle@2
+
+[sr_idle@2]
+on_timer = 5000|sr_idle@3
+
+[sr_idle@3]
+;on_actor_outside = {+pri_agents_accept} %=pri_hall_agents_teleport%
+on_info = {+pri_agent_lider_speech_end} sr_idle@4_1
+
+
+[sr_idle@4_1]
+on_info = {+actor_mind_fight} sr_idle@4 %=pri_rooftop_ghosts1wave_spawn%
+
+[sr_idle@4]
+on_info = {+pri_rooftop_ghost1_dead +pri_rooftop_ghost2_dead +pri_rooftop_ghost3_dead} sr_idle@5 %+pri_rooftop_ghosts2wave_spawn =pri_rooftop_ghosts2wave_spawn =play_snd(soundtrack\dog_phantom\14)%
+
+[sr_idle@5]
+on_info = {+pri_rooftop_ghost4_dead +pri_rooftop_ghost5_dead +pri_rooftop_ghost6_dead} sr_idle@6 %+pri_rooftop_ghosts3wave_spawn =pri_rooftop_ghosts3wave_spawn =play_snd(soundtrack\dog_phantom\14)%
+
+[sr_idle@6]
+on_info = {+pri_rooftop_ghost7_dead +pri_rooftop_ghost8_dead +pri_rooftop_ghost9_dead +pri_rooftop_ghost10_dead} sr_idle@7 %=disable_ui%
+
+[sr_idle@7]
+on_timer = 4000|nil %+pri_rooftop_battle_end =actor_teleport_after_rooftop =enable_ui%
+
+
+
+
+
+
+
+
+

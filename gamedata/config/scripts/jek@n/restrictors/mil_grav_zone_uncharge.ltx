@@ -1,0 +1,14 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+mil_aviators_rwrd2} sr_cutscene %=spawn_mil_pepelatz%
+
+[sr_cutscene]
+point = mil_abdul_walk2
+look = mil_abdul_look2
+cam_effector = mil_grav_pepelatz_flying
+on_signal = cameff_end|sr_idle@2
+
+[sr_idle@2]
+on_timer = 2000|nil %+mil_grav_off =play_snd_from_obj(8801:anomaly\stancia_thunder) =play_particle_on_path(parpar\partilce_paradise_expxlarge_wave00_army:mil_gravit_anomaly_point1)%

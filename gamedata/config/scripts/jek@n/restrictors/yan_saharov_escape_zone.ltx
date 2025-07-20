@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+x16_fuel_blow} sr_idle@2 %+yan_saharov_escape =yan_saharov_teleportate%
+
+[sr_idle@2]
+on_timer = 5000 | sr_idle@3 %=yan_sold9spawn_in =play_snd(ambient\random\rnd_moan) =run_postprocess(agr_u_fade) =run_cam_effector(dis_consciousness) =disable_input%
+
+[sr_idle@3]
+on_timer = 3000 | nil %=enable_input =play_snd(characters_voice\scenario\x16_brain_goodbye) =x16brain_goodbye_think%

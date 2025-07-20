@@ -1,0 +1,27 @@
+[logic]
+
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+x16_brain_kill} sr_idle@2
+
+
+[sr_idle@2]
+on_timer = 2000 | sr_idle@3 %=play_snd(ambient\rnd_outdoor\rnd_dark9)%
+
+[sr_idle@3]
+on_timer = 5000 | sr_idle@4 %=run_postprocess(deadcity_wake) =play_snd(ambient\rnd_outdoor\rnd_dark7) =play_snd_from_obj(8678:characters_voice\human_03\stalker\reactions\hear_something\hear_7)%
+
+[sr_idle@4]
+on_timer = 6000 | sr_idle@kill %+x16_brain_saharov_hit%
+
+[sr_idle@kill]
+on_actor_inside = %=small_telepatic_hit_actor =play_snd(ambient\radar_1)%
+
+
+
+[sr_psy_antenna]
+
+eff_intensity = 75
+
+hit_intensity = 100

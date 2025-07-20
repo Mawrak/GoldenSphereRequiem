@@ -1,0 +1,34 @@
+[logic]
+active = nil
+
+[sr_idle]
+on_info = {+ochkaric_shron_info} sr_particle@1
+
+[sr_particle@1]
+name = anomaly2\group_items\teleport_spark_out_monolit_small1
+path = garb_ochkaric_habar_zone_point4
+mode = 2
+looped = false
+on_timer = 1000 | sr_particle@2
+on_info = {+garb_colorzones_off} nil
+
+[sr_particle@2]
+name = anomaly2\group_items\teleport_spark_out_monolit_small2
+path = garb_ochkaric_habar_zone_point5
+mode = 2
+looped = false
+on_timer = 1000 | sr_particle@3
+on_info = {+garb_colorzones_off} nil
+
+[sr_particle@3]
+name = anomaly2\group_items\teleport_spark_out_monolit_small3
+path = garb_ochkaric_habar_zone_point6
+mode = 2
+looped = false
+on_timer = 1000 | sr_particle@1
+on_info = {+garb_colorzones_off} nil
+
+
+
+
+

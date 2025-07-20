@@ -1,0 +1,114 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_camp@home
+
+[mob_camp@home]
+path_home = dar_swamp_teleport_home
+path_look = dar_swamp_teleport_home
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 15 | {~10} mob_camp@1 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~20} mob_camp@2 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~30} mob_camp@3 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~40} mob_camp@4 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~50} mob_camp@5 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~60} mob_camp@6 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~70} mob_camp@ 7 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~80} mob_camp@8 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%, {~90} mob_camp@9 %=play_snd_from_obj(8355:characters_voice\woman\help\wounded_heavy\help_5)%
+;on_info = {+actor_find_dar_woman} %=delme%
+
+
+
+[mob_camp@1]
+path_home = dar_swamp_teleport_point1
+path_look = dar_swamp_teleport_point1
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@2  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~20} mob_camp@3  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~30} mob_camp@4  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~40} mob_camp@5  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~50} mob_camp@6  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~60} mob_camp@7  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~70} mob_camp@8  %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%, {~80} mob_camp@9 %=play_snd_from_obj(8246:characters_voice\woman\help\wounded_heavy\help_5)%
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@2]
+path_home = dar_swamp_teleport_point2
+path_look = dar_swamp_teleport_point2
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@3, {~30} mob_camp@4, {~40} mob_camp@5, {~50} mob_camp@6, {~60} mob_camp@7, {~70} mob_camp@8, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@3]
+path_home = dar_swamp_teleport_point3
+path_look = dar_swamp_teleport_point3
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@4, {~40} mob_camp@5, {~50} mob_camp@6, {~60} mob_camp@7, {~70} mob_camp@8, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@4]
+path_home = dar_swamp_teleport_point4
+path_look = dar_swamp_teleport_point4
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@3, {~40} mob_camp@5, {~50} mob_camp@6, {~60} mob_camp@7, {~70} mob_camp@8, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@5]
+path_home = dar_swamp_teleport_point5
+path_look = dar_swamp_teleport_point5
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~20} mob_camp@2  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~30} mob_camp@3  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~40} mob_camp@4  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~50} mob_camp@6  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~60} mob_camp@7  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~70} mob_camp@8  %=play_snd_from_obj(8246:soundtrack\controller\7)%, {~80} mob_camp@9  %=play_snd_from_obj(8246:soundtrack\controller\7)%
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@6]
+path_home = dar_swamp_teleport_point6
+path_look = dar_swamp_teleport_point6
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@3, {~40} mob_camp@4, {~50} mob_camp@5, {~60} mob_camp@7, {~70} mob_camp@8, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@7]
+path_home = dar_swamp_teleport_point7
+path_look = dar_swamp_teleport_point7
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@3, {~40} mob_camp@4, {~50} mob_camp@5, {~60} mob_camp@6, {~70} mob_camp@8, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@8]
+path_home = dar_swamp_teleport_point8
+path_look = dar_swamp_teleport_point8
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@3, {~40} mob_camp@4, {~50} mob_camp@5, {~60} mob_camp@6, {~70} mob_camp@7, {~80} mob_camp@9
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+[mob_camp@9]
+path_home = dar_swamp_teleport_point9
+path_look = dar_swamp_teleport_point9
+home_min_radius  = 0
+home_max_radius = 0
+braindead = true
+on_actor_dist_le_nvis = 8 | {~10} mob_camp@1, {~20} mob_camp@2, {~30} mob_camp@3, {~40} mob_camp@4, {~50} mob_camp@5, {~60} mob_camp@6, {~70} mob_camp@7, {~80} mob_camp@8
+on_info = {=dar_movig_teleport_capture} mob_camp@home %=actor_teleport_to_dar_trap =delme%
+;on_info2 = {+actor_find_dar_woman} %=delme%
+
+
+
+
+
+
+
+

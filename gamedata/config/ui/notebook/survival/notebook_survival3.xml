@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_survival3>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="480" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Голод</text>
+</system_logo>
+<survival_icon_1 x="450" y="340" width="130" height="100" stretch="1">
+	<texture x="0" y="0" width="255" height="260">ui\notebook\survival_icon_3</texture>
+</survival_icon_1>
+<description1 x="330" y="450" width="380" height="500" stretch="1" complex_mode="1">
+		<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Простая, неприготовленная пища(хлеб, колбаса, консервы и т.д.) голод утолит слабо, а приготовленная - хорошо. Приготовить можно следующие продукты: 
+1) Картошку с салом
+2) Консерву
+3) Щупальце кровососа
+4) Глаз плоти
+5) Хвост псевдопса
+6) Лапу псевдогиганта
+7) Копыто кабана
+8) Мясо тушкана
+ 	 Для приготовления необходимо:
+1) Иметь котелок
+2) Иметь спички
+3) Иметь воду(где ее найти см. выше)
+3) Находится в близости от любого костра на локации
+4) Иметь любой из вышеперечисленных продуктов или частей мутантов
+5) Находясь у костра, использовать спички
+6) В меню выбрать блюдо, которое хотим приготовить
+7) Подождать немного, пока пройдет процесс приготовления
+8) Принять препарат Б-190 (если готовили часть мутанта)
+9) Употребить блюдо
+10) Приятного аппетита!
+</text>
+</description1>
+
+
+
+	<btn_1 x="600" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Далее</text>
+	</btn_1>
+	<btn_2 x="335" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Назад</text>
+	</btn_2>
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_survival3>
+

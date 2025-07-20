@@ -1,0 +1,41 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@base1
+combat_ignore = combat_ignore
+threshold = threshold@yan_sold6
+on_death = death
+
+
+; После освобождения Сахарова, уже на базе:
+[walker@base1]
+path_walk = yan_sold6_walk3
+path_look = yan_sold6_look3
+danger = danger_condition
+combat_ignore_cond = always
+on_timer = 1 | walker@base2 %=make_invulnerable%
+
+[walker@base2]
+path_walk = yan_sold6_walk3
+path_look = yan_sold6_look3
+danger = danger_condition
+combat_ignore_cond = always
+
+
+
+
+
+[threshold@yan_sold6]
+max_ignore_distance = 5
+ignore_monster = 0
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+yan_sold6_dead%

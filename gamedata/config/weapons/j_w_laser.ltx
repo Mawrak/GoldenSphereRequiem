@@ -1,0 +1,213 @@
+[wpn_laser]:identity_immunities
+GroupControlSection		= spawn_group
+discovery_dependency 	= 
+$spawn                  = "weapons\wpn_laser"					; option for Level Editor
+$npc			 		= on				; option for Level Editor
+$prefetch 		 		= 8
+scheduled               = off              ; option for ALife Simulator
+cform                   = skeleton
+class                   = WP_LR300
+min_radius              = 0
+max_radius              = 50
+description				= wpn_laser_descr 
+
+ef_main_weapon_type		= 2
+ef_weapon_type			= 6
+
+;-----------------------------------------------------------------------------------
+holder_range_modifier	= 1.0		       ; во сколько раз увеличивается eye_range 
+holder_fov_modifier		= 0.7              ; во сколько раз увеличивается eye_fov
+;-----------------------------------------------------------------------------------
+
+;can_trade			= false
+weapon_class			= assault_rifle
+
+cost					= 1000000
+
+ammo_limit		 		= 210
+ammo_current			= 5
+ammo_elapsed		 	= 5
+
+ammo_mag_size		 	= 200
+ammo_class		 		= ammo_psy
+fire_modes				=  -1
+
+hand_dependence		 	= 1
+single_handed			= 0
+
+inv_name				= wpn_laser_name
+inv_name_short			= wpn_laser_name
+inv_weight				= 6.5
+
+inv_grid_width			= 6
+inv_grid_height			= 2
+inv_grid_x				= 25
+inv_grid_y				= 25
+
+kill_msg_x			= 72
+kill_msg_y			= 82
+kill_msg_width		= 56
+kill_msg_height		= 23
+
+slot 					= 2		; // secondary
+animation_slot			= 8		; type of the animation that will be used
+
+;-----------------------------------------------------------------------------------
+;базовая дисперсия
+fire_dispersion_base		= 0.1 ;угол (в градусах) базовой дисперсии оружия (оружия зажатого в тисках)
+control_inertion_factor		= 1.05f
+disp_rate 			= 1.95
+
+;отдача
+cam_relax_speed         = 2.5	;скорость возврата в исходное положение
+cam_relax_speed_ai			= 120.78
+cam_dispersion          = 0.05	;увеличения угла (в градусах) с каждым выстрелом
+cam_max_angle			= 4.0	;максимальный угол отдачи
+cam_max_angle_horz		= 5.0	;(degree) maximum shot horizontal degree 
+cam_step_angle_horz		= 0.5	;(degree) size of step camera moved in horizontal position while shooting
+
+fire_dispersion_condition_factor = 1	;увеличение дисперсии в процентах при максимальном износе 
+misfire_probability 		= 0.2 ;вероятность осечки при максимальном износе 
+misfire_condition_k			= 0.005
+condition_shot_dec 			= 0.0001 ;увеличение износа при каждом выстреле
+;-----------------------------------------------------------------------------------
+
+direction               = 0, 0, 1
+
+fire_point				= 0.00,0.12,0.69
+flame_particles         = weapons\group_items\shot_matrix01_old
+shell_point		 		= 0.00,0.12,0.174				; position (3rd person view) for shell to throw out
+smoke_particles	 		= weapons\generic_flame_01	; name of the particles for shells
+rpm_empty_click 		= 120
+
+PDM_disp_base 			= 1.0
+PDM_disp_vel_factor 		= 1.1
+PDM_disp_accel_factor 		= 1.1
+PDM_crouch	 		= 1.0
+PDM_crouch_no_acc 		= 1.0
+
+; ttc
+hit_power           = 0.7
+hit_impulse		 	= 0
+;hit_type 			= burn
+hit_type 			= fire_wound
+hit_rate			= 1.85
+
+fire_distance       = 1500
+bullet_speed		= 1500	;начальная скорость пули
+rpm                 = 1000
+use_aim_bullet		= true
+time_to_aim			= 1.0
+; end ttc
+
+
+silencer_hit_power       	= 0.1
+silencer_hit_impulse	 	= 0
+silencer_fire_distance   	= 500
+silencer_bullet_speed	 	= 300
+
+hud                     = wpn_laser_hud
+normal                  = 0, 1, 0
+position                = -0.026, -0.070, 0.0
+orientation             = 0, 0, 0
+
+;--STRAP PARAMETERS-----------------------------------------------------------------
+;--STRAP PARAMETERS-----------------------------------------------------------------
+;под мышкой
+strap_position         		= -0.26,-0.11,0.15			; position (offset) and orientation of the weapon when it is strapped
+strap_orientation      		= -15,-9,110				; (3rd person view in degrees)
+;под мишкой
+;strap_position         		= -0.20,-0.13,0.25			; position (offset) and orientation of the weapon when it is strapped
+;strap_orientation      		= -50,-13,110				; (3rd person view in degrees)
+;на спине
+;strap_position         		= -0.16,-0.32,0.15			; position (offset) and orientation of the weapon when it is strapped
+;strap_orientation      		= -10,-7,10					; (3rd person view in degrees)
+
+strap_bone0					= bip01_spine2
+strap_bone1					= bip01_spine1
+
+startup_ammo            = 10
+visual                  = weapons\psy_gun\wpn_laser.ogf
+
+light_color		= 1.3,1.5,2
+light_range		= 4.0
+light_var_color		= 0.05
+light_var_range		= 0.5
+light_time 		= 0.5
+
+ph_mass			 		= 5
+
+;addons
+scope_status		= 1
+silencer_status		= 0
+grenade_launcher_status	= 0
+
+scope_name 					= wpn_zf4		; section name for the attachable scope
+scope_x 					= 70						; offset in inventory icon
+scope_y 					= -9
+
+silencer_name  				= wpn_addon_silencer
+silencer_x 					= 218
+silencer_y 					= 13
+
+;silencer_flame_particles 	= weapons\generic_weapon01
+silencer_smoke_particles 	= weapons\generic_shoot_00
+
+silencer_light_color		= 1.0, 0.1, 0.0
+silencer_light_range		= 0.01
+silencer_light_var_color	= 0.05
+silencer_light_var_range	= 0.5
+silencer_light_time 		= 0.2
+
+zoom_enabled			= true
+scope_texture		= wpn\old_scopes\scope_gauss
+scope_zoom_factor	    = 60
+
+;звуки
+snd_draw			= weapons\psy_draw
+snd_holster			= weapons\gauss\gauss_holster
+snd_shoot			= weapons\laser_shoot
+snd_empty			= weapons\gauss\gauss_empty, 0.1
+snd_reload			= weapons\gauss\gauss_reload, 0.1
+
+snd_gyro			= weapons\binoculars_gyro
+snd_zoomin			= weapons\binoculars_zoomin
+snd_zoomout			= weapons\binoculars_zoomout
+snd_close			= weapons\generic_close
+
+;params when silencer is attached 
+;similar to corresponding params without prefix silencer_
+
+
+snd_silncer_shot			= weapons\ak47_silent
+
+
+
+[wpn_laser_hud]
+shell_point	= -0.042000,0.103000,0.267000
+shell_dir		 = 0.0, 0.0, 0.0
+
+fire_point			= -0.044000,0.111000,0.155000
+fire_bone               = wpn_body
+orientation             = 0, 0, 0
+position                = 0, 0, 0.09
+visual 				= weapons\psy_gun\wpn_psy_hud2.ogf
+
+anim_holster	= holster
+anim_idle		= idle
+anim_idle_aim	= idle
+anim_reload		= reload
+anim_draw		= draw
+anim_shoot		= shoot
+anim_idle_sprint			= holster
+
+         
+;смещения HUD для режима приближения
+zoom_offset			= -0.020000,-0.030000,0.030000
+zoom_rotate_x		= 0.000000
+zoom_rotate_y		= -0.020000
+
+zoom_hide_crosshair	    = true						;to hide crosshair in zoom 
+zoom_rotate_time		= 0.2
+rotate_time			    = 0.2
+

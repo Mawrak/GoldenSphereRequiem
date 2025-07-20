@@ -1,0 +1,14 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home
+on_death = mob_death
+
+[mob_home]
+path_home = ros_stroyka_atack_mobs_point
+home_min_radius  = 4
+home_max_radius = 5
+
+[mob_death]
+on_info = %+ros_stroyka_atack_mob5dead%

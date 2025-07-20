@@ -1,0 +1,52 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+ros_hunter_behind_rescuer} sr_idle@10
+on_info2 = {+ros_hunter_behind_rescuer2} sr_idle@2
+
+
+[sr_idle@2]
+on_info = {+ros_rescuers_robbery} sr_idle@3
+
+[sr_idle@3]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 5000|sr_idle@4 %=send_tip(ros_rescuers_after_atack_tip1:milstalker)%
+
+[sr_idle@4]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 3000|sr_idle@5 %=send_tip(ros_rescuers_after_atack_tip2:milstalker)%
+
+[sr_idle@5]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 3500|sr_idle@6 %=send_tip(ros_rescuers_after_atack_tip3:milstalker) =spawn_ros_danger_anomaly%
+
+[sr_idle@6]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 2500|sr_idle@7 %=play_snd(characters_voice\human_01\stalker\states\panic_human\panic_human_4)%
+
+[sr_idle@7]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 2500|sr_idle@8 %=play_snd(weapons\w1300\w1300_shot)%
+
+[sr_idle@8]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 1000|sr_idle@9 %=play_snd(characters_voice\human_01\stalker\fight\death\death_2)%
+
+[sr_idle@9]
+on_actor_outside = %=run_postprocess(deadcity_wake_old:657:false)%
+on_timer = 1000|sr_idle@9_1 %=send_tip(ros_rescuers_after_atack_tip4:gravecross)%
+
+[sr_idle@9_1]
+on_timer = 6000|nil %=ros_rescuers_robbery_think =enable_input%
+
+
+ 
+[sr_idle@10]
+on_info = {+ros_stroyka_atack_mob1dead +ros_stroyka_atack_mob2dead +ros_stroyka_atack_mob3dead +ros_stroyka_atack_mob4dead +ros_stroyka_atack_mob5dead +ros_stroyka_atack_mob6dead +ros_stroyka_atack_mob7dead +ros_stroyka_atack_mob8dead} sr_idle@11 %=start_ros_atack_mobs_timer =send_tip(ros_mobs_atack_done_tip:milstalker) =play_snd(characters_voice\scenario\ros_stroyka_mobs_atack_done) -ros_stroyka_atack_mob1dead -ros_stroyka_atack_mob2dead -ros_stroyka_atack_mob3dead -ros_stroyka_atack_mob4dead -ros_stroyka_atack_mob5dead -ros_stroyka_atack_mob6dead -ros_stroyka_atack_mob7dead -ros_stroyka_atack_mob8dead -ros_mobs_atack%
+
+[sr_idle@11]
+on_info = {+ros_mobs_atack} sr_idle@10 %=send_tip(ros_mobs_atack_start_tip:stalker)%
+
+
+

@@ -1,0 +1,70 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_walker@1
+on_death = mob_death
+on_hit = mob_hit
+
+[mob_walker@1]
+path_walk = esc_atp_nest_room
+path_look = atp_zombie_nest_center
+braindead = true
+on_timer = 1 | mob_walker@start %=atp_controler_health_down%
+
+[mob_walker@start]
+path_walk = esc_atp_nest_room
+path_look = atp_zombie_nest_center
+braindead = true
+
+; если актора заметили зомби во дворе:
+on_info = {+esc_atp_controler_agress} mob_home@agress %=esc_atp_controler_agress =atp_controler_health_up%
+
+; если актор подлез слишком близко и контролёр сам его заметил:
+on_actor_dist_le = 5 | mob_home@agress %=esc_atp_controler_agress%
+
+
+
+
+[mob_home@agress]
+path_home = esc_atp_nest_room
+home_min_radius = 1
+home_max_radius = 4
+on_actor_not_in_zone = nest_esc_atp|mob_walker@calm %=esc_atp_controler_calm -esc_atp_controler_agress =atp_controler_health_down%
+;on_actor_dist_ge_nvis = 30 | mob_walker@calm %=esc_atp_controler_calm -esc_atp_controler_agress =atp_controler_health_down%
+
+[mob_walker@calm]
+path_walk = esc_atp_nest_room
+path_look = atp_zombie_nest_center
+braindead = true
+on_info = {+esc_atp_controler_agress} mob_home@agress %=esc_atp_controler_agress =atp_controler_health_up%
+on_actor_dist_le = 5 | mob_home@agress %=esc_atp_controler_agress%
+
+
+[mob_home@calm]
+path_home = esc_atp_nest_room
+home_min_radius = 1
+home_max_radius = 3
+braindead = true
+on_info = {+esc_atp_controler_agress} mob_home@agress %=esc_atp_controler_agress =atp_controler_health_up%
+on_actor_dist_le = 1 | mob_home@agress %=esc_atp_controler_agress%
+
+
+[mob_hit]
+on_info =  {=hit_by_actor -esc_atp_controler_agress} %=kill_from_actor%
+
+[mob_death]
+on_info = {+atp_controler_task =killed_by_actor =actor_armed_knife} %+esc_atp_controler_dead +atp_controler_knifed =esc_atp_controler_spawn_in%, %+esc_atp_controler_dead%
+
+
+
+
+
+
+
+
+
+
+
+
+

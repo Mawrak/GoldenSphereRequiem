@@ -1,0 +1,6 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = nil %=play_snd(weapons\f1_explode2) =run_postprocess(deadcity_wake_old:677:false) =hide_weapon =actor_goto_doctor_trap%
+

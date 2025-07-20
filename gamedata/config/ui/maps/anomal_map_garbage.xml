@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<anomal_map_garbage>	
+	<main_list x="160" y="80" width="600" height="550" stretch="1">
+		<texture x="0" y="0" width="1024" height="1030">ui\anomal_map_garbage</texture>
+	</main_list>
+
+</anomal_map_garbage>
+

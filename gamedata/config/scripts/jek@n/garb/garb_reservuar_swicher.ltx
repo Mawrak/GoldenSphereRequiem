@@ -1,0 +1,18 @@
+[collide]
+ignore_static
+
+[logic]
+active = nil
+
+[ph_button]
+anim_blend  = true
+anim        = lab_primary_switcher_idle
+tooltip     = turret_off
+on_press    = ph_idle %=garb_reservuar_turret_release =garb_reservuar_turret_box_spawn =play_snd(ambient\switch_1) =send_tip(garb_reservuar_turret_off_tip:default)%
+; on_press    = ph_idle %=garb_reservuar_turret_release =play_snd(ambient\switch_1) =send_tip(garb_reservuar_turret_off_tip:default)%
+
+
+[ph_idle]
+;on_use  = %=garb_reservuar_turret_release =garb_reservuar_turret_box_spawn% nil
+
+

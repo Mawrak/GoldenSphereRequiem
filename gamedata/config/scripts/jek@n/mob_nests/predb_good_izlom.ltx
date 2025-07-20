@@ -1,0 +1,18 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@1
+
+[mob_home@1]
+path_home = predb_good_izlom_nest
+home_min_radius = 5
+home_max_radius = 15
+on_info = {=actor_has_item(af_yuck)} mob_home@2
+on_actor_dist_le = 8|%=predb_good_izlom_think%
+
+[mob_home@2]
+path_home = predb_good_izlom_nest
+home_min_radius = 3
+home_max_radius = 5
+on_actor_dist_le_nvis = 3|nil %=remove_item(af_yuck) =send_tip(predb_good_izlom_tip:stalker)%

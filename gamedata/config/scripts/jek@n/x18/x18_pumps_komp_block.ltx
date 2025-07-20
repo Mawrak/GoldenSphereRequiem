@@ -1,0 +1,47 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@idle
+
+[ph_idle@idle]
+tips      = x18pumps_block_use
+on_info = {+x18_pumps_task} ph_idle@0
+
+
+[ph_idle@0]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa1)} ph_idle@1 %=remove_item(x18_disketa1) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare1:anomal) +x18_others_acess%, {=actor_has_item(x18_disketa2)} ph_idle@2 %=remove_item(x18_disketa2) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare2:anomal) +x18_gidro_acess%, {=actor_has_item(x18_disketa3)} ph_idle@3 %=remove_item(x18_disketa3) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare3:anomal) +x18_electric_acess%
+
+
+
+[ph_idle@1]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa2)} ph_idle@4 %=remove_item(x18_disketa2) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare2:anomal) +x18_gidro_acess%, {=actor_has_item(x18_disketa3)} ph_idle@6 %=remove_item(x18_disketa3) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare3:anomal) +x18_electric_acess%
+
+[ph_idle@2]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa1)} ph_idle@5 %=remove_item(x18_disketa1) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare1:anomal) +x18_others_acess%, {=actor_has_item(x18_disketa3)} ph_idle@7 %=remove_item(x18_disketa3) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare3:anomal) +x18_electric_acess%
+
+[ph_idle@3]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa1)} ph_idle@6 %=remove_item(x18_disketa1) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare1:anomal) +x18_others_acess%, {=actor_has_item(x18_disketa2)} ph_idle@7 %=remove_item(x18_disketa2) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare2:anomal) +x18_gidro_acess%
+
+
+
+[ph_idle@4]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa3)} nil %=remove_item(x18_disketa3) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare3:anomal) +x18_electric_acess%
+
+[ph_idle@5]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa3)} nil %=remove_item(x18_disketa3) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare3:anomal) +x18_electric_acess%
+
+[ph_idle@6]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa2)} nil %=remove_item(x18_disketa2) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare2:anomal) +x18_gidro_acess%
+
+[ph_idle@7]
+tips      = x18pumps_block_use
+on_use    = {=actor_has_item(x18_disketa1)} nil %=remove_item(x18_disketa1) =play_snd(characters_voice\scenario\pilik) =send_tip(x18pumps_block_prepare1:anomal) +x18_others_acess%
+

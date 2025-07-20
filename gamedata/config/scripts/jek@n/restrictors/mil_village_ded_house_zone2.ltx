@@ -1,0 +1,8 @@
+[logic]
+active = sr_idle1
+
+[sr_idle1]
+on_actor_inside = {+mil_icon_finded} sr_idle2 %=play_snd(characters_voice\scenario\mil_dedok_goodbye)%
+
+[sr_idle2]
+on_timer = 4000|nil  %+mil_dedok_goodbye%

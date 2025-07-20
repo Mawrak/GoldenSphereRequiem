@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {=actor_has_item(wonder_doll) +wonderdoll_first_talk +predb_village_finditem +predb_village_art_done -predb_dead_friend_info} nil %=send_tip(predb_village_doll_hint_tip:doll)%
+
+
+
+

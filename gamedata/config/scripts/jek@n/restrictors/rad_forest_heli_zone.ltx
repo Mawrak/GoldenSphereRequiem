@@ -1,0 +1,17 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+rad_abdul_rest} sr_sound_act %=spawn_rad_fenix =rad_fenix_dollhelp_tip%
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\rad_fenix_fight
+on_info = {+rad_fenix_headshot} sr_idle@3, {+rad_fenix_dead} sr_idle@2
+;on_info2 = {+rad_fenix_headshot} sr_idle@3
+
+[sr_idle@2]
+on_timer = 1000|nil %=rad_fenix_spawn_in%
+
+[sr_idle@3]
+on_info = {+rad_fenix_dead} sr_idle@2
+

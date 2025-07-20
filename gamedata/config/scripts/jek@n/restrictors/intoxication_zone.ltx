@@ -1,0 +1,18 @@
+[logic]
+active = nil
+
+
+[sr_idle@1]
+on_info = {+intoxication} sr_idle@2 %=close_dialog =disable_input =hide_weapon =run_postprocess(deadcity_wake) =play_snd(characters_voice\human_03\stalker\states\health\health_1)%
+
+[sr_idle@2]
+on_timer = 2500 | sr_idle@3 %=intoxication_effect1%
+on_info = {-intoxication} sr_idle@1
+
+[sr_idle@3]
+on_timer = 5000 | sr_idle@4 %=enable_input =restore_weapon =intoxication_effect2 -intoxication%
+on_info = {-intoxication} sr_idle@1
+
+[sr_idle@4]
+on_timer = 100 | sr_idle@1 %=restore_weapon%
+

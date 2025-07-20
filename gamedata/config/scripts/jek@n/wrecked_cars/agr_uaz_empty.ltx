@@ -1,0 +1,13 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_button@unpressed
+
+[ph_button@unpressed]
+anim_blend  = true
+anim        = lab_primary_switcher_idle
+tooltip     = niva_empty_use
+on_press    = {+agr_uaz_empty_akum +agr_uaz_empty_wheel1 +agr_uaz_empty_wheel2 +agr_uaz_empty_wheel3 +agr_uaz_empty_wheel4 +agr_uaz_empty_bearing +agr_uaz_empty_tank} %=agr_uaz_empty_delete =spawn_agr_uaz_empty_unfuel =agr_uaz_empty_info_clear%, {!actor_has_item(repair_kit)} %=send_tip(dont_has_repair_kit:default)%, {=actor_has_item(repair_kit)} %=agr_uaz_empty_use%
+
+

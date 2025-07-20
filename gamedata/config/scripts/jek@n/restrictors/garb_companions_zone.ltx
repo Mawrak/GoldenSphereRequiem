@@ -1,0 +1,7 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_outside = {+garbage_door_opened} nil %+spawn_garbage_companions =delete_esc_hunter =delete_helicrash_survival =delete_abdul =dolltip_garbage1%, {-garbage_door_opened} sr_idle@2 %=dolltip_garbage1%
+
+[sr_idle@2]

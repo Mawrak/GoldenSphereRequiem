@@ -1,0 +1,27 @@
+[logic]
+active = sr_idle@1
+ 
+
+;Стартовые секции:
+[sr_idle@1]
+on_actor_inside = {+af_invis5_1_birth} sr_idle@4 %-strange_zone5_charged -fakeart_deleted%
+
+
+
+;Промежуточные рабочие секции:
+[sr_idle@4]
+on_info = {=has_some_fakearts} sr_idle@6 %-strangezone5_rebuild -af_invis5_1_birth%	;поймал артефакт
+on_actor_inside = {+fakeart_deleted =no_fakearts} sr_idle@5				;не успел поймать
+
+[sr_idle@5]
+on_timer = 900 | sr_idle@1 %-af_invis5_1_birth +strange_zone5_charged%
+
+
+;Секция ожидания\перезарядки:
+[sr_idle@6]
+on_info = {+strangezone5_rebuild} sr_idle@1
+
+
+
+
+

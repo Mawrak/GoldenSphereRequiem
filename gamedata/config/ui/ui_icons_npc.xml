@@ -1,0 +1,88 @@
+<ui_texture>
+    <file_name>ui\ui_icons_actor_djekman_armor</file_name>
+
+    <texture id="npc_icon_vatnik_outfit" 		        x="834"   y="0" width="129" height="323" />
+    <texture id="npc_icon_bulletproof_outfit"		        x="132" y="0" width="119" height="324" />
+    <texture id="npc_icon_without_outfit"		        x="965" y="0" width="127" height="317" />
+    <texture id="npc_icon_mask_outfit"		        x="0" y="336" width="121" height="314" />
+    <texture id="npc_icon_novice_outfit" 		         x="510"   y="331" width="127" height="322" />
+    <texture id="npc_icon_outfit_novice_m1" 		     x="1849"   y="0" width="139" height="320" />
+    <texture id="npc_icon_bandit_outfit" 		         x="636"   y="326" width="127" height="323" />
+    <texture id="npc_icon_killer_outfit" 		         x="1749"   y="0" width="123" height="322" />
+    <texture id="npc_icon_monolit_outfit"		        x="1496"   y="0" width="121" height="327" />
+    <texture id="npc_icon_specops_outfit"		        x="702" y="0" width="132" height="325" />
+    <texture id="npc_icon_stalker_outfit"		        x="910"   y="327" width="133" height="326" />
+    <texture id="npc_icon_scientific_outfit"		    x="124" y="328" width="131" height="326" />
+    <texture id="npc_icon_exo_outfit"			        x="0" y="0" width="134" height="325" />
+    <texture id="npc_icon_ecolog_outfit"		       x="1345" y="0" width="135" height="326" />
+    <texture id="npc_icon_protection_outfit"		    x="768" y="384" width="128" height="320" />
+    <texture id="npc_icon_bandit_master_outfit"		    x="542" y="0" width="157" height="321" />
+    <texture id="npc_icon_outfit_stalker_m2"		x="252" y="332" width="130" height="322" />
+    <texture id="npc_icon_soldier_outfit_m1"		    x="1622" y="0" width="119" height="324" />
+    <texture id="npc_icon_headhunter_outfit"		    x="1626" y="672" width="155" height="341" />
+    <texture id="npc_icon_outfit_stalker_m3" 		     x="261"   y="0" width="128" height="325" />
+    <texture id="npc_icon_fireproof_outfit"		       x="765" y="337" width="137" height="327" />
+    <texture id="npc_icon_usas_outfit"		       x="1470" y="332" width="143" height="325" />
+    <texture id="npc_icon_outfit_stalker_red"		       x="1619" y="329" width="135" height="327" />
+    <texture id="npc_icon_outfit_stalker_blue"		       x="1322" y="327" width="135" height="322" />
+    <texture id="npc_icon_outfit_stalker_green"		       x="1180" y="328" width="135" height="321" />
+    <texture id="npc_icon_outfit_stalker_bigbag"		       x="1047" y="325" width="132" height="331" />
+    <texture id="npc_icon_ranger_outfit"		       x="1774" y="328" width="124" height="332" />
+    <texture id="npc_icon_gilly_outfit"		       		x="0" y="662" width="129" height="329" />
+    <texture id="npc_icon_scout_outfit"		       		x="139" y="670" width="129" height="329" />
+    <texture id="npc_icon_maroder_outfit"		       		x="1900" y="332" width="140" height="330" />
+
+    <texture id="npc_icon_victims_outfit"		       		x="1304" y="672" width="140" height="330" />
+    <texture id="npc_icon_madmans_outfit"		       	x="1137" y="677" width="140" height="330" />
+    <texture id="npc_icon_forester_outfit"		       		x="984" y="676" width="140" height="330" />
+    <texture id="npc_icon_hunter_outfit"		       		x="854" y="687" width="140" height="330" />
+    <texture id="npc_icon_licvidator_outfit"		       		x="709" y="679" width="140" height="330" />
+    <texture id="npc_icon_smuggler_outfit"		       		x="567" y="668" width="140" height="330" />
+    <texture id="npc_icon_rus_bulletproof_outfit"		       	 x="1622" y="0" width="119" height="324" />
+    <texture id="npc_icon_slayer_outfit"		       		x="427" y="662" width="140" height="330" />
+    <texture id="npc_icon_courier_outfit"		       		x="281" y="672" width="140" height="330" />
+
+   <texture id="npc_icon_rad_secret_suite"		       		x="1475" y="667" width="140" height="330" />
+
+
+
+
+
+
+    <texture id="npc_icon_svoboda_light_outfit" 	    x="640" y="704" width="128" height="320" />
+    <texture id="npc_icon_svoboda_heavy_outfit" 	    x="128" y="384" width="128" height="320" />
+	<texture id="npc_icon_svoboda_light_outfit_m1" 	    x="1222" y="0" width="138" height="320" />
+    <texture id="npc_icon_dolg_outfit"			        x="512" y="704" width="128" height="320" />
+    <texture id="npc_icon_dolg_scientific_outfit"	    x="512" y="384" width="128" height="320" />
+    <texture id="npc_icon_stalker_killer_exoskeleton"	x="128" y="704" width="128" height="320" />
+	<texture id="npc_icon_outfit_bandit_m1"	            x="0" y="384" width="128" height="320" />
+	<texture id="npc_icon_outfit_killer_m1"	            x="128" y="0" width="128" height="320" />
+	<texture id="npc_icon_outfit_stalker_m1"	        x="263" y="0" width="128" height="320" />
+
+	<texture id="npc_icon_serafim_outfit"		        x="1536" y="704" width="134" height="320" />
+			
+	<texture id="npc_icon_neytral_exo_antigas_outfit"	x="1280" y="384" width="128" height="320" />
+	<texture id="npc_icon_broken_exo_outfit"		    x="1408" y="384" width="128" height="320" />
+	<texture id="npc_icon_monolit_exo_outfit"		    x="1536" y="384" width="128" height="320" />
+	<texture id="npc_icon_dolg_exo_outfit"			    x="1664" y="384" width="128" height="320" />
+	<texture id="npc_icon_svoboda_exo_outfit"		    x="1792" y="384" width="128" height="320" />
+	<texture id="npc_icon_killer_blue_exoskeleton"		x="1920" y="384" width="128" height="320" />
+		
+	<texture id="npc_icon_mil_exoskeleton"		        x="782" y="0" width="128" height="320" />
+	<texture id="npc_icon_scientific_exoskeleton"		x="654" y="0" width="128" height="320" />
+	<texture id="npc_icon_bandit_exo_outfit"		    x="512" y="0" width="128" height="320" />
+
+	<texture id="npc_icon_bandit_veteran_outfit"		x="917" y="0" width="150" height="320" />
+
+
+    <texture id="npc_icon_military_stalker_commander_outfit"	x="1152" y="384" width="128" height="320" />
+
+    <texture id="npc_icon_monolit_scientific_outfit" 	x="1024"   y="704" width="128" height="320" />
+    <texture id="npc_icon_military_outfit"	 		    x="1152"   y="704" width="128" height="320" />
+    <texture id="npc_icon_merc_scientific_outfit" 		x="1280"   y="704" width="128" height="320" />
+    <texture id="npc_icon_freedom_scientific_outfit" 	x="1408"   y="704" width="128" height="320" />
+	
+	<texture id="npc_icon_nebo_light_outfit" 		    x="1355"   y="0" width="134" height="320" />
+    <texture id="npc_icon_nebo_heavy_outfit" 	        x="1501"   y="0" width="134" height="320" />
+
+</ui_texture>

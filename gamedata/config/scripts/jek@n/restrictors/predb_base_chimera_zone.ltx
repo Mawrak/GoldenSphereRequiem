@@ -1,0 +1,10 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_actor_inside = {+predb_base_btn_switch} sr_sound_act %=predb_base_chimera_spawn%
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\predb_base_chimera_fight
+on_info = {+predb_base_chimera_dead} nil
+

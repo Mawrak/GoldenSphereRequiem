@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<mil_treasure2>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<name x="430" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Информация о схроне №1:</text>
+</name>
+<description x="330" y="460" width="380" height="500" stretch="1" complex_mode="1">
+		<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Имеются координаты места, где спрятан рюкзак с хабаром, бывшего владельца которого съели псевдособаки. Информация о содержимом неопределенная: возможно, оружие. Координаты точки продаются. Цена - 45 000р.</text>
+</description>
+
+
+
+	<btn_1 x="570" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Купить</text>
+	</btn_1>
+	<btn_2 x="355" y="410" width="70" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="125" g="218" b="218" font="letterica16">Назад</text>
+	</btn_2>
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</mil_treasure2>
+

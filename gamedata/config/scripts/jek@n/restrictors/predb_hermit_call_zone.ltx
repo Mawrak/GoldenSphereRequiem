@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+predb_firest_komander_zapiska_info} sr_idle@2
+
+[sr_idle@2]
+on_npc_in_zone = 8972|predb_anomaly_spawn_zone2|nil %=village_sold_stop_companion +predb_vilg_sold_end%
+

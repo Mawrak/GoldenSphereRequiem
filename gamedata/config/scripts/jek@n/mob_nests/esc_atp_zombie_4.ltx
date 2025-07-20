@@ -1,0 +1,29 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home1
+on_death = mob_death
+
+[mob_home1]
+path_home = atp_zombie_nest_center
+home_min_radius = 5
+home_max_radius = 18
+on_info = {+esc_atp_controler_dead} mob_home3
+on_actor_dist_le = 20 | mob_home2 %=esc_atp_controler_agress%
+
+[mob_home2]
+path_home = esc_atp_nest_room
+home_min_radius = 5
+home_max_radius = 10
+on_info = {-esc_atp_controler_agress} mob_home1
+on_info2 = {+esc_atp_controler_dead} mob_home3
+
+[mob_home3]
+path_home = atp_zombie_nest_center
+home_min_radius = 5
+home_max_radius = 18
+
+
+[mob_death]
+on_info = %+esc_atp_zomb4_dead%

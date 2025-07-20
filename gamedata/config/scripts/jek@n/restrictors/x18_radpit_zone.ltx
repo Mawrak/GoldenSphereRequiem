@@ -1,0 +1,18 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = %=radiation_hit_obj(37:bip01_spine:0.01:0) =play_snd(detectors\geiger_4)%
+on_info = {+x18radpit_sucess} sr_idle@2
+on_info2 = {+x18radpit_fail} sr_idle@3
+
+[sr_idle@2]
+on_actor_inside = %=radiation_hit_obj(37:bip01_spine:0.01:0) =play_snd(detectors\geiger_4)%
+on_timer = 4000 | nil %+x18_radpit_off%
+
+[sr_idle@3]
+on_actor_inside = %=radiation_hit_obj(37:bip01_spine:0.01:0) =play_snd(detectors\geiger_4)%
+on_timer = 4000 | sr_idle@4 %=play_particle_on_path(industrial_particles\exhaust_isparenie:x18_radpit_point) =play_snd_from_obj(8313:ambient\underground\steam_1)%
+
+[sr_idle@4]
+on_timer = 2000 | nil %=kill_actor =kill_subj5%

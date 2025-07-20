@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+ros_house_diary1_info} sr_idle@2 %=ros_house_case_think%
+
+[sr_idle@2]
+on_info    = {=have_all_ros_af_parts} nil %=ros_af_chips_generate%
+

@@ -1,0 +1,296 @@
+----- жажда и голод (from Charsi)
+
+local thirst = 0 -- жажда;
+local hunger = 0 -- голод;
+local karma = 0 -- удача;
+local addiction = 0 -- морфиновая зависимость;
+local sniping = 0 -- снайперское мастерство;
+local buckshoot = 0 -- выстрелы в упор дробью;
+local murder = 0 -- убийства людей;
+
+
+-- Если жажда\голод = 1, то мы сыты\напились полностью, если = 0, помираем. Обе переменные постоянно уменьшаются.
+
+-- не одет костюм зомбированого
+function on_update1()
+	change_values(0.000009,0.000007,0.0,0.0,0.0,0.0,0.0)
+end
+
+-- одет костюм зомбированого
+function on_update2()
+	change_values(0.000005,0.000005,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+end
+
+
+function on_game_load()
+	thirst = amk.load_variable("thr",1)
+	hunger = amk.load_variable("hng",1)
+	karma = amk.load_variable("karma1",1) 
+	addiction = amk.load_variable("addiction1",0) 
+	sniping = amk.load_variable("sniping1",0) 
+	buckshoot = amk.load_variable("buckshoot1",0) 
+	murder	=	amk.load_variable("murder1",0) 
+end
+
+function on_game_save()
+	amk.save_variable("thr",thirst)
+	amk.save_variable("hng",hunger)
+	amk.save_variable("karma1",karma)
+	amk.save_variable("addiction1",addiction)
+	amk.save_variable("sniping1",sniping)
+	amk.save_variable("buckshoot1",buckshoot)
+	amk.save_variable("murder1",murder)
+end
+
+
+function get_thirst() -- читаем из другого скрипта
+	return thirst
+end
+function set_thirst(val) -- изменяем
+	thirst = val
+end
+function add_thirst(a) -- добавляем(отнимаем) к жажде нужную величину
+	thirst = thirst + a
+end
+
+
+function get_hunger() -- читаем из другого скрипта
+	return hunger
+end
+function set_hunger(val) -- изменяем
+	hunger = val
+end
+function add_hunger(a) -- добавляем(отнимаем) к голоду нужную величину
+	hunger = hunger + a
+end
+
+
+function get_karma() -- читаем из другого скрипта
+	return karma
+end
+function set_karma(val) -- изменяем
+	karma = val
+end
+function add_karma(a) -- добавляем(отнимаем) к карме нужную величину
+	karma = karma + a
+end
+
+
+function get_addiction()
+	return addiction
+end
+function set_addiction(val)
+	addiction = val
+end
+function add_addiction(a)
+	addiction = addiction + a
+end
+
+
+function get_sniping()
+	return sniping
+end
+function set_sniping(val)
+	sniping = val
+end
+function add_sniping(a)
+	sniping = sniping + a
+end
+
+
+function get_buckshoot()
+	return buckshoot
+end
+function set_buckshoot(val)
+	buckshoot = val
+end
+function add_buckshoot(a)
+	buckshoot = buckshoot + a
+end
+
+
+function get_murder()
+	return murder
+end
+function set_murder(val)
+	murder = val
+end
+function add_murder(a)
+	murder = murder + a
+end
+
+
+
+
+local dht = {
+	-- { жажда, голод }. Чем меньше значение, тем сильнее продукт утоляет параметр
+
+	bread =  { 0.0,  -0.1 },
+	bread_bad =  { 0.0,  -0.1 },
+	voda =  {  -0.9,  0.0 },
+	flyaga_full =  {   -0.8,  0.0 },
+	flyaga_bad =  {  -0.8,  0.0 },
+	mre =  {  0.0,  -0.2 },
+	mre_bad =  {  0.0,  -0.2 },
+	["irp-b"] =  {  0.0,  -0.9 },
+	["irp-b_bad"] =  {  0.0,  -0.9 },
+	kartoshka =  {  0.0,  -0.05 },
+	kartoshka_bad =  {  0.0,   -0.05 },
+	syrok =  {  0.0,   -0.15 },
+	syrok_bad =  {  0.0,  -0.15 },
+	kolbasa =  {  0.0,   -0.15 },
+	kolbasa_bad =  {  0.0,   -0.15 },
+	conserva =  {   0.0,  -0.5 },
+	conserva_bad =  { 0.0,  -0.5 },
+	salo =  {  0.0,  -0.3 },
+	rat_meet =  {  0.0,  -0.2 },
+	salo_bad =  {  0.0,  -0.3 },
+	conserva2 =  {  0.0,  -0.2 },
+	conserva2_bad =  {  0.0,  -0.2 },
+	vodka =  {  -0.4,  0.0 },
+	kefir =  {  -0.5,  -0.1 },
+	kefir_bad =  { -0.5,   -0.1 },
+	pivo =  {  -0.5,  0.0 },
+	energy_drink =  {  -0.8,  0.0 },
+	rad_mashroom =  {  0.0,  -0.3 },
+	suharik =  { 0.0,  -0.1 },
+
+	boarleg_soup =  {  0.0,  -0.95 },
+	flesheye_soup =  {  0.0,  -0.95 },
+	pseudotail_soup =  {  0.0,  -0.95 },
+	krovosos_soup =  {  0.0,  -0.95 },
+	tushkano_soup =  {  0.0,  -0.95 },
+	pseudogig_soup =  {  0.0,  -0.95 },
+	conserva_soup =  {  0.0,  -0.8 },
+	salo_soup =  {  0.0,  -0.8 },
+
+	teapot_full =  {  -0.9,  0.0 },
+	unic_flyaga_full =  {  -0.9,  0.0 },
+	anomal_conserva =  {  0.0,  -0.5 },
+	
+	power_liquor =  {  -0.4,  0.0 },
+	rage_liquor =  {  -0.4,  0.0 },
+	brain_liquor =  {  -0.4,  0.0 },
+	radiation_liquor =  {  -0.4,  0.0 },
+
+}
+
+function on_item_use(obj)
+	local dt_dh = dht[obj:section()]
+	if dt_dh then
+		change_values(dt_dh[1],dt_dh[2])
+	end
+end
+
+function change_values(dt,dh)	--	совсем сдохнуть от жажды\голода не получится, но мы будем полуживыми.
+	thirst = thirst - dt
+	hunger = hunger - dh
+	if thirst>1 then thirst=1 end
+	if ( thirst<0.0000002 and db.actor.power > 0.2 ) then db.actor.power = - 0.0002 end
+	if hunger>1 then hunger=1 end
+	if ( hunger<0.0000002 and db.actor.health > 0.2 ) then db.actor.health = - 0.0001 end
+	on_chahge()
+end
+
+function on_chahge()
+	-- запускаем эффекты при достижении каких-то значений
+	if thirst>0.7 then
+		get_hud():RemoveCustomStatic("thirst1",true) 
+		get_hud():RemoveCustomStatic("thirst2",true)
+		get_hud():RemoveCustomStatic("thirst3",true)
+	end
+	if thirst<0.7 and thirst>0.5 then
+		get_hud():AddCustomStatic("thirst1",true) 
+		get_hud():RemoveCustomStatic("thirst3",true)
+		get_hud():RemoveCustomStatic("thirst2",true)
+	end
+	if thirst<0.5 and thirst>0.3 then 
+		get_hud():AddCustomStatic("thirst2",true)
+		get_hud():RemoveCustomStatic("thirst1",true)
+		get_hud():RemoveCustomStatic("thirst3",true)
+	end
+	if thirst<0.2 then 
+		get_hud():AddCustomStatic("thirst3",true) 
+		get_hud():RemoveCustomStatic("thirst2",true)
+		get_hud():RemoveCustomStatic("thirst1",true)
+	end
+
+
+	if hunger>0.7 then
+		get_hud():RemoveCustomStatic("hunger1",true) 
+		get_hud():RemoveCustomStatic("hunger2",true)
+		get_hud():RemoveCustomStatic("hunger3",true)
+	end
+	if hunger<0.7 and hunger>0.5 then
+		get_hud():AddCustomStatic("hunger1",true) 
+		get_hud():RemoveCustomStatic("hunger3",true)
+		get_hud():RemoveCustomStatic("hunger2",true)
+	end
+	if hunger<0.5 and hunger>0.3 then 
+		get_hud():AddCustomStatic("hunger2",true)
+		get_hud():RemoveCustomStatic("hunger1",true)
+		get_hud():RemoveCustomStatic("hunger3",true)
+	end
+	if hunger<0.2 then 
+		get_hud():AddCustomStatic("hunger3",true) 
+		get_hud():RemoveCustomStatic("hunger2",true)
+		get_hud():RemoveCustomStatic("hunger1",true)
+	end
+
+
+
+	if karma >0.9 then
+
+	end
+	if karma<0.9 and karma>0.5 then
+
+	end
+	if karma<0.5 and karma>0.2 then 
+
+	end
+
+
+
+	if hunger<0.5 and db.actor.health > 0.75 then 
+	db.actor.health = - 0.01
+	end
+	if hunger<0.3 and db.actor.health > 0.6 then 
+	db.actor.health = - 0.015
+	end
+
+
+	if thirst<0.5 and db.actor.power > 0.7 then 
+	db.actor.power = - 0.01
+	end
+	if thirst<0.2 and db.actor.power > 0.6 then 
+	db.actor.power = - 0.015
+	end
+
+
+
+	if addiction >0.5 then
+		get_hud():AddCustomStatic("addiction",true) 
+		if db.actor:dont_has_info("narko_addiction") then
+			db.actor:give_info_portion ("narko_addiction")
+		end
+	end
+	if addiction<=0.5 then
+		get_hud():RemoveCustomStatic("addiction",true)
+		if has_alife_info("narko_addiction") then
+			db.actor:disable_info_portion("narko_addiction")
+		end
+	end
+
+
+end
+
+
+
+
+
+
+
+
+
+
+

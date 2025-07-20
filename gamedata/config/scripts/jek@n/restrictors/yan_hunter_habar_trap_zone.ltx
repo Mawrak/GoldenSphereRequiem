@@ -1,0 +1,14 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+yan_hunter_habar_info} sr_idle@2 %=send_tip(yan_hunter_habar_info_tip:stalker) =add_self_spot(green_location:yan_hunter_habar_info_mark_text)%
+
+[sr_idle@2]
+on_actor_inside = sr_idle@3 %=play_snd(weapons\generic_close)%
+
+[sr_idle@3]
+on_timer = 200 | nil %=drop_weapon =play_snd(weapons\f1_explode2) =run_cam_effector(fusker) =actor_hit_halfhealth =run_postprocess(deadcity_wake_old:657:false) +actor_yan_hunter_habar_trap%
+
+
+

@@ -1,0 +1,549 @@
+
+
+
+-- "Оружейник" ------------------------------------------------------------------------------------------------------------
+
+-- если игрок собрал все оружейные инфопоршены, то ему выдается один общий инфопоршн, на который идет проверка в амк.
+function all_weapons_info_collected()
+	if has_alife_info("tutor_sng_scopes") and
+		has_alife_info("tutor_nato_scopes") and
+		has_alife_info("tutor_sng_sil") and
+		has_alife_info("tutor_nato_sil") and
+		has_alife_info("tutor_sng_grenl") and
+		has_alife_info("tutor_nato_grenl") and db.actor:dont_has_info("weapon_powerup") then
+			db.actor:give_info_portion ("weapon_powerup")
+		end
+end
+
+function change_addons()
+	if db.actor:dont_has_info("tutor_sng_grenl") then
+		if db.actor:object("wpn_addon_grenade_launcher") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_grenade_launcher",db.actor)
+		amk.spawn_item_in_inv("glauncher_vog")
+		end
+	elseif has_alife_info("tutor_sng_grenl") then
+		if db.actor:object("glauncher_vog") ~= nil   then
+		amk.remove_item_from_inventory_by_name("glauncher_vog",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_grenade_launcher")
+		end
+	end
+	
+	if db.actor:dont_has_info("tutor_nato_grenl") then
+		if db.actor:object("wpn_addon_grenade_launcher_m203") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_grenade_launcher_m203",db.actor)
+		amk.spawn_item_in_inv("glauncher_m203")
+		end
+	elseif has_alife_info("tutor_nato_grenl") then
+		if db.actor:object("glauncher_m203") ~= nil   then
+		amk.remove_item_from_inventory_by_name("glauncher_m203",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_grenade_launcher_m203")
+		end
+	end
+	
+	if db.actor:dont_has_info("tutor_nato_sil") then
+		if db.actor:object("wpn_addon_sil_1143_p") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_sil_1143_p",db.actor)
+		amk.spawn_item_in_inv("silencer_1143")
+		end
+		if db.actor:object("wpn_addon_sil_556_ar") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_sil_556_ar",db.actor)
+		amk.spawn_item_in_inv("silencer_556")
+		end
+		if db.actor:object("wpn_9mm_nato_silencer") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_9mm_nato_silencer",db.actor)
+		amk.spawn_item_in_inv("silencer_9mm")
+		end
+	elseif has_alife_info("tutor_nato_sil") then
+		if db.actor:object("silencer_1143") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer_1143",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_sil_1143_p")
+		end
+		if db.actor:object("silencer_556") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer_556",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_sil_556_ar")
+		end
+		if db.actor:object("silencer_9mm") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer_9mm",db.actor)
+		amk.spawn_item_in_inv("wpn_9mm_nato_silencer")
+		end
+	end
+	
+	if db.actor:dont_has_info("tutor_sng_sil") then
+		if db.actor:object("wpn_addon_sil_545_ar") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_sil_545_ar",db.actor)
+		amk.spawn_item_in_inv("silencer_545")
+		end
+		if db.actor:object("wpn_addon_sil_762_ar") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_sil_762_ar",db.actor)
+		amk.spawn_item_in_inv("silencer_762")
+		end
+		if db.actor:object("wpn_addon_silencer") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_silencer",db.actor)
+		amk.spawn_item_in_inv("silencer")
+		end
+	elseif has_alife_info("tutor_sng_sil") then
+		if db.actor:object("silencer_545") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer_545",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_sil_545_ar")
+		end
+		if db.actor:object("silencer_762") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer_762",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_sil_762_ar")
+		end
+		if db.actor:object("silencer") ~= nil   then
+		amk.remove_item_from_inventory_by_name("silencer",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_silencer")
+		end
+	end
+	
+	if db.actor:dont_has_info("tutor_sng_scopes") then
+		if db.actor:object("wpn_addon_scope") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_scope",db.actor)
+		amk.spawn_item_in_inv("scope_pso")
+		end
+		if db.actor:object("wpn_scope_mosin") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_scope_mosin",db.actor)
+		amk.spawn_item_in_inv("scope_mosin")
+		end
+		if db.actor:object("wpn_addon_scope_sks") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_scope_sks",db.actor)
+		amk.spawn_item_in_inv("scope_sks")
+		end
+		if db.actor:object("wpn_addon_scope_aksu") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_scope_aksu",db.actor)
+		amk.spawn_item_in_inv("scope_aksu")
+		end
+	elseif has_alife_info("tutor_sng_scopes") then
+		if db.actor:object("scope_pso") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_pso",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_scope")
+		end
+		if db.actor:object("scope_mosin") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_mosin",db.actor)
+		amk.spawn_item_in_inv("wpn_scope_mosin")
+		end
+		if db.actor:object("scope_sks") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_sks",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_scope_sks")
+		end
+		if db.actor:object("scope_aksu") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_aksu",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_scope_aksu")
+		end
+	end
+	
+	if db.actor:dont_has_info("tutor_nato_scopes") then
+		if db.actor:object("wpn_addon_acog") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_acog",db.actor)
+		amk.spawn_item_in_inv("scope_acog")
+		end
+		if db.actor:object("wpn_addon_m16_scope") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_m16_scope",db.actor)
+		amk.spawn_item_in_inv("scope_m16")
+		end
+		if db.actor:object("wpn_addon_scope_susat") ~= nil   then
+		amk.remove_item_from_inventory_by_name("wpn_addon_scope_susat",db.actor)
+		amk.spawn_item_in_inv("scope_susat")
+		end
+	elseif has_alife_info("tutor_nato_scopes") then
+		if db.actor:object("scope_acog") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_acog",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_acog")
+		end
+		if db.actor:object("scope_m16") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_m16",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_m16_scope")
+		end
+		if db.actor:object("scope_susat") ~= nil   then
+		amk.remove_item_from_inventory_by_name("scope_susat",db.actor)
+		amk.spawn_item_in_inv("wpn_addon_scope_susat")
+		end
+	end
+	
+end
+
+-- выводим на худ значок достижения:
+function achievement1tip()
+local st = get_hud():GetCustomStatic("achievement_1") or get_hud():AddCustomStatic("achievement_1",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement()
+end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+-- Коллекционер -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function check_arts() -- за каждый из артов выдаем соответствующий инфопоршн(однократно)
+	if ( db.actor:object("af_coal") ~= nil and db.actor:dont_has_info("af_1") )  then
+	db.actor:give_info_portion ("af_1")
+	end
+
+	if ( db.actor:object("af_scale") ~= nil  and db.actor:dont_has_info("af_2") )  then
+	db.actor:give_info_portion ("af_2")
+	end
+
+	if ( db.actor:object("af_bitum") ~= nil and db.actor:dont_has_info("af_3") )  then
+	db.actor:give_info_portion ("af_3")
+	end
+
+	if ( db.actor:object("af_ballast") ~= nil and db.actor:dont_has_info("af_4") )  then
+	db.actor:give_info_portion ("af_4")
+	end
+
+	if ( db.actor:object("af_roll") ~= nil and db.actor:dont_has_info("af_5") ) then
+	db.actor:give_info_portion ("af_5")
+	end
+
+	if ( db.actor:object("af_chicken_god") ~= nil and db.actor:dont_has_info("af_6") ) then
+	db.actor:give_info_portion ("af_6")
+	end
+
+	if ( db.actor:object("af_steel_nut") ~= nil  and db.actor:dont_has_info("af_7") ) then
+	db.actor:give_info_portion ("af_7")
+	end
+
+	if ( db.actor:object("af_bearing") ~= nil and db.actor:dont_has_info("af_8") ) then
+	db.actor:give_info_portion ("af_8")
+	end
+
+	if ( db.actor:object("af_crown") ~= nil and db.actor:dont_has_info("af_9") ) then
+	db.actor:give_info_portion ("af_9")
+	end
+
+	if ( db.actor:object("af_frog") ~= nil and db.actor:dont_has_info("af_10") ) then
+	db.actor:give_info_portion ("af_10")
+	end
+
+	if ( db.actor:object("af_chestnut") ~= nil and db.actor:dont_has_info("af_11") ) then
+	db.actor:give_info_portion ("af_11")
+	end
+
+	if ( db.actor:object("af_sagebrush") ~= nil and db.actor:dont_has_info("af_12") ) then
+	db.actor:give_info_portion ("af_12")
+	end
+
+	if ( db.actor:object("af_mushroom") ~= nil and db.actor:dont_has_info("af_13") ) then
+	db.actor:give_info_portion ("af_13")
+	end
+
+	if ( db.actor:object("af_glass") ~= nil and db.actor:dont_has_info("af_14") ) then
+	db.actor:give_info_portion ("af_14")
+	end
+
+	if ( db.actor:object("af_teardrop") ~= nil and db.actor:dont_has_info("af_15") ) then
+	db.actor:give_info_portion ("af_15")
+	end
+
+	if ( db.actor:object("af_lens") ~= nil and db.actor:dont_has_info("af_16") ) then
+	db.actor:give_info_portion ("af_16")
+	end
+
+	if ( db.actor:object("af_spiral") ~= nil and db.actor:dont_has_info("af_17") ) then
+	db.actor:give_info_portion ("af_17")
+	end
+
+	if ( db.actor:object("af_cristallic") ~= nil  and db.actor:dont_has_info("af_18") ) then
+	db.actor:give_info_portion ("af_18")
+	end
+
+	if ( db.actor:object("af_snail") ~= nil and db.actor:dont_has_info("af_19") ) then
+	db.actor:give_info_portion ("af_19")
+	end
+
+	if ( db.actor:object("af_hole") ~= nil and db.actor:dont_has_info("af_20") ) then
+	db.actor:give_info_portion ("af_20")
+	end
+
+	if ( db.actor:object("af_egg") ~= nil  and db.actor:dont_has_info("af_21") ) then
+	db.actor:give_info_portion ("af_21")
+	end
+
+end
+
+
+-- если игрок собрал все артефактные инфопоршены, то ему выдается один общий инфопоршн, на который идет проверка в амк.
+function all_arts_has_collected()
+	if ( has_alife_info("af_1") and
+		has_alife_info("af_2") and
+		has_alife_info("af_3") and
+		has_alife_info("af_4") and
+		has_alife_info("af_5") and
+		has_alife_info("af_6") and
+		has_alife_info("af_7") and
+		has_alife_info("af_8") and
+		has_alife_info("af_9") and
+		has_alife_info("af_10") and
+		has_alife_info("af_11") and
+		has_alife_info("af_12") and
+		has_alife_info("af_13") and
+		has_alife_info("af_14") and
+		has_alife_info("af_15") and
+		has_alife_info("af_16") and
+		has_alife_info("af_17") and
+		has_alife_info("af_18") and
+		has_alife_info("af_19") and
+		has_alife_info("af_20") and
+		has_alife_info("af_21") and not has_alife_info("arts_powerup") ) then
+			db.actor:give_info_portion ("arts_powerup")
+		end
+end
+
+-- выводим на худ значок достижения:
+function achievement2tip()
+local st = get_hud():GetCustomStatic("achievement_2") or get_hud():AddCustomStatic("achievement_2",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement()
+end
+
+
+-- За Родину! ---------------------------------------------------------------------------------------------------------------------------------------
+
+function check_items_of_achiev3() -- нужно иметь в инвентаре бюст Ленина
+	if ( db.actor:object("lenin_bust") ~= nil and db.actor:dont_has_info("achievement3") ) then
+		db.actor:give_info_portion ("achievement3")
+	end
+	check_dummys()
+end
+
+-- выводим на худ значок достижения:
+function achievement3tip()
+local st = get_hud():GetCustomStatic("achievement_3") or get_hud():AddCustomStatic("achievement_3",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement()
+end
+
+-- подменяем булыжники на артефакты:
+function check_dummys()
+	if ( db.actor:object("dummy") ~= nil and has_alife_info("achievement3") ) then
+		rnd = math.random(1, 10)
+		if rnd == 1 then 
+		alife():create('af_coal', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 2 then 
+		alife():create('af_scale', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 3 then 
+		alife():create('af_bitum', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 4 then 
+		alife():create('af_ballast', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 5 then 
+		alife():create('af_steel_nut', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 6 then 
+		alife():create('af_frog', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 7 then 
+		alife():create('af_chestnut', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 8 then 
+		alife():create('af_glass', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 9 then 
+		alife():create('af_spiral', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+		if rnd == 10 then 
+		alife():create('af_cristallic', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+		addon.remove_items("dummy", 1)
+		end
+	end
+end
+
+-- Чёрный копатель ------------------------------------------------------------------------------------------------------------------------------
+
+function check_deadmans_head_portions()
+	if ( has_alife_info("grave1") and
+		has_alife_info("grave2") and
+		has_alife_info("grave3") and
+		has_alife_info("grave4") and
+		has_alife_info("grave5") and
+		has_alife_info("grave6") and
+		has_alife_info("grave7") and
+		has_alife_info("grave8") and
+		has_alife_info("grave9") and
+		has_alife_info("grave10") and
+		has_alife_info("grave11") and
+		has_alife_info("grave12") and
+		has_alife_info("grave13") and
+		has_alife_info("grave14") and
+		has_alife_info("grave15") ) and not has_alife_info("deadman_head_powerup") then
+			db.actor:give_info_portion ("deadman_head_powerup")
+		end
+end
+
+-- выводим на худ значок достижения:
+function achievement4tip()
+local st = get_hud():GetCustomStatic("achievement_4") or get_hud():AddCustomStatic("achievement_4",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement()
+db.actor:disable_info_portion("grave1")
+db.actor:disable_info_portion("grave2")
+db.actor:disable_info_portion("grave3")
+db.actor:disable_info_portion("grave4")
+db.actor:disable_info_portion("grave5")
+db.actor:disable_info_portion("grave6")
+db.actor:disable_info_portion("grave7")
+db.actor:disable_info_portion("grave8")
+db.actor:disable_info_portion("grave9")
+db.actor:disable_info_portion("grave10")
+db.actor:disable_info_portion("grave11")
+db.actor:disable_info_portion("grave12")
+db.actor:disable_info_portion("grave13")
+db.actor:disable_info_portion("grave14")
+db.actor:disable_info_portion("grave15")
+end
+
+function deadmans_head_exchange()
+	if db.actor:object("deadman_head") ~= nil then
+	--amk.remove_item_from_inventory_by_name("deadman_head",db.actor)
+	addon.remove_items("deadman_head", 1)
+	amk.spawn_item_in_inv("power_scull")
+	end
+end
+
+
+-- Мастер ножа ---------------------------------------------------------------------------------------------------------------------------
+
+function check_knife_powerup_condition()
+if ( has_alife_info("atp_controler_knifed") and db.actor:dont_has_info("esc_atp_controler_agress") and db.actor:dont_has_info("achievement5") ) then
+	db.actor:give_info_portion ("achievement5")
+end
+end
+
+function achievement5tip()
+local st = get_hud():GetCustomStatic("achievement_5") or get_hud():AddCustomStatic("achievement_5",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement2()
+end
+
+function change_knifes()
+	if db.actor:object("wpn_knife") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife",db.actor)
+	amk.spawn_item_in_inv("wpn_knife_up1")
+
+	elseif db.actor:object("wpn_knife2") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife2",db.actor)
+	amk.spawn_item_in_inv("wpn_knife2_up1")
+
+	elseif db.actor:object("wpn_knife3") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife3",db.actor)
+	amk.spawn_item_in_inv("wpn_knife3_up1")
+
+	elseif db.actor:object("wpn_knife4") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife4",db.actor)
+	amk.spawn_item_in_inv("wpn_knife4_up1")
+
+	elseif db.actor:object("wpn_knife5") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife5",db.actor)
+	amk.spawn_item_in_inv("wpn_knife5_up1")
+
+	elseif db.actor:object("wpn_knife6") ~= nil   then
+	amk.remove_item_from_inventory_by_name("wpn_knife6",db.actor)
+	amk.spawn_item_in_inv("wpn_knife6_up1")
+
+
+	end
+
+end
+
+
+
+-- Снайпер ----------------------------------------------------------------------------------------------------------------
+
+function check_sniper_condition()
+local sniping = starvation.get_sniping()
+	if ( sniping == 1.0 and db.actor:dont_has_info("achievement6") ) then
+		db.actor:give_info_portion ("achievement6")
+	end
+end
+
+function achievement6tip()
+local st = get_hud():GetCustomStatic("achievement_6") or get_hud():AddCustomStatic("achievement_6",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement3()
+end
+
+
+-- Дробью в щщи ----------------------------------------------------------------------------------------------------------------
+
+function check_buck_condition()
+local buckshoot = starvation.get_buckshoot()
+	if buckshoot == 1.0 and db.actor:dont_has_info("achievement7") then
+		db.actor:give_info_portion ("achievement7")
+	end
+end
+
+function achievement7tip()
+local st = get_hud():GetCustomStatic("achievement_7") or get_hud():AddCustomStatic("achievement_7",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement4()
+end
+-----------------------------------------------------------------------------------------------------------------------------------
+
+-- Если прошли Недостройку ни разу не спалившись --------------------------------------------------------------------------------------
+function check_dar_build_guard_violence()
+local karma = starvation.get_karma()
+	if has_alife_info("dar_kristall_task") and db.actor:dont_has_info("dar_build_guard_violence") then
+		db.actor:give_info_portion ("achievement8")
+	end
+end
+
+function achievement8tip()
+local st = get_hud():GetCustomStatic("achievement_8") or get_hud():AddCustomStatic("achievement_8",true)
+st.m_endTime = time_global()/1000 + 10
+soundtrack.achievement()
+end
+
+
+-- Значки --------------------------------------------------------------------------------------------------------------------------
+
+function check_sssr_signs()
+if db.actor:object("signs_albom") ~= nil then
+	if ( db.actor:object("sssr_sign1") ~= nil and db.actor:dont_has_info("sssr_sgn1") ) then
+		addon.remove_items("sssr_sign1", 1)
+		db.actor:give_info_portion ("sssr_sgn1")
+	elseif ( db.actor:object("sssr_sign2") ~= nil and db.actor:dont_has_info("sssr_sgn2") ) then
+		addon.remove_items("sssr_sign2", 1)
+		db.actor:give_info_portion ("sssr_sgn2")
+	elseif ( db.actor:object("sssr_sign3") ~= nil and db.actor:dont_has_info("sssr_sgn3") ) then
+		addon.remove_items("sssr_sign3", 1)
+		db.actor:give_info_portion ("sssr_sgn3")
+	elseif ( db.actor:object("sssr_sign4") ~= nil and db.actor:dont_has_info("sssr_sgn4") ) then
+		addon.remove_items("sssr_sign4", 1)
+		db.actor:give_info_portion ("sssr_sgn4")
+	elseif ( db.actor:object("sssr_sign5") ~= nil and db.actor:dont_has_info("sssr_sgn5") ) then
+		addon.remove_items("sssr_sign5", 1)
+		db.actor:give_info_portion ("sssr_sgn5")
+	elseif ( db.actor:object("sssr_sign6") ~= nil and db.actor:dont_has_info("sssr_sgn6") ) then
+		addon.remove_items("sssr_sign6", 1)
+		db.actor:give_info_portion ("sssr_sgn6")
+	elseif ( db.actor:object("sssr_sign7") ~= nil and db.actor:dont_has_info("sssr_sgn7") ) then
+		addon.remove_items("sssr_sign7", 1)
+		db.actor:give_info_portion ("sssr_sgn7")
+	elseif ( db.actor:object("sssr_sign8") ~= nil and db.actor:dont_has_info("sssr_sgn8") ) then
+		addon.remove_items("sssr_sign8", 1)
+		db.actor:give_info_portion ("sssr_sgn8")
+	elseif ( db.actor:object("sssr_sign9") ~= nil and db.actor:dont_has_info("sssr_sgn9") ) then
+		addon.remove_items("sssr_sign9", 1)
+		db.actor:give_info_portion ("sssr_sgn9")
+	elseif ( db.actor:object("sssr_sign10") ~= nil and db.actor:dont_has_info("sssr_sgn10") ) then
+		addon.remove_items("sssr_sign10", 1)
+		db.actor:give_info_portion ("sssr_sgn10")
+	end
+	if ( has_alife_info("sssr_sgn1") and has_alife_info("sssr_sgn2") and has_alife_info("sssr_sgn3") and has_alife_info("sssr_sgn4") and has_alife_info("sssr_sgn5") and has_alife_info("sssr_sgn6") and has_alife_info("sssr_sgn7") and has_alife_info("sssr_sgn8") and has_alife_info("sssr_sgn9") and has_alife_info("sssr_sgn10") ) and db.actor:dont_has_info("sssr_sgns_bonus") then
+		db.actor:give_info_portion ("sssr_sgns_bonus")
+	end
+end
+end

@@ -1,0 +1,47 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_camp@0
+on_death = mob_death
+
+[mob_camp@0]
+path_home = yan_burer_king_walk1
+path_look = yan_burer_king_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_timer = 1 | mob_camp@1 %=make_invulnerable%
+
+[mob_camp@1]
+path_home = yan_burer_king_walk1
+path_look = yan_burer_king_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_info = {+yan_saharov_escape} %=delme2%
+on_actor_dist_le = 2 | mob_camp@2 %=start_burer_king_dialog =play_snd_from_obj(8668:monsters\burer2\burer_attack_0)%
+
+[mob_camp@2]
+path_home = yan_burer_king_walk1
+path_look = yan_burer_king_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_actor_dist_ge = 3 | mob_camp@3 %=close_dialog%
+
+[mob_camp@3]
+path_home = yan_burer_king_walk1
+path_look = yan_burer_king_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_timer = 1000 | mob_camp@1
+
+
+
+
+
+
+[mob_death]
+on_info = %+yan_burer_king_dead%

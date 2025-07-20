@@ -1,0 +1,123 @@
+; Восьмой(занимается инкубатором и выращиванием грибов)
+
+[smart_terrains]
+none = true
+
+[logic]
+active = {+x18_ambush_start} walker@3, walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = subject_weak_2_walk1
+path_look = subject_weak_2_look1
+show_spot = false
+on_timer      = 1|walker@ambush %=make_invulnerable =disable_trading%
+
+[walker@ambush]
+path_walk = subject_weak_2_walk1_1
+path_look = subject_weak_2_look1_1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_signal       = arrived|remark@beat_actor1 %=disable_ui%
+
+[remark@beat_actor1]
+snd = x18_entrance_vmordu
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+show_spot = false
+on_signal = sound_end | remark@beat_actor2
+
+[remark@beat_actor2]
+anim = vmordu
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+show_spot = false
+on_signal = anim_end | remark@wait %=x18_entrance_robbery%
+
+[remark@wait]
+anim = wait
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+show_spot = false
+on_timer = 4000 | walker@2 %=actor_goto_x18prison2%
+
+
+
+[walker@2]
+path_walk = subject_weak_2_walk1
+path_look = subject_weak_2_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subject_weak_3_first_talk} walker@3
+
+[walker@3]
+path_walk = subject_weak_2_walk2
+path_look = subject_weak_2_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subjects_goto_pray} walker@pray
+on_info2 = {+x18_doctor_final} nil
+
+
+; Молитва:
+[walker@pray]
+path_walk = subject_weak_2_walk_pray
+path_look = subjects_look_pray
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-subjects_goto_pray} walker@2
+
+
+
+
+
+
+
+
+
+[meet]
+meet_state = 5| idle
+meet_state = 5| idle
+victim = 5| nil
+victim_wpn = 5| nil
+use = true
+use_wpn = true
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject_weak_2_dead%

@@ -1,0 +1,21 @@
+[logic]
+active = sr_idle@1
+ 
+[sr_idle@1]
+on_actor_inside = {+x18_remoral_phase1} sr_particle@1
+
+[sr_particle@1]
+name = anomaly2\electra_damage_02_smoke
+path = x18_remoralizator_point
+mode = 2
+looped = true
+on_timer = 8000 | sr_particle@2 %=play_snd_from_obj(8473:ambient\monolith_1)%
+on_info = {+x18_remoralizer_blow} nil %=play_snd_from_obj(ambient\radarsparks_1) =play_particle_on_path(explosions\group_items\campfire_boar_grill_smoke:x18_remoralizator_point)%
+
+[sr_particle@2]
+name = anomaly2\electra_damage_02_smoke
+path = x18_remoralizator_point
+mode = 2
+looped = true
+on_timer = 8000 | sr_particle@1 %=play_snd_from_obj(8473:ambient\monolith_1)%
+on_info = {+x18_remoralizer_blow} nil %=play_snd_from_obj(ambient\radarsparks_1) =play_particle_on_path(explosions\group_items\campfire_boar_grill_smoke:x18_remoralizator_point)%

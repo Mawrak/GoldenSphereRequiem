@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+
+<notebook_client_2_task_1_waiting>
+
+<corpus x="250" y="250" width="550" height="550" stretch="1">
+	<texture x="0" y="0" width="1025" height="1010">ui\notebook\notebook_corpus</texture>
+</corpus>
+<system_logo x="400" y="305" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="letterica18">Ричард Нунан:</text>
+</system_logo>
+
+
+<icon_client1 x="350" y="340" width="70" height="80" stretch="1">
+	<texture x="0" y="0" width="510" height="510">ui\notebook\icon_client_nunan</texture>
+</icon_client1>
+<description1 x="430" y="350" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Как продвигаются Ваши дела, молодой человек?</text>
+</description1>
+<description2 x="430" y="360" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="arial_14">Надеюсь, все идет хорошо и я дождусь своего</text>
+</description2>
+<description3 x="430" y="370" width="370" height="35">
+	<text x="0" y="0" r="225" g="218" b="118" font="arial_14">заказа?</text>
+</description3>
+
+
+
+	<btn_1 x="480" y="490" width="100" height="20">
+		<texture_e>ui\notebook\notebook_file</texture_e>
+		<text x="0" y="0" r="225" g="118" b="118" font="letterica16">Заказ выполнен</text>
+	</btn_1>
+
+
+
+	<btn_quit x="690" y="610" width="18" height="18">
+		<text x="0" y="0" r="225" g="58" b="58" font="letterica16">OFF</text>
+	</btn_quit>
+
+</notebook_client_2_task_1_waiting>
+

@@ -1,0 +1,757 @@
+-- Функции с постоянной проверкой и прочее -----------------------------------------------------------------------------------------------------------------------------
+-- Created by Jek@n-limon & Charsi
+
+
+
+
+
+-- Износ костюмов: -------------------------------------------------------------------
+function outfit_destruction()
+local outfit = db.actor:item_in_slot(6)
+if outfit ~= nil and outfit:condition() <=0.15 and db.actor:alive() then
+	amk.remove_item(outfit)
+	news_manager.send_tip(db.actor, "outfit_destruction_tip", nil, "stalker", 10000, nil)
+end
+end
+
+
+-- Простейший античит от детей: ----------------------------------------------------
+
+function weight_control()
+local weight = system_ini():r_s32("actor_condition","max_walk_weight")
+if ( weight > 80 and db.actor:alive() ) then
+	db.actor:kill(db.actor)
+	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+end
+end
+
+function jump_control()
+local jump = system_ini():r_s32("actor","jump_speed")
+if ( jump > 7 and db.actor:alive() ) then
+	db.actor:kill(db.actor)
+	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+end
+end
+
+function weapon_control()
+local wpn1 = system_ini():r_s32("wpn_ak74u","hit_power")
+local wpn2 = system_ini():r_s32("wpn_akm","hit_power")
+local wpn3 = system_ini():r_s32("wpn_aks74","hit_power")
+local wpn4 = system_ini():r_s32("wpn_aps","hit_power")
+local wpn5 = system_ini():r_s32("wpn_aug","hit_power")
+local wpn6 = system_ini():r_s32("wpn_bm16_full","hit_power")
+local wpn7 = system_ini():r_s32("wpn_colt1911","hit_power")
+local wpn8 = system_ini():r_s32("wpn_galil","hit_power")
+local wpn9 = system_ini():r_s32("wpn_ks23","hit_power")
+local wpn10 = system_ini():r_s32("wpn_mosin","hit_power")
+local wpn11 = system_ini():r_s32("wpn_pm","hit_power")
+local wpn12 = system_ini():r_s32("wpn_samopal","hit_power")
+local wpn13 = system_ini():r_s32("wpn_sayga1","hit_power")
+local wpn14 = system_ini():r_s32("wpn_sayga2","hit_power")
+local wpn15 = system_ini():r_s32("wpn_sks","hit_power")
+if ( wpn1 > 0.05 or wpn2 > 0.05 or wpn3 > 0.05 or wpn4 > 0.05 or wpn5 > 0.05 or wpn6 > 0.05 or wpn7 > 0.05 or wpn8 > 0.05 or wpn9 > 0.05 or wpn10 > 0.05 or wpn11 > 0.05 or wpn12 > 0.05 or wpn13 > 0.05 or wpn14 > 0.05 or wpn15 > 0.05 ) and db.actor:alive() then
+	db.actor:kill(db.actor)
+	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+end
+end
+
+-----------------------------------------------------------------------------------
+
+function bad_ammo_exchange()
+if db.actor:object("ammo_9x39_ap") ~= nil then
+	addon.remove_items("ammo_9x39_ap", 1)
+	amk.spawn_item_in_inv("ammo_9x39_sp5")
+elseif db.actor:object("ammo_12x76_dart") ~= nil then
+	addon.remove_items("ammo_12x76_dart", 1)
+	amk.spawn_item_in_inv("ammo_12x76_zhekan")
+elseif db.actor:object("ammo_12x70_kart") ~= nil then
+	addon.remove_items("ammo_12x70_kart", 1)
+	amk.spawn_item_in_inv("ammo_12x70_buck")
+elseif db.actor:object("ammo_7.92x57_fmj") ~= nil then
+	addon.remove_items("ammo_7.92x57_fmj", 1)
+end
+end
+
+-----------------------------------------------------------------------------------
+function hud_items_hints()
+if db.actor:object("antirad") ~= nil then
+	get_hud():AddCustomStatic("hud_items_hint1",true)
+elseif db.actor:object("antirad") == nil then
+	get_hud():RemoveCustomStatic("hud_items_hint1",true)
+end
+if db.actor:object("flyaga_full") ~= nil then
+	get_hud():AddCustomStatic("hud_items_hint2",true)
+elseif db.actor:object("flyaga_full") == nil then
+	get_hud():RemoveCustomStatic("hud_items_hint2",true)
+end
+if db.actor:object("ibuprophen") ~= nil then
+	get_hud():AddCustomStatic("hud_items_hint3",true)
+elseif db.actor:object("ibuprophen") == nil then
+	get_hud():RemoveCustomStatic("hud_items_hint3",true)	
+end
+if db.actor:object("vodka") ~= nil then
+	get_hud():AddCustomStatic("hud_items_hint4",true)
+elseif db.actor:object("vodka") == nil then
+	get_hud():RemoveCustomStatic("hud_items_hint4",true)	
+end
+if has_alife_info("af_pult_use") then
+	get_hud():AddCustomStatic("hud_items_hint5",true)
+elseif db.actor:dont_has_info("af_pult_use") then
+	get_hud():RemoveCustomStatic("hud_items_hint5",true)	
+end
+if ( has_alife_info("wonderdoll_first_talk") and db.actor:object("wonder_doll") ~= nil ) then
+	get_hud():AddCustomStatic("hud_items_hint6",true)
+elseif db.actor:object("wonder_doll") == nil then
+	get_hud():RemoveCustomStatic("hud_items_hint6",true)	
+end
+end
+
+-- Некоторый функционал из SGM(thanks, GeJorge) --------------------------------------------------------------
+
+function get_side_stick_value(string,value_num)
+   local s_string
+   if string~=nil then
+      s_string=utils.parse_params(string)
+   else
+      s_string=nil
+   end
+   if value_num==nil or s_string==nil then
+      return s_string
+   else
+      return s_string[to_number(value_num)]
+   end
+end
+
+function check_section_stick(ini,section,line,def_val)
+   local d_value=""
+   if def_val==nil then d_value=nil else d_value=def_val end
+   if ini==nil then
+      return get_side_stick_value(section)
+   end
+   return get_side_stick_value(addon_2.cfg_get_string(ini,section,line,d_value))
+end
+
+-- 'Чтение параметров из секций.
+function cfg_get_string(ini,section,line,def_val)
+   return utils.cfg_get_string(ini,section,line,nil,false,"",def_val)
+end
+function cfg_get_number(ini,section,line,def_val)
+   return utils.cfg_get_number(ini,section,line,nil,false,def_val)
+end
+-- 'Проверка и выполнение действий {=-!}%+-=%
+function check_section_condlist(ini,section,line,def_val,value_type)
+   local d_value=""
+   if def_val==nil then d_value="" else d_value=def_val end
+   if value_type==nil or value_type=="string" then
+      return xr_logic.pick_section_from_condlist(db.actor,db.actor,xr_logic.parse_condlist(nil,section,"condlist",addon_2.cfg_get_string(ini,section,line,d_value)))
+   elseif value_type=="number" then
+      return xr_logic.pick_section_from_condlist(db.actor,db.actor,xr_logic.parse_condlist(nil,section,"condlist",addon_2.cfg_get_number(ini,section,line,d_value)))
+   end
+end
+function check_string_condlist(target_value,npc)
+   if npc==nil then npc=db.actor end
+   return xr_logic.pick_section_from_condlist(db.actor,npc,xr_logic.parse_condlist(nil,"check_section","condlist",target_value))
+end
+function execute_condlist(npc,section,value)
+   if npc==nil then npc=db.actor end
+   xr_logic.pick_section_from_condlist(db.actor,npc,xr_logic.parse_condlist(nil,section,"condlist",value))
+end
+
+
+
+
+
+-- 'Перевод мутанта под схему поведения.
+function mob_recapture(mob_obj)
+   if not xr_logic.mob_captured(mob_obj) then
+      xr_logic.mob_capture(mob_obj,true)
+   end
+end
+-- 'Отправить мутанта на левел вертекс.
+function mob_send_to(mob_obj,target)
+   action(mob_obj,move(move.run_fwd,level.vertex_position(target)))
+end
+-- 'Заставить мутанта, смотреть на левел вертекс.
+function mob_look_to(mob_obj,target)
+   action(mob_obj,anim(anim.look_around),look(look.point,level.vertex_position(target)))
+end
+-- 'Телепортация мутанта к ГГ, если мутант слишком отдалился.
+function mob_teleport_to_actor(mob_obj)
+  if db.actor~=nil then
+	 if distance_between_safe(db.actor,mob_obj)>60 then
+		 alife_teleport_object("_", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), mob_obj:id())
+     end
+  end
+end
+-- 'Телепортация мутанта на левел вертекс.
+function mob_teleport_to_home_position(mob_obj,home_pos,bool)
+  if home_pos~=nil and (bool==nil or bool=="true") then
+     -- local param1=level.vertex_position(home_pos).x
+     -- local param2=level.vertex_position(home_pos).y
+     -- local param3=level.vertex_position(home_pos).z
+	 local pos=level.vertex_position(home_pos)
+     --mob_obj:set_npc_position(vector():set(param1,param2,param3))
+	 alife_teleport_object("", pos, db.actor:level_vertex_id(), db.actor:game_vertex_id(), mob_obj:id())
+  end
+end
+
+
+-- Респавн аномалий на локациях: ----------------------------------------------------------
+
+function level_anomaly_respawn()
+if xr_conditions.actor_in_camp_zone() == false then
+	if db.actor:dont_has_info("anom_spwn") then
+		db.actor:give_info_portion ("anom_spwn")
+		db.actor:disable_info_portion("anom_del")
+	end
+else --if xr_conditions.actor_in_camp_zone() == true then
+	if db.actor:dont_has_info("anom_del") then
+		db.actor:give_info_portion ("anom_del")
+		db.actor:disable_info_portion("anom_spwn")
+	end
+end
+end
+
+-- Лучевая болезнь: ----------------------------------------------------------------------
+
+function rad_seek_effect()
+if has_alife_info("rad_seek") then
+local rad = db.actor.radiation
+	if rad < 0.3 then
+		db.actor.radiation = 0.1
+	end
+end
+if has_alife_info("rad_immunity") then
+local rad = db.actor.radiation
+	if rad > 0 then
+		db.actor.radiation = -rad
+	end
+end
+end
+
+-------------------------------------------------------------------------------------------
+
+function special_arts_effects()
+deadmask_target_effect()
+addon_dialogs.af_brain_effect()
+end
+
+-- Разбивается фонарик: ---------------------------------------------------------------
+function headtorch_broke()
+if math.random()<0.1 then
+	local torch = db.actor:item_in_slot(9)
+	if torch ~= nil then
+		amk.remove_item(torch) --alife():release(torch, true)
+		soundtrack.glass_break()
+		headtorch_broken_think()
+	end
+end
+end
+
+
+function headtorch_broken_think()
+local st = get_hud():GetCustomStatic("headtorch_broken_think") or get_hud():AddCustomStatic("headtorch_broken_think",true)
+	st.m_endTime = time_global()/1000 + 5
+end
+
+
+function quicksave_message()
+	if get_console():get_string("g_hardsave") == "on" then
+		if xr_conditions.actor_in_camp_zone() == true then
+			soundtrack.save_game_replics2()
+		elseif xr_conditions.actor_in_camp_zone() ~= true then
+			--local st = get_hud():GetCustomStatic("no_save_message") or get_hud():AddCustomStatic("no_save_message",true)
+			--st.m_endTime = time_global()/1000 + 5
+			soundtrack.save_game_replics1()
+		end	
+	elseif get_console():get_string("g_hardsave") ~= "on" then
+		local karma = starvation.get_karma()
+		if karma<0.4 then
+			soundtrack.save_game_replics1()
+		else 
+			soundtrack.save_game_replics2()
+		end
+	end
+end
+
+function quicksave_help()
+local st = get_hud():GetCustomStatic("quicksave_message") or get_hud():AddCustomStatic("quicksave_message",true)
+st.m_endTime = time_global()/1000 + 5
+end
+
+
+function small_add_karma()
+	local karma = starvation.get_karma()
+	if karma<0.96 then starvation.add_karma(0.02)
+	end
+end
+
+-- Накладываем постэффект, если критическая совесть: ---------------------------------------------
+
+function too_much_murders_effect()
+local murder = starvation.get_murder()
+	if murder>0.7 then 
+		level.add_pp_effector("radiation.ppe", 2111, false)
+	end
+end
+
+
+-- Быстрое употребление антирада, фляги и пэйнкиллера по F-1-2-3-4: --------------------------------------------
+
+function eat_antirad()
+	local item = db.actor:object("antirad")
+	if item then
+		db.actor:eat(item)
+	end
+end
+
+function eat_flyaga()
+	local item = db.actor:object("flyaga_full")
+	local thirst = starvation.get_thirst()
+	if item and thirst<1.0 then
+		db.actor:eat(item)
+	end
+end
+
+function eat_ibuprophen()
+	local item = db.actor:object("ibuprophen")
+	if item then
+		db.actor:eat(item)
+	end
+end
+
+function eat_vodka()
+	local item = db.actor:object("vodka")
+	if item then
+		db.actor:eat(item)
+	end
+end
+
+function use_doll()
+	local item = db.actor:object("wonder_doll")
+	if item and has_alife_info("wonderdoll_first_talk") and db.actor:alive() then
+		db.actor:eat(item)
+	end
+end
+
+
+-- Кукла периодически нас лечит: --------------------------------------------------------------------------------------
+
+function wonderdoll_healing()
+if db.actor:alive() and db.actor:object("wonder_doll") ~= nil and db.actor:object("medkit") ~= nil and has_alife_info("wonderdoll_first_talk") and db.actor:dont_has_info("wonderdoll_healing") then
+	local hlth = db.actor.health
+	if hlth < 0.2 then
+		db.actor.health = 1.0
+		db.actor:heal_wounds(1.5)
+		addon.remove_items("medkit", 1)
+		soundtrack.wonderdoll_sucess_tip28()
+		xr_effects.give_dolltip1()
+		start_real_timer(15*60, "timer_actions.wonderdoll_healing_action")
+		db.actor:give_info_portion ("wonderdoll_healing")
+	end
+
+end
+end
+
+-- Маска порчи: ------------------------------------------------------------------------------------------------------------
+
+function deadmask_target_effect()
+	if ( inventory.belt["af_deadmask_2"] and db.actor:dont_has_info("deadmask_target") ) then 
+		local target = level.get_target_obj()
+		if ( target and IsStalker(target) and target:alive() 
+			and amk.get_npc_relation(target,db.actor)=="enemy" 
+			and not string.find(target:section(), "^rad_fenix") 
+			and target:position():distance_to(db.actor:position()) < 100 ) then
+				local hit = hit()
+				hit.direction = vector():set(0, 0, 0)
+				hit.impulse = 0
+				hit.draftsman = db.actor
+				hit.power = 10.0
+				hit.type = hit.burn
+				target:hit(hit)
+					local karma = starvation.get_karma()
+					if karma>0.3 then starvation.add_karma(-0.3)
+					end
+				soundtrack.actor_deadmask2use_snd()
+				db.actor:give_info_portion ("deadmask_target")
+				start_game_timer(240*60, "timer_actions.deadmask2timer_action")
+		end
+	end
+end
+
+
+-- Напарник не берёт в руки пси-оружие: -----------------------------------------------------------------------------------
+
+function npc_psy_weapon_fix()
+ local npc = level_object_by_sid(8666)
+ if npc and npc:alive() then
+  local gun = npc:active_item()
+  if gun and ( gun:section() == "wpn_psy" or gun:section() == "wpn_psy_npc" ) then
+   local so = alife():object(gun:id())
+   if so then alife():release( so ) end
+  end
+ end
+end
+
+-- Кукла сообщает нам информацию о цели: ----------------------------------------------------------------------------------
+function wonderdoll_target_check()
+if db.actor:object("wonder_doll") ~= nil then
+	local target = level.get_target_obj()
+	if not target then return end
+	local mob_id = get_clsid (target)
+	local pos = target:position()
+	local tn = target:name() --dbglog("tgt_name>>%s",target:name())
+	if pos:distance_to(db.actor:position()) < 100 then
+		if IsStalker(target) then
+			if ( string.find(tn, "^headhunter1")
+					or string.find(tn, "^headhunter2")
+					or string.find(tn, "^headhunter3")
+					or string.find(tn, "^bridge_anomal_killer1")
+					or string.find(tn, "^bridge_anomal_killer2")
+					or string.find(tn, "^bridge_anomal_killer3")
+					or string.find(tn, "^miln_stranger1")
+					or string.find(tn, "^miln_stranger2")
+					or string.find(tn, "^miln_stranger3")
+					or string.find(tn, "^headhunter4")	) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc2", nil, "doll", 10000)
+						soundtrack.wonderdoll_target_is_npc()
+			end
+
+				if string.find(tn, "^faint_npc1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc3", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^esc_helicrash_survival") or string.find(tn, "^esc_helicrash_survival2") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc4", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^vagon_stranger1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc5", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^stalker_volk") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc6", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^post_soldier10") or string.find(tn, "^post_soldier10_new") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc7", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^stalker_malandrinus") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc8", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^bandit_tirsa") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc9", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^bandit_shusrtila") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc10", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^bandit_abdul") or string.find(tn, "^bar_abdul") or string.find(tn, "^dar_abdul") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc11", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^stalker_sanya") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc12", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^stalker_skidan") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc13", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^hunter_1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc14", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^esc_stalker_izgoy") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc15", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^hunter_3") or string.find(tn, "^hunter_3_scient") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc16", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^redrik") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc17", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^agr_nii_ecolog1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc18", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^ros_rescuer1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc19", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^hunter_6") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc20", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^bar_lost_man") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc21", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^bar_scientist") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc22", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^hunter_5") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc23", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^x18_general_doktor") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc24", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^x18_cattle1") or string.find(tn, "^x18_cattle2") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc25", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^dar_btr_zomb_oficer") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc26", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^dar_suicider_woman") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc27", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^subject_weak_1") or string.find(tn, "^subject_weak_2") or string.find(tn, "^subject_weak_3") or string.find(tn, "^subject_weak_4") or string.find(tn, "^subject_weak_5") or string.find(tn, "^subject_weak_6") or string.find(tn, "^subject_weak_7") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc28", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^hunter_4") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc29", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if ( string.find(tn, "^dar_renegade1") or string.find(tn, "^dar_renegade2") ) then
+						news_manager.send_tip(db.actor, "doll_target_check_npc30", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^stalker_freak") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc31", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^hunter_7") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc32", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^mil_vsu_commander") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc33", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^mil_vsu_sold5") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc34", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^mil_separ_commander") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc35", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^mil_dedok") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc36", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_komandr_agent") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc37", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_village_sold") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc38", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_catwoman") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc39", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_king") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc40", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_marouder1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc41", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_rogue") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc42", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_hermit") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc43", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_trader") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc44", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_kontrabander3") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc45", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_kontrabander4") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc46", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_kontrabander5") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc47", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_courier1") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc48", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^predb_kpp_soldier5") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc49", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^yan_sold_comander") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc50", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^pri_agent_lider") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc51", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+				if string.find(tn, "^aes_last_agent") then
+						news_manager.send_tip(db.actor, "doll_target_check_npc52", nil, "doll", 10000, nil)
+						soundtrack.wonderdoll_target_is_npc()
+				end
+		end -- isstalker
+		
+		if IsMonster(target) then
+			if ( mob_id == clsid.dog_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob1", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.pseudodog_s or mob_id == clsid.psy_dog_s ) and target:section() ~= "ovcharka" then
+				news_manager.send_tip(db.actor, "doll_target_check_mob2", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.zombie_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob3", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.fracture_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob4", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.snork_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob5", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.bloodsucker_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob6", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.chimera_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob7", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.gigant_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob8", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.controller_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob9", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.tushkano_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob10", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.crow_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob11", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if target:section() == "ovcharka" then
+				news_manager.send_tip(db.actor, "doll_target_check_mob12", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.boar_s or mob_id == clsid.flesh_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob13", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.burer_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob14", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+			if ( mob_id == clsid.cat_s ) then
+				news_manager.send_tip(db.actor, "doll_target_check_mob15", nil, "doll", 10000)
+				soundtrack.wonderdoll_target_is_npc()
+			end
+		end
+	else -- distance > 100
+		news_manager.send_tip(db.actor, "doll_target_check_none", nil, "doll", 10000)
+		soundtrack.wonderdoll_target_too_far()
+	end
+end
+end
+
+
+-- Отображение уровня здоровья цели на худе: ---------------------------------------------------------------------
+
+function show_visual_health()
+	local target = level.get_target_obj()
+	local hud = get_hud()
+	hud:RemoveCustomStatic("mob_health1")
+	hud:RemoveCustomStatic("mob_health2")
+	hud:RemoveCustomStatic("mob_health3")
+	hud:RemoveCustomStatic("mob_health4")
+	hud:RemoveCustomStatic("mob_health5")
+	hud:RemoveCustomStatic("stalker_health1")
+	hud:RemoveCustomStatic("stalker_health2")
+	hud:RemoveCustomStatic("stalker_health3")
+	hud:RemoveCustomStatic("stalker_health4")
+	hud:RemoveCustomStatic("stalker_health5")
+	if target and IsStalker(target) and target:position():distance_to(db.actor:position()) < 90 
+	then
+		local stalker_health = target.health
+		if stalker_health > 0.9 then -- здоров
+			hud:AddCustomStatic("stalker_health1",true)
+		elseif stalker_health > 0.6 then -- напуган
+			hud:AddCustomStatic("stalker_health2",true)
+		elseif stalker_health > 0.2 then -- ранен
+			hud:AddCustomStatic("stalker_health3",true)
+		elseif stalker_health > 0 then -- умирает
+			hud:AddCustomStatic("stalker_health4",true)
+		else --if stalker_health == 0 then	--сдох
+			hud:AddCustomStatic("stalker_health5",true)
+		end
+	elseif target and IsMonster(target) 
+		and target:position():distance_to(db.actor:position()) < 110 
+		and get_clsid(target) ~= clsid.poltergeist_s	--	проверка на полтергейста;
+		then
+		local mob_health = target.health
+		if mob_health > 0.9 then -- здоров
+			hud:AddCustomStatic("mob_health1",true)
+		elseif mob_health > 0.6 then -- испуган
+			hud:AddCustomStatic("mob_health2",true)
+		elseif mob_health > 0.2 then --ранен
+			hud:AddCustomStatic("mob_health3",true)
+		elseif mob_health > 0 then --умирает
+			hud:AddCustomStatic("mob_health4",true)
+		else --if mob_health == 0 then -- сдох
+			hud:AddCustomStatic("mob_health5",true) 
+		end
+	end
+end
+
+
+
+function heal_actor_all_body()
+	db.actor:disable_info_portion("actor_damaged_head")
+	db.actor:disable_info_portion("actor_damaged_torso")
+	db.actor:disable_info_portion("actor_damaged_arm")
+	db.actor:disable_info_portion("actor_damaged_leg")
+	db.actor:disable_info_portion("actor_damaged_pelvis")
+end
+
+
+
+
+
+
+
+
+

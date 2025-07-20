@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+client2_military_traveling} sr_idle@2 %=add_self_spot(green_location:client2_mark_text)%
+
+[sr_idle@2]
+on_actor_inside = sr_idle@3 %=send_tip(client2_agent_welcome_tip:stalker)%
+
+[sr_idle@3]
+on_actor_outside = {-client2_agro_traveling -client2_garbage_traveling -client2_darkval_traveling -client2_military_traveling} sr_idle@1 %=garb_client2btr_delete =garb_client2agent_delete =garb_client2guard1delete =garb_client2guard2delete =garb_client2guard3delete =remowe_self_spot(green_location:client2_mark_text) -notebook_client2task1_reward -notebook_client2task2_reward -notebook_client2task3_reward%

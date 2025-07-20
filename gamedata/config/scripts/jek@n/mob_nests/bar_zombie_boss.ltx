@@ -1,0 +1,16 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home
+on_death = mob_death
+
+[mob_home]
+path_home = bar_zombie_boss_nest
+home_min_radius = 3
+home_max_radius = 15
+on_info = {=bar_actor_at_zombboss_see2} %=hit_obj(37:bip01_spine:0:2000) =play_snd_from_obj(8544:monsters\zombie_s\zombie_threaten_1)%
+
+
+[mob_death]
+on_info = nil

@@ -1,0 +1,15 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@1
+on_death = mob_death
+
+[mob_home@1]
+path_home = zapravka_bloodsuckers_point_house
+home_min_radius = 1
+home_max_radius = 4
+
+
+[mob_death]
+on_info = %+dar_zapravka_bloodsucker3_dead%

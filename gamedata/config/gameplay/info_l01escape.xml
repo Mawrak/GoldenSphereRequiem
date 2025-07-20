@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<game_information_portions>
+
+
+
+<info_portion id="turrets_shoot_off">
+	<disable>turrets_shoot_on</disable>
+</info_portion>
+
+ <info_portion id="miksture_drink"></info_portion>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</game_information_portions>

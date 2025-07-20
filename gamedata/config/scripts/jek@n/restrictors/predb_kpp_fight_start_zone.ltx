@@ -1,0 +1,17 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_timer = 6000|sr_idle@2 %+predb_kpp_fight_start =predb_kpp_invulnerable_off%
+
+[sr_idle@2]
+on_timer = 5000|sr_idle@3 %=send_tip(predb_kpp_soldiers_help_tip:army) =play_snd(characters_voice\scenario\predb_kpp_fight_snd_1)%
+
+[sr_idle@3]
+on_timer = 6000|sr_idle@4 %=send_tip(predb_kpp_kontrabanders_help_tip:stalker) =play_snd(characters_voice\scenario\predb_kpp_fight_snd_2)%
+
+[sr_idle@4]
+on_info = {+predb_kpp_soldier1_dead +predb_kpp_soldier2_dead +predb_kpp_soldier3_dead +predb_kpp_soldier4_dead +predb_kpp_soldier5_dead +predb_kpp_soldier6_dead +predb_kpp_soldier7_dead} nil, {+predb_kontrabander6_dead +predb_kontrabander7_dead +predb_kontrabander8_dead} nil
+on_actor_dist_ge_nvis = 250|nil %=predb_kpp_fight_neutral%
+
+

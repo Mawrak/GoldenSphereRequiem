@@ -1,0 +1,2211 @@
+--------- Спавн динамических рандомных аномалий для OGSЕ 0.6.9.х --------------
+      ---- корректировка секторов для OGSE - - KamikaZze & Dusty79 ----
+		--- предопределение типов аномалий по локациям Dusty79 ----
+    --- код спавна артов на месте аномалий KamikaZze, интеграция Dusty79 ----
+	--- Перекомпоновка и реализация удаления аномалий Dusty79 13_10_2009 ---
+					--- Использованы материалы АМК мода ---
+-------------- Copyright 2007-2009 DEXXX, Offbar, KamikaZze, Dusty79 -----------
+
+local list_anom_id = {}
+local list_del_anom_id = {}
+local list_mob_id = {}
+local list_stalk_id = {}
+local lc = {}
+	  lvids_forbidden = {}
+	  position_forbidden = {}
+local anom_to_del_exist = false
+local console = get_console()
+-- local spawn_anom_prob = system_ini():r_s32("options","spawn_anom_prob") -- Коэффициент кол-ва аномалий
+local spawn_anom_prob = 2.0
+local spawn_blow_art_probe = system_ini():r_s32("options","spawn_blow_art_probe") -- Коэффициент вероятности попытки рождения артефакта аномалией в Выброс
+local string_find=string.find
+loc = {
+l01_escape = 1,
+l02_garbage = 2,
+l03_agroprom = 3,
+l04_darkvalley = 4,
+l05_bar = 5,
+l06_rostok = 6,
+l07_military = 7,
+l08_yantar = 8,
+l10_radar = 10,
+l11_pripyat = 11,
+l12_stancia = 12,
+predbannik = 13,
+
+l03u_agr_underground = 0,
+l04u_labx18 = 0,
+l08u_brainlab = 0,
+l10u_bunker = 0,
+l12u_sarcofag = 0,
+l12u_control_monolith = 0,
+l12_stancia_2 = 0
+
+}
+
+local level_anoms = {
+	l01_escape     = { 40, 50},
+	l02_garbage    = { 45, 55},
+	l03_agroprom   = { 45, 55},
+	l04_darkvalley = { 45, 55}, 
+	l05_bar        = {  3,  8},
+	l06_rostok     = { 25, 30},
+	l08_yantar     = { 20, 25},
+	l07_military   = { 45, 55},
+	l10_radar      = { 40, 50},
+	l11_pripyat    = { 35, 40},
+	l12_stancia    = { 50, 60},
+	predbannik    = { 65, 70}
+}
+
+local level_vertexes = {
+-- levels           	|    gvids  | lvids
+l01_escape            = {   0,  251, 595499},
+l02_garbage           = { 252,  415, 382663},
+l03_agroprom          = { 416,  702, 437420},
+l03u_agr_underground  = { 703,  810,      0},
+l04_darkvalley        = { 811, 1108, 390124},
+l04u_labx18           = {1109, 1167,      0},
+l05_bar               = {1168, 1307,  99538},
+l06_rostok            = {1308, 1437,  67712},
+l07_military          = {1545, 1861, 418267},
+l08_yantar            = {1438, 1528, 141470},
+l08u_brainlab         = {1529, 1544,      0},
+l10_radar             = {1862, 2116, 227188},
+l10u_bunker           = {2661, 2791,      0},
+l11_pripyat           = {2117, 2272, 261218},
+l12_stancia           = {2273, 2401, 477922},
+l12_stancia_2         = {2517, 2660,      0},
+l12u_sarcofag         = {2402, 2466,      0},
+l12u_control_monolith = {2467, 2516,      0},
+predbannik 				= {2792, 2953,    1216802}
+}
+
+function chek_exclusion_position(p_vector, lname, psy)
+	if bad_position(p_vector, lname, psy) then return true end
+	if bad_sector(p_vector, lname, psy) then return true end
+	if bad_zone(p_vector, lname, psy) then return true end
+	if lc_protect(p_vector, lname, psy) then return true end
+	if bad_circle(p_vector, lname, psy) then return true end
+	return false
+end
+
+-- Проверяем, попадает ли аномалия рядом с занятой позицией
+function bad_position(p_vector, lname, psy)
+
+	local amendment = 0
+	if psy then
+		amendment = 30
+	end
+
+	local min_dist = 10
+	for k,v in pairs(position_forbidden) do
+		if v then
+			if p_vector:distance_to(v) < (min_dist + amendment) then
+				return true
+			end
+		end
+	end
+	return false
+
+end
+
+local bad_list_sector = {
+-- Кордон --- fixed by KamikaZze
+l01_escape = {
+ x1 = {  -89, -107, -160, 145,  10, -65, 136,  35, 373, -146,  83, -126, 145 },
+ x2 = { -286, -150, -180,  90,  -5, -70, 125,  20, 346, -164,  29, -176, 117 },
+ y1 = { -182, -400, -360, -50, -76, 115, 305, 670, -49, -341, 134, -360, 290 },
+ y2 = { -100, -350, -344,  12, -55, 200, 325, 690, -15, -235, 182, -320, 335 }
+},
+
+-- Свалка --- fixed by KamikaZze
+l02_garbage = {
+ x1 = {   38,  -41,  68,   38, -230, 306,  -36,  125,  120,  -182 },
+ x2 = {   25, -146,  15,   32, -306, 291,  -92,   51,   35,  -272 },
+ y1 = { -271,   -9, 199, -323,  -32, 132, -250, -165,  140,  -177 },
+ y2 = { -258,   29, 262, -289,  -13, 154, -195, -111,  185,  -133 }
+},
+
+-- Темная долина --- fixed by KamikaZze
+l04_darkvalley = {
+ x1 = { -131, -100,  -36,  191, 122,  51,  51, -29, -26, 20,   73,   71 },
+ x2 = { -217, -155,  -53,  96,   82, -12, -33, -73, -32,  8,   35,   40 },
+ y1 = { -211, -532, -547, -301, -20, -91,  25, -23, -22,  5, -249, -225 },
+ y2 = { -175, -455, -536, -200,   8, -16,  50, -18,  25, 17, -208, -179 }
+},
+
+-- Агропром --- fixed by KamikaZze
+l03_agroprom = {
+ x1 = {   67, -188,  -89, 291, 255, -158 },
+ x2 = { -100, -209, -211, 265, 220, -170 },
+ y1 = {  -36,   78, -241,   0, -16,   90 },
+ y2 = {   58,  102, -117,   5,   7,   98 }
+},
+
+-- Дикая территория --- fixed by KamikaZze
+l06_rostok = {
+ x1 = {  37,  -58, -226, -235, -218, -113, -215, -242 },
+ x2 = {   9, -103, -235, -285, -242, -213, -297, -266 },
+ y1 = { 117,  113,  135,   78,   29, -123,  119,    2 },
+ y2 = { 156,  151,  165,  112,   64,  -49,  172,   24 }
+},
+
+-- Армейские склады --- fixed by KamikaZze
+l07_military = {
+ x1 = { -305, -317, -198, -259, -324, -160,  -83, 104, 113, -203, -117,   75, -14, 77,  -2, -186,  92 },
+ x2 = { -322, -347, -233, -277, -386, -195, -105,  85,  87, -247, -146, -141, -60,  0, -10, -202,  12 },
+ y1 = {   55,   37,  185,  234,  371,  350,  207, 300, 160,   31,    7,  -62, -34, 10,   0,   35, 335 },
+ y2 = {   67,   50,  211,  249,  411,  391,  235, 316, 184,   72,   37,  122, -10, 23, 109,   46, 403 }
+},
+
+-- Радар --- fixed by KamikaZze
+l10_radar = {
+ x1 = { 149, 390, 664, 404, 314 },
+ x2 = {  75, 377, 609, 355, 297 },
+ y1 = { -35, 141, 167, -11, -30 },
+ y2 = { -20, 162, 200,  40, -15 }
+},
+
+-- Припять  --- fixed by KamikaZze
+l11_pripyat = {
+ x1 = {   31, 118, 115,  36,  18,   33 },
+ x2 = {   11,  58,  96,  27, -17,  -15 },
+ y1 = { -296,  -2, 110, 280, 191, -307 },
+ y2 = { -266,  33, 159, 301, 210,  -60 }
+}
+}
+
+-- Проверяем, попадает ли аномалия в "bad-сектор"
+function bad_sector(p_vector, lname, psy)
+
+	if not lname then
+		lname = level.name()
+	end
+
+	local amendment = 0
+	if psy then
+		amendment = 30
+	end
+
+	local bad_list = bad_list_sector[lname] or {} --формируется по принципу x1>x2, y2>y1
+
+	if bad_list.x1 and bad_list.x2 and bad_list.y1 and bad_list.y2 then
+		for k,v in pairs(bad_list.x1) do
+			if (p_vector.x >= (bad_list.x2[k]-amendment) and (p_vector.x <= bad_list.x1[k]+amendment)) and (p_vector.z >= (bad_list.y1[k]-amendment) and p_vector.z <= (bad_list.y2[k]+amendment)) then
+				return true
+			end
+		end
+	end
+
+	return false
+
+end
+
+local function inside_zone(obj_position, zone)
+	return obj_position ~= nil and zone ~= nil and zone:inside(obj_position)
+end
+
+local function find_in_bad_zone(p_vector,amendment,x1,x2,y1,y2,z1,z2)
+	if (p_vector.x >= (x1-amendment) and p_vector.x <= (x2+amendment)) and (p_vector.z >= (y1-amendment) and p_vector.z <= (y2+amendment)) and (p_vector.y >= (z1-amendment)) and (p_vector.y <= (z2+amendment)) then
+		return 1
+	end
+	return 0
+end
+
+-- Проверяем, попадает ли аномалия в "bad-зону"
+function bad_zone(p_vector, lname, psy)
+
+if not lname then
+	lname = level.name()
+end
+
+local amendment = 0
+if psy then
+	amendment = 30
+end
+
+local function find_in_zone(...)
+	find_in_bad_zone(p_vector,amendment,...)
+--end
+	if lname == "l01_escape" then
+		if find_in_zone(-211,-198,-132,-125,-23,-20) == 1 or		-- Подвал 1 в лагере новичков
+		   find_in_zone(-256,-246,-137,-132,-25,-20) == 1 or		-- Бункер Сидора
+		   find_in_zone(20,35,673,688,15,20) == 1 or				-- Домик при выходе на Свалку -- добавил KamikaZze
+		   find_in_zone(-216,-209,-133,-120,-24,-20) == 1 then		-- Подвал 2 в лагере новичков
+			return true
+		end
+	end
+
+	if lname == "l02_garbage" then
+		if find_in_zone(38,49,232,247,0,5) == 1 or 					-- вагончик Долга на Свалке -- добавил KamikaZze
+		   find_in_zone(-112,-57,-6,25,-9,90) == 1 then				-- Ангар на Свалке
+			return true
+		end
+	end
+
+	if lname == "l03_agroprom" then
+		if find_in_zone(-198.31,-195.66,85.4,96.54,2,5.3) == 1 then	-- Вагон дезертира
+			return true
+		end
+	end
+
+	if lname == "l04_darkvalley" then
+		if find_in_zone(30,50,-60,-25,-4,0) == 1 then				-- Тюрьма в Темной долине
+			return true
+		end
+	end
+
+	if lname == "l05_bar" then
+		if find_in_zone(123,140,18,30,-6,0) == 1 or 				-- Бар
+		   find_in_zone(118,121,34,41,-4,1) == 1 or					-- Охранник Бара
+		   find_in_zone(206,213,50,68,0,4) == 1 or 					-- Магазин Петренко
+		   find_in_zone(149,158,67,74,0,4) == 1 or 					-- Приемная Арни
+		   find_in_zone(136,168,73,134,-22,-10) == 1 or				-- Арена
+		   find_in_zone(208,234,120,139,-6,2) == 1 then				-- База Долга
+			return true
+		end
+	end
+
+	if lname == "l06_rostok" then
+		if find_in_zone(-90,-87,125,151,0,6) == 1 or				-- Блокпост наемников
+		   find_in_zone(-285,-235,78,112,-7,0) == 1 then			-- Тоннель Фримена
+			return true
+		end
+	end
+
+	if lname == "l07_military" then
+		if find_in_zone(-27,-16,-33,-14,-9,0) == 1 then 			-- База Свободы
+			return true
+		end
+	end
+
+	if lname == "l08_yantar" then
+		if find_in_zone(23,40,-282,-269,-16,0) == 1 or				-- Бункер ученых
+		   find_in_zone(116,133,-192,-127,-10,-4) == 1 or			-- Янтарь, глубь тоннеля -- добавил KamikaZze
+		   find_in_zone(177,179,-105,-102,-8,-4) == 1 or			-- Янтарь, автобус -- добавил KamikaZze			
+		   find_in_zone(-265,-22,-218,-6,-20,-11) == 1 then			-- Кишка
+			return true
+		end
+	end
+
+	if lname == "l10_radar" then
+		if find_in_zone(639,664,167,189,-45,-37) == 1 or			-- Секретная база Монолита
+		   find_in_zone(-33,-26,-53,-43,-1,4) == 1 or 				-- Радар, домик торговца -- добавил KamikaZze
+		   find_in_zone(-18,-7,-70,-39,-1,4) == 1 or 				-- Радар, здание с дырой в крыше -- добавил KamikaZze			
+		   find_in_zone(86.73,153,-27,-21.70,-10,-4.6) == 1 then	-- Вход в бункер
+			return true
+		end
+	end
+
+	if lname == "l11_pripyat" then
+		if find_in_zone(-18,-12,58,82,-6,-3) == 1 or 				-- Подземный переход
+		   find_in_zone(167,173,58,83,-6,-3) == 1 or 				-- Подземный переход
+		   find_in_zone(-16,-2,188,204,-5,0) == 1 or				-- Подвал ДК
+		   find_in_zone(-24,55,116,122,-4,0) == 1 then				-- Канализация
+			return true
+		end
+	end
+	
+	end
+
+	--for k,v in pairs(ogsm_respawn.restrictor_list) do
+	--	local obj = level.object_by_id(v.id)
+	--	if obj and inside_zone(p_vector, obj) then
+	--		return true
+	--	end
+	--end
+
+	return false
+
+end
+
+local bad_circle_list = {
+-- Кордон ---
+l01_escape = {
+			{vector():set( 313.16,   3.70, 116.90), 15},	-- лагерь "в поле"
+			{vector():set(-156.70, -29.60,-369.30),200},	-- армейский кордон
+			{vector():set(  20.72,  15.95, 668.35), 45},	-- заброшенный кордон
+			{vector():set(  162.58,  8.85, 68.50), 20},		-- район вокруг Обелиска
+			{vector():set(  311.82,3.78,115.06), 20},		-- лагерь хедхантеров за горбом
+			{vector():set(  2.55,-18.25,-161.43), 20},		-- заброшенный научный лагерь
+			{vector():set(  -242.65,-8.14,-65.35), 20},		-- район охоты на первого кровососа
+			{vector():set(  134.47,0.21,339.73), 20},		-- Убежище Андрея
+			{vector():set(  210.27,2.03,322.07), 20},		-- Упавший в электры вертолёт
+			{vector():set(  135.00,11.84,230.64), 10},		-- Жигули Лесника на горбе за мостом
+			{vector():set(27.28,1.19,24.76), 15},			-- Пост хедхантеров №1
+			{vector():set(-99.59,-4.53,-103.60), 15},		-- Пост хедхантеров №2
+			{vector():set(32.28,0.20,-74.16), 15},			-- Пост хедхантеров №3
+			{vector():set(-243.69,-14.35,-17.47), 10},		-- Аномальная зона
+			{vector():set(45.31,-10.85,-33.62), 7},		-- Турист в "Студне"
+			{vector():set(-4.71,0.32,6.70), 10},			-- Сгоревший БТР
+			{vector():set(-32.93,-6.91,1.71), 5},			-- Рация рядом со сгоревшим БТР-ом
+			{vector():set(308.34,14.85,273.36), 5},		-- Позиция сдуревшего новичка с арбалетом
+			{vector():set(-230.56,-28.09,-221.08), 25},		-- место охоты на ночного кровососа
+			{vector():set(-163.34,-22.58,-207.79), 10},		-- место появления выжившего Овраха
+			{vector():set(119.51,1.95,469.29), 20},		-- путь следования Андрея и майора на КПП
+			{vector():set(83.37,8.94,607.35), 20},		-- путь следования Андрея и майора на КПП
+			{vector():set(18.34,3.28,89.94), 10},		-- место внутри мельницы, где исчезают трое неизвестных
+			{vector():set(57.37,-1.27,32.48), 7},		-- место появления киллеров, идущих к мосту
+			{vector():set(-176.26,-6.14,-39.53), 5},		-- тело без сознания
+			{vector():set(-40.35,-10.25,-73.43), 10},		-- место охоты на пищевого кабана
+			{vector():set(183.32,-8.06,-1.70), 8},		-- вещи исчезнувшего на дороге
+			{vector():set(6.41,2.38,63.72), 10},		-- мельница с зомбями
+			{vector():set(  2.07,  4.10, 124.55), 20}		-- лежка Волка рядом с мельницей
+			},
+
+-- Свалка ---
+l02_garbage = {
+			{vector():set( -16.76,   0.54, 284.90), 10},	-- точка перехода
+			{vector():set(-282.50,   3.29, -24.80), 10},	-- точка перехода
+			{vector():set(-225.36,  -8.24,-139.30), 35},	-- лагерь за кладбищем техники
+			{vector():set(  15.16,   0.40, -14.70), 15},	-- автобусная остановка напротив ангара
+			{vector():set(  31.69,   0.48,-263.05), 25},	-- сценка с Юриком
+			{vector():set(  36.45,   0.48,-305.70), 10},	-- точка перехода
+			{vector():set(-183.00,   0.00,-160.00), 20},	-- старт квестовых бандитов за кладбищем техники
+			{vector():set(-100.00,   0.00,-204.00), 10},	-- наблюдатель с биноклем, пасущий бандитов
+			{vector():set(275.70,-7.47,1.67), 25},		-- Бак с "Роем" в овражке у дерева
+			{vector():set(69.55,1.09,99.32), 20},		-- Убегающий телепорт меж 2 резервуаров
+			{vector():set(-184.61,-3.55,109.21), 15},		-- Экскаватор с "Душами" погибших
+			{vector():set(-47.20,-0.80,-35.11), 15},		-- Запорожец с "Роем"
+			{vector():set(82.18,-0.56,-55.84), 10},		-- Хлюст и его артефакт
+			{vector():set(230.96,-1.22,-202.26), 20},		-- Место базирования БТР-а и Мосола
+			{vector():set(231.26,-3.15,-26.25), 15},		-- Место базирования Нивы и учёного-посыльного от Пильмана
+			{vector():set(156.79,-1.03,-178.19), 10},		-- Гнездо псевдособак на опушке леска
+			{vector():set(-185.88,4.00,-65.10), 15},		-- Пост хедхантеров №1
+			{vector():set(-137.36,0.40,80.11), 15},			-- Пост хедхантеров №2
+			{vector():set(72.91,-0.02,-52.39), 15},			-- Пост хедхантеров №3
+			{vector():set(-39.08,20.25,105.41), 10},			-- Аномальная зона
+			{vector():set(-267.88,0.40,-14.52), 15},			-- У перехода на Агро(колонна техники)
+			{vector():set(-193.20,0.58,9.24), 10},			-- вход в ж\д туннель
+			{vector():set(-125.88,-0.62,207.73), 25},			-- Захоронение 335
+			{vector():set(-240.49,-3.36,95.33), 20},			-- Братская могила ликвидаторов
+			{vector():set(10.67,0.49,-192.75), 6},			-- Разбитый автомобиль у кладбища техники
+			{vector():set(183.84,-1.56,-113.33), 10},			-- место стрелки с Тырсой1
+			{vector():set(151.79,6.02,-75.32), 10},			-- место стрелки с Тырсой2
+			{vector():set(132.40,-3.01,267.54), 20},			-- место содержания пленников
+			{vector():set(48.07,0.40,-61.43), 20},			-- стадо собак у дороги
+			{vector():set(-5.15,0.40,51.46), 20},			-- стадо тушканов у дороги
+			{vector():set(14.96,0.46,236.51), 30},			-- сломанный БТР у перехода в Бар
+			{vector():set( -82.00,   0.00,-208.00), 40}		-- Бес, поле боя с бандитами
+			},
+
+-- Агропром ---
+l03_agroprom = {
+			{vector():set(  76.33,  -0.05,  33.20), 20}, 	-- место боя нейтралов с солдатнёй
+			{vector():set(  -28.45,-0.63,-177.25), 10}, 	-- убежище местного разведчика
+			{vector():set(  -112.51,0.49,-28.95), 15}, 	-- "мухи-воры" у прицепа на дороге
+			{vector():set(  -61.34,-0.02,-1.51), 10}, 	-- позиция Юрия перед входом в подземку
+			{vector():set(  -160.43,0.03,-305.09), 15}, 	-- место базирования агентов Нунана
+			{vector():set(  4.95,19.49,203.14), 15}, 	-- место базирования агентов Пильмана
+			{vector():set(116.53,2.47,-173.58), 23},			-- Захоронение 
+			{vector():set(-82.09,10.69,-109.56), 15},			-- Машина Камеррера
+			{vector():set(90.14,10.30,186.10), 5},			-- Зона Маски
+			{vector():set( 173.50,   0.30,   6.70), 10}		-- точка возврата после облёта камеры
+			},
+
+-- Темная долина ---
+l04_darkvalley = {
+			{vector():set(  -9.36,   6.80,  98.10), 10},	-- точка перехода
+			{vector():set(  39.32,   1.62,  -215.90), 15},	-- вагончик разведчика
+			{vector():set(30.82,0.00,-240.85), 4},		-- место приземления вертолетов
+			{vector():set(135.45,0.21,-14.85), 10},		-- путь девушки с заправки 1
+			{vector():set(136.20,0.25,-71.45), 8},		-- путь девушки с заправки 2
+			{vector():set(161.19,-4.71,-76.35), 10},		-- путь девушки с заправки 3
+			{vector():set(156.80,-3.32,-120.91), 10},		-- путь девушки с заправки 4
+			{vector():set(-118.90,0.03,-450.20), 10},		-- ренегаты у забора фермы
+			{vector():set(-139.04,-1.00,-304.81), 18},		-- БТР с зомбированными военными у утёса
+			{vector():set(116.50,4.37,-423.19), 15},		-- палатка Ворпала у холма
+			{vector():set(-94.89,2.35,-320.78), 15},		-- место спавна химер, нападающих на БТР
+			{vector():set(146.05,4.02,-467.36), 20},		-- Аномалия "Три сосны"
+			{vector():set(142.83,0.45,-201.11), 15},		-- Старый вагончик у фабрики
+			{vector():set(91.14,2.01,-507.77), 15},		-- место базирования Мосола
+			{vector():set(-163.66,0.27,-379.88), 15},		-- место базирования агента Пильмана
+			{vector():set(54.18,0.04,-220.99), 15},		-- место приземления Хью
+			{vector():set(-217.17,   2.00,-183.55), 10}		-- точка перехода
+			},
+
+-- Бар ---
+l05_bar = 	{
+			{vector():set( 389.00,  11.23,-419.00), 10},	-- точка перехода
+			{vector():set( -30.30,  -6.45, 380.60), 10},	-- точка перехода
+			{vector():set(  48.00,  -0.20, 142.00), 20},	-- точка перехода
+			{vector():set(  391.25,12.91,-349.33), 30},	-- аномальный автобус
+			{vector():set(  306.50,3.35,-146.17), 20},	-- труп вояки и рация
+			{vector():set(  388.38,19.11,-272.04), 30},	-- место боя со снорками у бензовоза
+			{vector():set( 160.00,   0.00, 100.00),150}		-- территория
+			},
+
+-- Дикая территория ---
+l06_rostok = {
+			{vector():set(-162.27, -11.08,-345.90), 10},	-- точка перехода
+			{vector():set(  34.96,  -0.57, 139.10), 10},	-- точка перехода
+			{vector():set(-280.60,   0.00,  97.70), 10},	-- точка перехода
+			{vector():set( -27.35,   0.00, 141.50), 30},	-- пост долговцев на ДТ
+			{vector():set(-242.20,   4.00,  50.20), 30},	-- стройка наёмников
+--			{vector():set(-106.80,   1.40, 135.50), 20},	-- бульдозер
+			{vector():set(-236.37,   0.00,  -9.50), 10}		-- дозорный одиночка (после X-10)
+			},
+
+-- Армейские склады ---
+l07_military = 	{
+			{vector():set(  99.65,  -0.30, 304.30), 35},	-- лагерь у Барьера
+			{vector():set(  -37.07,  -10.98, 201.96), 35},	-- Гравитационная аномалия
+			{vector():set(  -215.42,  -12.65, 46.83), 30},	-- хутор ВСУ
+			{vector():set(  -176.82,  -15.58, 375.63), 25},	-- хутор сепаров
+			{vector():set(  -365.70,  -16.12, 396.63), 25},	-- блокпост на МГ
+			{vector():set(  -17.91,  -17.44, 163.47), 5},	-- путь Абдуля к барьеру
+			{vector():set(  -60.92,  -16.78, 171.51), 5},	-- путь Абдуля к барьеру
+			{vector():set(  -149.95,  -20.04, 112.99), 5},	-- путь Абдуля к барьеру
+			{vector():set(  -250.89,  -23.62, 103.39), 5},	-- путь Абдуля к барьеру
+			{vector():set(  -204.52,  4.09, 443.17), 15},	-- разведчик на дереве
+			{vector():set(  98.62,0.00,302.43), 20},	-- гнездо мутантов
+			{vector():set(  -112.84,-19.32,295.42), 20},	-- гнездо мутантов
+			{vector():set(  -91.25,-20.32,230.33), 20},	-- гнездо мутантов
+			{vector():set(  107.73,-11.36,231.64), 20},	-- гнездо мутантов
+			{vector():set(  -112.84,-19.32,295.42), 20},	-- гнездо мутантов
+			{vector():set(  -74.45,-19.36,159.11), 20},	-- гнездо мутантов
+			{vector():set(  -141.80,-20.91,127.72), 10},	-- остановка
+			{vector():set(  -188.71,-10.58,135.57), 10},	-- путь Чехова
+			{vector():set(  -108.48,-19.14,260.26), 15},	-- место сброса груза с вертолета и Хью
+			{vector():set(  -172.68,-3.02,-7.01), 15},	-- учёные на Ниве
+			{vector():set(  -74.04,-8.55,405.42), 15},	-- торгаш и вояки на БТР-е
+			{vector():set(  -65.91,-15.88,238.85), 20},	-- убежище разведчика
+			{vector():set(-269.26, -18.10,  236.12), 90}		-- деревенька
+			},
+
+-- Янтарь ---
+l08_yantar = {
+			{vector():set( 255.40,   6.70,-281.00), 10},	-- точка перехода
+			{vector():set( -66.65,  -0.50,-353.40), 10},	-- точка перехода
+			{vector():set( 161.65,  -7.70, -96.70), 20},	-- лагерь у автобуса
+			{vector():set(  31.55, -11.70,-272.40), 30},	-- лагерь экологов
+			{vector():set(  144.22,   -2.10,69.84), 15},	-- заброшенный лагерь у камаза
+			{vector():set( 3.26,   0.77, -164.70), 20},	-- лазутчик бюреров
+			{vector():set( 18.04,   1.12, -166.52), 30},	-- место охоты на лазутчика бюреров
+			{vector():set( 128.24,-1.92,45.00), 10},	-- призраки у камаза
+			{vector():set( 118.48,   2.27, -29.08), 10},	-- место выхода на связь с Егоровым
+			{vector():set( 145.30,   -2.08, 68.08), 16},	-- затерянный лагерь разведчика
+			{vector():set( 46.11,   0.68, -130.84), 10},	-- аномальная зона
+			{vector():set( -46.07,   -13.60, -264.67), 10},	-- район замеров на болоте
+			{vector():set( 42.32,   0.30, -12.39), 60},	-- вся территория завода
+			{vector():set( 29.98,   -11.64, -276.19), 40},	-- бункер учёных и двор
+			{vector():set( 122.47,   0.73, -184.75), 8},	-- сгоревший джип на дороге
+			{vector():set( 90.80,   1.60, -137.16), 8},	-- вход в трансформаторную будку
+			{vector():set( -86.29,   -15.43, -198.58), 10},	-- подземный коллектор
+			{vector():set( -25.70,   0.80, -10.30), 10}		-- точка перехода
+			},
+
+-- Радар ---
+l10_radar = {
+			{vector():set( 266.80, -40.00,  64.50),  5},	-- точка на подъёме к антенному комплексу
+			{vector():set( 251.20, -35.85,  69.50),  5},	-- точка на подъёме к антенному комплексу
+			{vector():set( 238.30, -28.45,  85.60),  5},	-- точка на подъёме к антенному комплексу
+			{vector():set( 197.80, -13.00,  84.85), 15},	-- пост на подъёме к антенному комплексу
+			{vector():set( 140.55,  -4.35,  34.40), 15},	-- пост на подъёме к антенному комплексу
+			{vector():set( 279.00, -42.40,  57.70), 15},	-- костёр на подъёме к антенному комплексу
+			{vector():set( 187.40, -12.05,  81.50), 15},	-- костёр на подъёме к антенному комплексу
+			{vector():set( 107.55,   0.35,  28.10), 20},	-- костёр после подъёма к антенному комплексу
+			{vector():set( 101.10,   0.65, -46.80), 15},	-- дерево на заборе антенного комплекса
+			{vector():set( 355.18,   -47.30, -189.71), 20},	-- вертушка в лесу
+			{vector():set( 351.06,   -50.17, -234.54), 15},	-- место спавна Феникса 1
+			{vector():set( 403.24,-50.34,-207.48), 10},	-- место спавна Феникса 2
+			{vector():set( 325.61,-47.36,-166.41), 10},	-- место спавна Феникса 3
+			{vector():set( 607.67,-51.98,-316.83), 20},	-- КПП на входе
+			{vector():set( 538.06,-54.50,-88.17), 5},	-- тело в лесу
+			{vector():set( 515.16,-50.10,-127.57), 5},	-- тело в лесу
+			{vector():set( 59.77,-3.84,-47.36), 35},	-- территория Антенн
+			{vector():set( 524.02,-49.86,-122.39), 15},	-- нычка с ПДА экспедиции
+			{vector():set( 288.24,-51.03,-68.00), 15},	-- нычка с ПДА экспедиции
+			{vector():set( 633.69,-61.64,-190.18), 15},	-- нычка с ПДА экспедиции
+			
+			{vector():set(   8.05,  -0.30, -71.50), 20}		-- вход на территорию антенного комплекса
+			},
+			
+-- Припять ---
+l11_pripyat = {
+			{vector():set( -112.88, -2.19,  63.97),  10},	-- место спавна кровосаса возле автостанции
+			{vector():set( -19.19,12.44,-176.70),  9},	-- позиция снайпера-убийцы Абдуля
+			{vector():set( 120.13, -0.94,  -22.11),  45},	-- детсад
+			{vector():set( -58.79, -0.71,  9.09),  25},	-- площадка с прыгающим мячом
+			{vector():set( -112.02, -2.23,  21.10),  40},	-- помещение автовокзала
+			{vector():set( -6.96, 2.80,  200.86),  40},	-- помещение актового зала
+			{vector():set( -67.34, 3.00,  190.01),  20},	-- место встречи с Апостолом
+			{vector():set( 31.21, 1.06,  268.89),  10},	-- вход на стадион
+			
+			{vector():set(   4.42,  -2.60, -189.41), 10}		-- место смерти Абдуля
+			},
+			
+-- ЧАЭС-1 ---
+l12_stancia = {
+			{vector():set( 959.23, 0.00,  -364.73),  100},	-- островок безопасности перед мостом;
+			{vector():set( 1012.27, 0.00,  45.69),  10},	-- агент 2
+			{vector():set( 581.97, 0.10,  -10.91),  10},	-- агент 3
+			{vector():set( 273.27, 0.40,  -218.41),  10},	-- агент 4
+			{vector():set( 922.28, 0.40,  -243.11),  10},	-- агент 1
+			{vector():set( 851.23, -0.10,  -61.44),  10},	-- островок безопасности(3 вагончика)
+			{vector():set( 976.88, -0.40,  -92.75),  150},	-- первый сектор двора(где вихри)
+						
+			{vector():set(   387.41,  0.15, -4.36), 10}		-- вход в станцию
+			},
+			
+			
+-- Окраина ---
+predbannik = {
+			{vector():set( -44.69, 1.54,  354.35),  55},	-- хуторок контрабандистов
+			{vector():set( -214.31, 17.91,  246.78),  10},	-- вход в пещеру
+			{vector():set( -552.11, 14.53,  277.76),  25},	-- блокпост зона 1
+			{vector():set( -556.86, 14.23,  326.10),  30},	-- блокпост зона 2
+			{vector():set( -504.18, 0.06,  -151.02),  80},	-- пожарная часть
+			{vector():set( -223.94, 28.01,  -153.08),  50},	-- военная часть на холме зона 1
+			{vector():set( -279.83, 27.83,  -166.45),  50},	-- военная часть на холме зона 2
+			{vector():set( -44.37, -3.25,  -258.60),  40},	-- фабрика
+			{vector():set( -216.92,10.29,356.04),  15},	-- лагерь мутантов
+			{vector():set( -219.40,31.84,281.27),  15},	-- лагерь мутантов
+			{vector():set( -164.93,24.34,272.22),  15},	-- лагерь мутантов
+			{vector():set( -299.29,3.18,296.28),  15},	-- лагерь мутантов
+			{vector():set( -361.24,-3.48,360.70),  15},	-- лагерь мутантов
+			{vector():set( -187.48,28.74,297.06),  15},	-- лагерь мутантов
+			{vector():set( -246.76,0.92,417.41),  15},	-- лагерь мутантов
+			{vector():set( -421.20,14.64,265.67),  15},	-- лагерь мутантов
+			{vector():set( -451.951,37.87,172.14),  15},	-- лагерь мутантов
+			{vector():set( -304.94,0.76,125.89),  15},	-- лагерь мутантов
+			{vector():set( -244.99,1.32,88.66),  15},	-- лагерь мутантов
+			{vector():set( -198.51,16.92,178.56),  15},	-- лагерь мутантов
+			{vector():set( -109.53,10.40,105.08),  15},	-- лагерь мутантов
+			{vector():set( -40.93,13.31,137.50),  15},	-- лагерь мутантов
+			{vector():set( 97.82,14.76,130.65),  15},	-- лагерь мутантов
+			{vector():set( 141.36,17.31,56.86),  15},	-- лагерь мутантов
+			{vector():set( 151.66,20.55,-55.48),  15},	-- лагерь мутантов
+			{vector():set( 32.90,8.70,-68.82),  15},	-- лагерь мутантов
+			{vector():set( 3.38,9.19,-67.56),  15},	-- лагерь мутантов
+			{vector():set( 32.45,-3.02,-2.68),  15},	-- лагерь мутантов
+			{vector():set( -39.99,2.42,-4.89),  15},	-- лагерь мутантов
+			{vector():set( 53.03,2.69,59.02),  15},	-- лагерь мутантов
+			{vector():set( 82.19,4.51,-46.52),  15},	-- лагерь мутантов
+			{vector():set( 82.94,13.75,55.52),  15},	-- лагерь мутантов
+			{vector():set( -49.96,9.89,-81.17),  15},	-- лагерь мутантов
+			{vector():set( -91.32,11.26,-188.59),  15},	-- лагерь мутантов
+			{vector():set( -125.85,-1.16,-314.14),  15},	-- лагерь мутантов
+			{vector():set( -49.90,-3.20,-283.00),  15},	-- лагерь мутантов
+			{vector():set( 1.08,-4.06,-280.76),  15},	-- лагерь мутантов
+			{vector():set( 82.30,-19.73,-261.81),  15},	-- лагерь мутантов
+			{vector():set( 100.52,-21.88,-278.98),  15},	-- лагерь мутантов
+			{vector():set( -20.39,-2.79,-261.95),  15},	-- лагерь мутантов
+			{vector():set( -450.50,-8.16,-291.38),  15},	-- лагерь мутантов
+			{vector():set( -569.10,-13.71,-287.24),  15},	-- лагерь мутантов
+			{vector():set( -530.55,2.55,-99.22),  15},	-- лагерь мутантов
+			{vector():set( -436.94,14.28,-32.69),  15},	-- лагерь мутантов
+			{vector():set( -564.94,28.44,-15.62),  15},	-- лагерь мутантов
+			{vector():set( -547.46,19.81,85.69),  15},	-- лагерь мутантов
+			{vector():set( 113.37,-8.35,386.91),  15},	-- лагерь мутантов
+			{vector():set( -109.87,16.55,-136.51),  15},	-- лагерь мутантов
+			{vector():set( -339.80,9.06,21.63),  15},	-- лагерь мутантов
+			{vector():set( -204.83,3.75,406.61),  15},	-- лагерь мутантов
+			{vector():set( 109.69,-15.76,-253.13),  15},	-- лагерь мутантов
+			{vector():set( -153.08,26.59,286.08),  15},	-- лагерь мутантов
+			{vector():set( -417.38,30.43,81.05),  15},	-- лагерь мутантов
+			
+			{vector():set( -192.48,7.28,-298.99),  10},	-- место спавна агентов
+			{vector():set( -175.27,2.46,108.72),  10},	-- место спавна агентов
+			{vector():set( -506.14,18.13,104.85),  10},	-- место спавна агентов
+			{vector():set( -324.74,-6.31,348.77),  10},	-- место спавна агентов
+			{vector():set( -563.61,13.95,216.63),  20},	-- место штурма кпп контрабандистами
+			{vector():set( 126.71,16.42,312.80),  30},	-- тело Зуба
+			{vector():set( -266.10,16.30,235.21),  70},	-- пещера
+			{vector():set( -347.78,12.40,146.66),  5},	-- Зона Маски
+			{vector():set( 17.23,-3.38,-84.91),  10},	-- место спавна секретного арта
+			{vector():set( -51.07,9.10,-59.90),  40},	-- аномальное поле в деревне
+			
+			{vector():set( 126.53,15.60,-93.33),  5},	-- тело Понзыля
+			{vector():set( 119.95,16.90,101.24),  5},	-- тело 4
+			{vector():set( -97.23,16.90,-162.52),  5},	-- тело 5
+			{vector():set( 112.39,-17.20,-261.18),  5},	-- тело 6
+			{vector():set( -445.61,-7.40,-277.78),  5},	-- тело 7	
+			{vector():set( -600.45,7.50,-63.10),  5},	-- тело 8
+			{vector():set( -424.88,24.60,-1.29),  5},	-- тело 9	
+			{vector():set( -236.59,3.20,115.25),  5},	-- тело 10
+			{vector():set( -257.45,7.70,374.97),  5},	-- тело 11
+			{vector():set( -457.20,24.30,122.01),  5},	-- тело 12
+			{vector():set( 82.91,39.20,233.08),  5},	-- тело 13
+			{vector():set( -443.04,-0.50,-192.69),  5},	-- тело 14
+			{vector():set( -290.38,18.90,-15.05),  5},	-- тело 15
+			{vector():set( -25.24,2.70,1.09),  20},	-- стая квестовых кабанов в деревне
+			{vector():set( -470.10,-3.72,-228.70),  25},	-- летающий телепорт на вышку
+			{vector():set( 53.93,17.50,-171.04),  10},	-- лагерь на холме1
+			{vector():set( -552.70,27.60,-14.79),  10},	-- лагерь на холме2
+			{vector():set( 142.66,24.99,-168.50),  20},	-- трон Короля
+			{vector():set( -184.99,1.68,105.86),  20},	-- логово Кошки
+			{vector():set( 4.00,33.60,222.58),  12},	-- разбитая вертушка на холме
+			{vector():set( 82.64,9.97,463.47),  15},	-- дружественный излом с сейфом
+			{vector():set( -456.65,17.03,277.45),  8},	-- разведчик Саня
+			{vector():set( -47.34,17.86,175.77),  10},	-- тайный лагерь контрабандистов
+
+			{vector():set(   8.05,  -0.30, -71.50), 1}		-- вход на территорию антенного комплекса
+			}
+			
+}
+
+
+function iskateli() -- добавляем в исключения местозалегание трупов искателей
+end
+
+function bad_circle(p_vector, lname, psy)
+	if not lname then
+		lname = level.name()
+	end
+
+	local amendment = 0
+	if psy then
+		amendment = 30
+	end
+
+	local bad_list = bad_circle_list[lname] or {}
+
+	for k, v in pairs(bad_list) do
+		if v then
+			if p_vector:distance_to(v[1]) <= (v[2]+amendment) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function lc_protect(p_vector, lname, psy)
+	if not lname then
+		lname = level.name()
+	end
+
+	local amendment = 0
+	if psy then
+		amendment = 30
+	end
+
+	local bad_list = lc[lname] or {}
+
+	for k, v in pairs(bad_list) do
+		if v then
+			if p_vector:distance_to(v) <= (10+amendment) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+
+-- Ищем точки входа на локации
+function lc_collect(lname)
+	lc = {}
+	local sim = alife()
+	for a = 1, 65534 do
+	local sobj = sim:object(a)
+		if sobj then
+			local obj_sect = sobj:section_name()
+			if string_find(obj_sect, "^level_changer") then
+-- amk.logf("Обрабатывается переход.")
+				local sobj_id = sobj.id
+				-- local lc_params = m_net_utils.get_lc_data(sobj)
+				local pk = get_netpk(sobj)
+				local lc_params = pk:get()
+				local lc_dest_gvid = lc_params.dest_game_vertex_id
+				local dest_lname = sim:level_name(game_graph():vertex(lc_dest_gvid):level_id())
+-- amk.logf("Локация назначения: " .. dest_lname)
+				if dest_lname == lname then
+					if lc[lname] == nil then
+						lc[lname] = {}
+					end
+					lc[lname][sobj_id] = lc_params.dest_position
+-- amk.logf("На текущей локации найден вход.")
+				end
+			end
+		end
+	end
+end
+
+
+-- Проверяем исключения локаций
+function chek_exclusion_location(lname)
+
+if not lname then
+	lname = level.name()
+end
+
+if lname == "l03u_agr_underground" or
+	lname == "l04u_labx18" or
+--	lname == "l05_bar" or
+--	(lname == "l06_rostok" and not has_alife_info("bar_rescue_research_done") and not has_alife_info("bar_rescue_research_fail")) or
+--	(lname == "l08_yantar" and not has_alife_info("yan_find_scientist_done") and not has_alife_info("yan_scientist_die") and not has_alife_info("yan_scientist_return_to_bunker")) or
+	lname == "l08u_brainlab" or
+	lname == "l10u_bunker" or
+--	lname == "l12_stancia" or 
+	lname == "l12u_sarcofag" or
+	lname == "l12u_control_monolith" or
+	lname == "l12_stancia_2" then
+
+	return true
+end
+
+return false
+
+end
+
+
+-- Проверяем исключения обрабатываемых аномалий
+function chek_exclusion_anomaly(id)
+
+local sobj = alife():object(id)
+if sobj then
+	local name_anom = sobj:name()
+	if string_find(name_anom,"^noartf_") then amk.logf("find_anom_noart="..name_anom) return true end
+	if string_find(name_anom,"^handmade_") then amk.logf("find_handmade="..name_anom) return true end
+	local sect = sobj:section_name() .. name_anom
+	if
+	
+-- общие
+	   not string_find(sect,"tutorial") and
+	   not string_find(sect,"ameba") and
+	   not string_find(sect,"hvatalka") and
+	   not string_find(sect,"liana") and
+	   not string_find(sect,"zone_clouds_bad") and
+	   not string_find(sect,"zone_fog") and
+	   not string_find(sect,"zone_tornado_mini") and
+	   not string_find(sect,"teleport") and
+	   not string_find(sect,"no_gravity") and
+	   not string_find(sect,"burning_fuzz") and
+	   not string_find(sect,"rusty_hair") and
+	   not string_find(sect,"radioactive") and
+	   not string_find(sect,"tesla_zone") and
+	   not string_find(sect,"mincer_zone") and
+	   not string_find(sect,"deadly_wind_zone") and
+	   not string_find(sect,"zone_flame") and
+	   not string_find(sect,"^noartf_") and
+	   not string_find(sect,"^zone_flame_small") and
+	   not string_find(sect,"zone_campfire_grill") and
+	   not string_find(sect,"zone_zhar") and
+	   not string_find(sect,"zone_flame_small") and
+
+-- Кордон
+	   not (name_anom == "esc_zone_witches_galantine" or
+			name_anom == "esc_zone_witches_galantine_0000" or
+			name_anom == "esc_zone_witches_galantine_0001" or
+			name_anom == "esc_zone_witches_galantine_0002" or
+			name_anom == "esc_zone_witches_galantine_0003" or
+			name_anom == "esc_zone_witches_galantine_0004" or
+			name_anom == "esc_zone_witches_galantine_0005" or
+			name_anom == "esc_zone_witches_galantine_0006" or
+			name_anom == "esc_miln_zone_gravi" or
+			name_anom == "esc_farm_boars_gravi" or
+			name_anom == "esc_locomotive_zone_buzz1" or
+			name_anom == "esc_locomotive_zone_buzz2" or
+			name_anom == "esc_turist_zone_buzz1" or
+			name_anom == "esc_turist_zone_buzz2" or
+			name_anom == "esc_turist_zone_buzz3" or
+			name_anom == "esc_turist_zone_buzz4" or
+			name_anom == "esc_turist_zone_buzz5" or
+			name_anom == "esc_turist_zone_buzz6" or
+			name_anom == "esc_turist_zone_buzz7" or
+			name_anom == "esc_btr_mosquito_bald" or
+			name_anom == "esc_musorka_tree_mincer1" or
+			name_anom == "esc_musorka_tree_mincer2" or
+			name_anom == "esc_musorka_tree_mincer3" or
+			name_anom == "esc_musorka_tree_mincer4" or
+			name_anom == "esc_musorka_tree_mincer5" or
+			name_anom == "esc_zone_mosquito_bald_weak_0074" or
+			name_anom == "esc_zone_mosquito_bald_weak_0024" or
+			name_anom == "esc_zone_mosquito_bald_weak_0023" or
+			name_anom == "esc_zone_mosquito_bald_weak_0025" or
+			name_anom == "esc_zone_mosquito_bald_weak_0020" or
+			name_anom == "esc_zone_mosquito_bald_weak_0079" or
+			name_anom == "esc_zone_mosquito_bald_weak_0078" or
+			name_anom == "esc_zone_mosquito_bald_weak_0077" or
+			name_anom == "esc_zone_mosquito_bald_weak_0076" or
+			name_anom == "esc_tutorial_mosquito_bald_01_0000" or
+			name_anom == "esc_zone_witches_galantine_0007") and
+
+-- Свалка
+	   not (name_anom == "gar_zone_mosquito_bald_weak_noart_0000" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0001" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0002" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0003" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0004" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0005" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0006" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0007" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0008" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0009" or
+			name_anom == "garb_deadly_wind1" or
+			name_anom == "garb_deadly_wind2" or
+			name_anom == "garb_deadly_wind3" or
+			name_anom == "garb_deadly_wind4" or
+			name_anom == "garb_deadly_wind5" or
+			name_anom == "garb_deadly_wind6" or
+			name_anom == "garb_deadly_wind7" or
+			name_anom == "garb_deadly_wind8" or
+			name_anom == "garb_deadly_wind9" or
+			name_anom == "garb_deadly_wind10" or
+			name_anom == "garb_deadly_wind11" or
+			name_anom == "garb_deadly_wind12" or
+			name_anom == "garb_deadly_wind13" or
+			name_anom == "garb_deadly_wind14" or
+			name_anom == "garb_deadly_wind15" or
+			name_anom == "garb_deadly_wind16" or
+			name_anom == "garb_deadly_wind17" or
+			name_anom == "garb_deadly_wind18" or
+			name_anom == "garb_deadly_wind19" or
+			name_anom == "garb_deadly_wind20" or
+			name_anom == "garb_deadly_wind21" or
+			name_anom == "garb_deadly_wind22" or
+			name_anom == "garb_deadly_wind23" or
+			name_anom == "garb_deadly_wind24" or
+			name_anom == "garb_deadly_wind25" or
+			name_anom == "garb_deadly_wind26" or
+			name_anom == "garb_deadly_wind27" or
+			name_anom == "garb_colonna_electra1" or
+			name_anom == "garb_colonna_electra2" or
+			name_anom == "garb_colonna_electra3" or
+			name_anom == "garb_colonna_electra4" or
+			name_anom == "garb_colonna_electra5" or
+			name_anom == "garb_colonna_electra6" or
+			name_anom == "garb_colonna_electra7" or
+			name_anom == "garb_colonna_electra8" or
+			name_anom == "agr_fabric_gate_gravi" or
+			name_anom == "gar_colorzones_mincer1" or
+			name_anom == "garb_ruins_mincer" or
+			name_anom == "gar_zone_mosquito_bald_weak_noart_0010") and
+
+-- Агро
+	      not (name_anom == "agr_to_garb_gates_mincer1" or
+			(name_anom == "agr_to_garb_gates_mincer2") or
+			(name_anom == "agr_to_garb_gates_mincer3") or
+			(name_anom == "agr_to_garb_gates_mincer4") or
+			(name_anom == "agr_to_garb_gates_mincer5") or
+			(name_anom == "agr_to_garb_gates_mincer6") or
+			(name_anom == "agr_to_garb_gates_mincer7") or
+			(name_anom == "agr_hangars_mincer1") or
+			(name_anom == "agr_hangars_mincer2") or
+			(name_anom == "agr_fabric_gate_gravi") or
+			(name_anom == "agr_fabric_reservuars_mosquito_bald1") or
+			(name_anom == "agr_fabric_reservuars_mosquito_bald2") or
+			(name_anom == "agr_fabric_reservuars_mosquito_bald3") or
+			(name_anom == "agr_fabric_reservuars_mosquito_bald4") or
+			(name_anom == "agr_zone_mosquito_bald_average_0000") or
+			(name_anom == "agr_zone_mosquito_bald_average_0001") or
+			(name_anom == "agr_zone_mosquito_bald_average_0002") or
+			(name_anom == "agr_zone_mosquito_bald_average_0003") or
+			(name_anom == "agr_zone_mosquito_bald_average_0004") or
+			(name_anom == "agr_zone_mosquito_bald_average_0005") or
+			(name_anom == "agr_nii_gate_electra") or
+			(name_anom == "agr_to_garb_gates_mincer8")) and
+
+-- Долина
+	      not (name_anom ==  "dar_building_reciver_gravi" or
+			(name_anom == "dar_kamaz_gravi")) and
+
+-- Бар
+	      not (name_anom == " bar_to_rostok_gravi1" or
+			(name_anom == " bar_to_rostok_gravi2") or
+			(name_anom == " bar_to_rostok_gravi3")) and
+
+-- Дикая Территория
+	   not (name_anom == "rostok_zone_buzz" or
+			string_find(name_anom,"rostok_zone_witches_galantine_average") or
+			string_find(name_anom,"ros_road_air_mincer") or
+			string_find(name_anom,"rostok_zone_zharka_static_average")) and
+
+-- Армейские Склады
+	   not (name_anom == "mil_zone_witches_galantine0000_0000" or
+			name_anom == "mil_zone_witches_galantine0000" or
+			name_anom == "mil_zone_zharka_static_strong" or
+			name_anom == "mil_zone_zharka_static_strong_0000" or
+			name_anom == "mil_zone_zharka_static_strong_0001" or
+			name_anom == "mil_village_electra" or
+			name_anom == "mil_village_electra_0000" or
+			name_anom == "mil_village_electra_0003" or
+			name_anom == "mil_village_electra_0001" or
+			name_anom == "mil_village_electra_0002" or
+			name_anom == "mil_village_zharka" or
+			name_anom == "mil_village_zharka_0000" or
+			name_anom == "mil_village_zharka_0001" or
+			name_anom == "mil_village_house_podval_studen" or
+			name_anom == "mil_village_house_podval_studen_0000" or
+			name_anom == "mil_village_house_podval_studen_0001" or
+			name_anom == "mil_village_house_podval_studen_0002" or
+			name_anom == "mil_village_house_podval_studen_0003" or
+			name_anom == "mil_ovrag_anomaly" or
+			name_anom == "mil_ovrag_anomaly_0000" or
+			name_anom == "mil_ovrag_anomaly_0001" or
+			name_anom == "mil_ovrag_anomaly_0002" or
+			name_anom == "mil_ovrag_anomaly_0003" or
+			name_anom == "mil_ovrag_anomaly_0004" or
+			name_anom == "mil_ovrag_anomaly_0005" or
+			name_anom == "mil_ovrag_anomaly_0006" or
+			name_anom == "mil_ovrag_anomaly_0007" or
+			name_anom == "mil_hill_zharka" or
+			
+			name_anom == "mil_zone_zharka_static_strong_0002") and
+			
+-- Радар
+	   not (name_anom == "rad_base_house_electra" or
+			name_anom == "rad_house_liana_0000" or
+			
+			name_anom == "rad_house_liana") and
+			
+-- Предбанник
+	   not (name_anom == "predb_hutor_deadbody_anomaly_1" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0000" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0001" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0002" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0003" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0004" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0005" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0006" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0007" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0008" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0009" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0010" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0011" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0012" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0013" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0014" or
+			name_anom == "predb_hutor_deadbody_anomaly_1_0015" or
+			name_anom == "predb_hutor_tree_hairs" or
+			name_anom == "predb_hutor_tree_hairs_0000" or
+			name_anom == "predb_hutor_tree_hairs_0001" or
+			name_anom == "predb_hutor_tree_hairs_0002" or
+			name_anom == "predb_hutor_tree_hairs_0003" or
+			name_anom == "predb_hutor_tree_hairs_0004" or
+			name_anom == "predb_hutor_tree_hairs_0005" or
+			name_anom == "predb_hutor_tree_hairs_0006" or
+			name_anom == "predb_hutor_tree_hairs_0007" or
+			name_anom == "predb_hutor_tree_hairs_0008" or
+			name_anom == "predb_hutor_tree_hairs_0009" or
+			name_anom == "predb_hutor_tree_hairs_0010" or
+			name_anom == "level_prefix_zone_hvatalka" or
+			name_anom == "level_prefix_zone_hvatalka_0000" or
+			name_anom == "level_prefix_zone_hvatalka_0001" or
+			name_anom == "level_prefix_zone_hvatalka_0002" or
+			name_anom == "level_prefix_zone_hvatalka_0003" or
+			name_anom == "level_prefix_zone_hvatalka_0004" or
+			name_anom == "level_prefix_zone_hvatalka_0005" or
+			name_anom == "level_prefix_zone_hvatalka_0006" or
+			name_anom == "level_prefix_zone_hvatalka_0007" or
+			name_anom == "level_prefix_zone_hvatalka_0008" or
+			name_anom == "predb_zone_radioactive_firestation_garazh" or
+			name_anom == "predb_fabrik_mincer" or
+			name_anom == "predb_fabrik_mincer_0000" or
+			name_anom == "predb_fabrik_mincer_0001" or
+			name_anom == "predb_fabrik_mincer_0002" or
+			name_anom == "predb_fabrik_mincer_0003" or
+			name_anom == "predb_village_quest_electra" or
+			name_anom == "predb_village_quest_electra_0000" or
+			name_anom == "predb_village_quest_electra_0001" or
+			name_anom == "predb_village_quest_electra_0002" or
+			name_anom == "predb_village_quest_electra_0003" or
+			name_anom == "predb_village_quest_electra_0004" or
+			name_anom == "predb_village_quest_gravi" or
+			name_anom == "predb_village_quest_gravi_0000" or
+			name_anom == "predb_village_quest_gravi_0001" or
+			name_anom == "predb_village_quest_gravi_0002" or
+			name_anom == "predb_village_quest_gravi_0003" or
+			name_anom == "predb_village_quest_gravi_0004" or
+			name_anom == "predb_village_quest_gravi_0005" or
+			name_anom == "predb_village_quest_mincer" or
+			name_anom == "predb_village_quest_mincer_0000" or
+			name_anom == "predb_village_quest_mincer_0001" or
+			name_anom == "predb_village_quest_mincer_0002" or
+			name_anom == "predb_village_quest_mincer_0003" or
+			name_anom == "predb_village_quest_mincer_0004" or
+			name_anom == "predb_village_quest_zharka" or
+			name_anom == "predb_village_quest_zharka_0000" or
+			name_anom == "predb_village_quest_zharka_0001" or
+			name_anom == "predb_village_quest_zharka_0002" or
+			name_anom == "predb_village_quest_zharka_0003" or
+			name_anom == "predb_village_house2_mincer" or
+			name_anom == "predb_village_house2_mincer_0000" or
+			name_anom == "predb_village_house2_mincer_0001" or
+			name_anom == "predb_village_house2_mincer_0002" or
+			name_anom == "predb_village_rogue_kill_mincer" or
+			name_anom == "predb_kings_electra" or
+			name_anom == "predb_zaurus_gravi" or
+			name_anom == "predb_zaurus_gravi_0000" or
+			name_anom == "predb_zaurus_gravi_0001" or
+			name_anom == "predb_zaurus_gravi_0002" or
+			name_anom == "predb_zaurus_gravi_0003" or
+			name_anom == "predb_zaurus_gravi_0004" or
+			name_anom == "predb_zaurus_gravi_0005" or
+			name_anom == "predb_zaurus_gravi_0006" or
+			name_anom == "predb_zaurus_gravi_0007" or
+			name_anom == "predb_zaurus_gravi_0008" or
+			name_anom == "predb_zaurus_gravi_0009" or
+
+			name_anom == "predb_hutor_pechka_zharka") and
+	   
+-- Припять
+	   not (name_anom == "pri_zone_witches_galantine_0004" or
+			name_anom == "pri_zone_witches_galantine_0005" or
+			name_anom == "pri_zone_witches_galantine_0006" or
+			name_anom == "pri_zone_witches_galantine_0007" or
+			name_anom == "pri_detsad_nopass_mincer1" or
+			name_anom == "pri_detsad_nopass_mincer2" or
+			name_anom == "pri_detsad_nopass_mincer3" or
+			name_anom == "pri_detsad_nopass_mincer4" or
+			name_anom == "pri_detsad_nopass_mincer5" or
+			name_anom == "pri_detsad_nopass_mincer6" or
+			name_anom == "pri_detsad_nopass_mincer7" or
+			name_anom == "pri_detsad_nopass_mincer8" or
+			name_anom == "pri_detsad_nopass_mincer9" or
+			name_anom == "pri_detsad_nopass_mincer10" or
+			name_anom == "pri_detsad_nopass_mincer11" or
+			name_anom == "pri_detsad_nopass_mincer12" or
+			name_anom == "pri_detsad_nopass_mincer13" or
+			name_anom == "pri_detsad_nopass_mincer14" or
+			name_anom == "pri_stadion_mincer" or
+			name_anom == "pri_stadion_mincer_0000" or
+			name_anom == "pri_stadion_mincer_0001" or
+			name_anom == "pri_stadion_mincer_0002" or
+			name_anom == "pri_stadion_mincer_0003" or
+			name_anom == "pri_stadion_mincer_0004" or
+			name_anom == "pri_stadion_mincer_0005" or
+			name_anom == "pri_stadion_mincer_0006" or
+			name_anom == "pri_stadion_mincer_0007" or
+			name_anom == "pri_stadion_mincer_0008" or
+			name_anom == "pri_stadion_mincer_0009" or
+			name_anom == "pri_stadion_mincer_0010" or
+			name_anom == "pri_stadion_mincer_0011" or
+			name_anom == "pri_stadion_mincer_0012" or
+			name_anom == "pri_stadion_mincer_0013" or
+			name_anom == "pri_stadion_mincer_0014" or
+			name_anom == "pri_abdul_shron_mincer" or
+			name_anom == "pri_abdul_shron_mincer_0000" or
+			name_anom == "pri_abdul_shron_mincer_0001" or
+			name_anom == "pri_abdul_shron_mincer_0002" or
+			name_anom == "pri_abdul_shron_mincer_0003" or
+			name_anom == "pri_abdul_shron_mincer_0004" or
+			name_anom == "pri_abdul_shron_mincer_0005" or
+			name_anom == "pri_abdul_shron_mincer_0006" or
+			name_anom == "pri_abdul_shron_mincer_0007" or
+			name_anom == "pri_abdul_shron_mincer_0008" or
+			name_anom == "pri_abdul_shron_mincer_0009" or
+			name_anom == "pri_abdul_shron_mincer_0010" or
+			name_anom == "pri_abdul_shron_mincer_0011" or
+			name_anom == "pri_abdul_shron_mincer_0012" or
+			name_anom == "pri_abdul_shron_mincer_0013" or
+			name_anom == "pri_abdul_shron_mincer_0014" or
+			name_anom == "pri_gravi_aaa" or
+			name_anom == "pri_gravi_aaa_0000" or
+			name_anom == "pri_gravi_aaa_0001" or
+			name_anom == "pri_gravi_aaa_0002" or
+			name_anom == "pri_gravi_aaa_0003" or
+			name_anom == "pri_gravi_aaa_0004" or
+			name_anom == "pri_gravi_aaa_0005" or
+			name_anom == "pri_gravi_aaa_0006" or
+			name_anom == "pri_gravi_aaa_0007" or
+			name_anom == "pri_gravi_aaa_0008" or
+			
+			string_find(name_anom,"secret"))
+	   then
+		return true
+	else
+		return false
+	end
+end
+return false
+
+end
+
+
+function get_lists()
+
+local sim = alife()
+
+list_anom_id = {}
+list_mob_id = {}
+list_stalk_id = {}
+
+for i = 0, 65534 do
+	local sobj = sim:object(i)
+	if sobj then
+		if IsAnomaly(sobj) then
+			get_anom(sobj)
+		elseif IsStalker(sobj) then
+			get_stalker(sobj)
+		elseif IsMonster(sobj) then
+			get_mob(sobj)
+		elseif isLc(sobj) then
+			get_lc(sobj)
+		end
+	end
+end
+
+end
+
+-- Учитываем аномалии на локациях
+function get_anom(sobj, lname)
+
+	if list_anom_id == nil then
+		list_anom_id = {}
+	end
+
+	local sobj_id = sobj.id
+	if not lname then
+		lname = alife():level_name(game_graph():vertex(sobj.m_game_vertex_id):level_id())
+	end
+
+	if list_anom_id[lname] == nil then
+		list_anom_id[lname] = {}
+	end
+
+	list_anom_id[lname][sobj_id] = sobj_id
+-- amk.logf("Получен элемент списка аномалий с идентификатором: "..tostring(sobj_id))
+
+	local obj = level.object_by_id(sobj_id)
+	if obj then
+		local status = get_anomaly_mode(sobj_id)
+		if status == "anom_off" then
+			obj:disable_anomaly()
+		end
+	end
+
+end
+
+
+-- Учитываем мутантов
+function get_mob(sobj)
+
+	if list_mob_id == nil then
+		list_mob_id = {}
+	end
+	local sobj_id = sobj.id
+	list_mob_id[sobj_id] = sobj_id
+	
+	local lname = alife():level_name(game_graph():vertex(sobj.m_game_vertex_id):level_id())
+	if lname == level.name() then
+		local obj = level.object_by_id(sobj_id)
+		if obj then
+			local obj_lvid = obj:level_vertex_id()
+			if obj_lvid then
+				lvids_forbidden[obj_lvid] = true
+			end
+		end
+	end
+
+end
+
+
+-- Учитываем сталкеров
+function get_stalker(sobj)
+
+	if list_stalk_id == nil then
+		list_stalk_id = {}
+	end
+	local sobj_id = sobj.id
+	list_stalk_id[sobj_id] = sobj_id
+	
+	local lname = alife():level_name(game_graph():vertex(sobj.m_game_vertex_id):level_id())
+	if lname == level.name() then
+		local obj = level.object_by_id(sobj_id)
+		if obj then
+			local obj_lvid = obj:level_vertex_id()
+			if obj_lvid then
+				lvids_forbidden[obj_lvid] = true
+			end
+		end
+	end
+
+end
+
+
+-- Учитываем точки входа на локациях
+function get_lc(sobj)
+
+	if lc == nil then
+		lc = {}
+	end
+
+-- amk.logf("Обрабатывается переход.")
+	local sobj_id = sobj.id
+	-- local lc_params = m_net_utils.get_lc_data(sobj)
+	local pk = get_netpk(sobj)
+	local lc_params = pk:get()
+	local lc_dest_gvid = lc_params.dest_game_vertex_id
+	local dest_lname = alife():level_name(game_graph():vertex(lc_dest_gvid):level_id())
+-- amk.logf("Локация назначения: " .. dest_lname)
+	if lc[dest_lname] == nil then
+		lc[dest_lname] = {}
+	end
+	lc[dest_lname][sobj_id] = lc_params.dest_position
+-- amk.logf("На локации " .. dest_lname .. " найден вход.")
+
+end
+
+
+-- Удаляем аномалию из списка аномалий на уровне
+function delete_anom(obj_id)
+	if list_anom_id then
+-- amk.logf("Удаляется элемент списка аномалий с идентификатором: "..tostring(obj_id))
+		list_anom_id[obj_id] = nil
+	end
+	
+	if list_del_anom_id == nil then
+		list_del_anom_id = {}
+	end
+-- amk.logf("Добавляется элемент списка удаляемых аномалий с идентификатором: "..tostring(obj_id))
+	list_del_anom_id[obj_id] = obj_id
+	anom_to_del_exist = true
+end
+
+
+-- Отключаем все текущие динамические аномалии на локации и вызываем новую порцию
+function add_anom(levelname, hot_spawn)
+
+if not levelname then
+	levelname = level.name()
+end
+
+if not hot_spawn then
+	hot_spawn = false
+end
+
+local cur_levelname = level.name()
+
+-- amk.logf("Старт респавна аномалий на локации " .. levelname)
+if chek_exclusion_location(levelname) then
+-- amk.logf("Опускаем флаг выброса для локации как для исключения.")
+	amk.del_variable("an"..loc[levelname])
+	return
+end
+
+if list_anom_id then
+-- amk.logf("1 Список аномалий существует.")
+	if list_anom_id[levelname] ~= nil then
+-- amk.logf("1 Список аномалий для локации " .. levelname .. " существует.")
+		local list_loc_anom_id = list_anom_id[levelname]
+
+-- amk.logf("Обрабатывем аномалии на локации.")
+		for k,v in pairs(list_loc_anom_id) do
+-- amk.logf("Объект с индентификатором " .. v)
+			if v then
+				local sobj = alife():object(v)
+				if sobj then
+-- amk.logf("Существует...")
+					if chek_exclusion_anomaly(v) then
+-- amk.logf("Не в исключениях...")
+						local obj = level.object_by_id(v)
+						if obj then
+-- amk.logf("Выключается аномалия: " .. tostring(obj:name()))
+							obj:disable_anomaly()
+						end
+						-- spawn_blow_art(v)
+-- amk.logf("Отмечается на удаление аномалия: " .. tostring(sobj:name()))
+						set_anomaly_mode(v, "anom_off")
+						anomaly_holder.remove_anomaly(v)
+					--level.map_remove_object_spot(list_loc_anom_id[v], "green_location")
+					end
+				end
+			end
+		end
+	end
+end
+
+if levelname == cur_levelname then
+-- amk.logf("Генерим новую порцию аномалий...")
+	generate_anoms(levelname, hot_spawn)
+-- amk.logf("Приспускаем флаг выброса для локации. (1)")
+	amk.del_variable("an"..loc[levelname])
+	amk.save_variable("an"..loc[levelname], 1)
+else
+-- amk.logf("Приспускаем флаг выброса для локации без генерации новых аномалий. (1.5)")
+	amk.del_variable("an"..loc[levelname])
+	amk.save_variable("an"..loc[levelname], 1.5)
+end
+
+end
+
+
+-- Создаёт набор аномалий на уровне
+function generate_anoms(lname, h_spawn)
+	local cnt, rnd, game_difficulty = 0,0,0
+	local v = level_anoms[lname]
+	if v then
+--		if h_spawn then
+--			lc_collect(lname)
+--		end
+		get_lists()
+		game_difficulty = level.get_game_difficulty() or 0
+		rnd = math.floor(spawn_anom_prob * math.random(v[1],v[2]) * (0.9+(game_difficulty+1)*0.1))
+		while cnt < rnd do
+			local sobj_anomaly = generate_anomaly(lname)
+			if sobj_anomaly then
+				get_anom(sobj_anomaly, lname)
+				cnt = cnt + 1
+			end
+		end
+		lvids_forbidden = {}
+		position_forbidden = {}
+	end
+end
+
+
+function generate_anomaly(lname)
+
+	local pos, new_lv, new_gv = anomaly_position_choice(lname, false)
+	if not pos then
+		return false
+	end
+	local section, shape = anomaly_section_choice(lname)
+
+	return spawn_rand_anom(section, pos, new_lv, new_gv, shape)
+end
+
+
+function spawn_rand_anom(name_new_anom, pos, lvid, gvid, shape)
+
+-- amk.logf("Новая аномалия: "..tostring(name_new_anom))
+	local sobj = alife():create(name_new_anom, pos, lvid, gvid)
+	if sobj then
+-- amk.logf("Обработаем её...")
+		local obj_id = sobj.id
+-- amk.logf("ID = "..tostring(obj_id))
+		-- local tbl = m_net_utils.get_anomaly_data(sobj)
+		-- tbl.shapes = shape
+		-- m_net_utils.set_anomaly_data(tbl, sobj)
+		local pk = get_netpk(sobj)
+		local data = pk:get()
+		if shape[1].shtype == 0 then
+			data.shapes:addSphere(shape[1].radius, shape[1].center)
+		else
+			data.shapes:addBox(shape[1].v1, shape[1].v2, shape[1].v3, shape[1].offset)
+		end
+		pk:set(data)
+		lvids_forbidden[lvid] = true
+		table.insert(position_forbidden, pos)
+		--level.map_add_object_spot(sobj.id, "green_location", sobj:name())
+	end
+	return sobj
+end
+
+
+-- Обновляем менеджер аномалий при загрузке
+function anom_update()
+
+if has_alife_info("blowout") --[[or has_alife_info("horror_time")]] then return end
+
+local lname = level.name()
+if chek_blow_flags() then
+	get_lists()
+	for k,v in pairs(loc) do
+-- amk.logf("Проверим, надо ли обновлять аномалии для локации " .. k)
+		local safety = false
+		local anom_chek = amk.load_variable("an"..loc[k], 0)
+		if anom_chek == 2 then
+-- amk.logf("Да. Обработаем имеющиеся аномалии.")
+			add_anom(k)
+		end
+
+		anom_chek = amk.load_variable("an"..loc[k], 0)
+		if anom_chek == 1.5 and k == lname then	-- хотя такое вряд ли возможно
+-- amk.logf("Да. Генерим новую порцию аномалий.")
+			generate_anoms(k)
+-- amk.logf("Приспускаем флаг выброса для локации. (1)")
+			amk.del_variable("an"..loc[k])
+			amk.save_variable("an"..loc[k], 1)
+		elseif anom_chek == 1.5 and k ~= lname then
+-- amk.logf("Да. Проверим отметки аномалий на удаление.")
+			chek_for_del(k)
+-- amk.logf("Приспускаем флаг выброса для локации. (0.5)")
+			amk.del_variable("an"..loc[k])
+			amk.save_variable("an"..loc[k], 0.5)
+		elseif anom_chek == 0.5 and k == lname then
+-- amk.logf("Нет. Генерим новую порцию аномалий.")
+			generate_anoms(k)
+-- amk.logf("Опускаем флаг выброса для локации.")
+			amk.del_variable("an"..loc[k])
+		elseif anom_chek == 1 and k ~= lname then	-- безопасно релизить аномалии можно только на другой локации
+-- amk.logf("Нет. Проверим отметки аномалий на удаление.")
+			chek_for_del(k)
+-- amk.logf("Опускаем флаг выброса для локации.")
+			amk.del_variable("an"..loc[k])
+		else
+-- amk.logf("Обновление не требуется или невозможно.")
+		end
+
+	end
+end
+
+if anom_to_del_exist then
+-- amk.logf("Зачистим из рестрикторов и удалим аномалии по списку удаляемых.")
+	remove_anom()
+end
+
+-- amk.logf("Очистим рабочие списки.")
+list_anom_id = {}
+list_mob_id = {}
+list_stalk_id = {}
+lc = {}
+
+end
+
+
+function chek_for_del(levelname)
+
+if list_anom_id then
+-- amk.logf("Список аномалий существует.")
+	if list_anom_id[levelname] ~= nil then
+-- amk.logf("Список аномалий для локации " .. levelname .. " существует.")
+		local list_loc_anom_id = list_anom_id[levelname]
+		for k,v in pairs(list_loc_anom_id) do
+			if v then
+-- amk.logf("Проверяется на наличие маркера удаления аномалия с идентификатором: "..tostring(v))
+				local sobj = alife():object(v)
+				if sobj then
+-- amk.logf("Она существует.")
+					local status = get_anomaly_mode(v)
+					if status == "anom_off" then
+-- amk.logf("И передаётся в список на удаление.")
+						delete_anom(k)
+					end
+				end
+			end
+		end
+	end
+end
+
+end
+
+
+need_disable_anomaly = true
+
+-- Предохранительное отключение аномалий
+function lvl_anomaly_disable()
+	if need_disable_anomaly then
+-- amk.logf("Предохранительное отключение аномалий.")
+		local levelname = level.name()
+		if list_anom_id then
+-- amk.logf("Список аномалий существует.")
+			if list_anom_id[levelname] ~= nil then
+-- amk.logf("Список аномалий для локации " .. levelname .. " существует.")
+				local list_loc_anom_id = list_anom_id[levelname]
+-- amk.logf("Обрабатывем зарегистрированные аномалии на локации.")
+				for k,v in pairs(list_loc_anom_id) do
+-- amk.logf("Аномалия с индентификатором " .. v)
+					if v then
+						local obj = level.object_by_id(v)
+						if obj then
+-- amk.logf("Существует.")
+							local status = get_anomaly_mode(v)
+							if status == "anom_off" then
+-- amk.logf("Выключается аномалия: " .. tostring(obj:name()))
+								obj:disable_anomaly()
+							end
+						end
+					end
+				end
+			end
+		end
+		need_disable_anomaly = false
+	end
+end
+
+
+-- Поднимаем флаги выброса для локаций
+function blow_flags()
+	for k,v in pairs(loc) do
+		amk.del_variable("an"..loc[k])
+		amk.save_variable("an"..loc[k], 2)
+-- amk.logf("Подняли флаг выброса для локации: "..tostring(loc[k]))
+	end
+end
+
+
+-- Проверяем флаги выброса для локаций
+function chek_blow_flags()
+-- amk.logf("Проверяем наличие флагов по локациям и возможность обновления аномалий.")
+	local blow_flag = false
+	local cur_lname = level.name()
+	for k,v in pairs(loc) do
+		local loc_flag = amk.load_variable("an"..loc[k], 0)
+		if loc_flag ~= 0 then
+-- amk.logf("Локация " .. k .. " требует обновления аномалий. " .. loc_flag)
+			if chek_exclusion_location(k) then
+				amk.del_variable("an"..loc[k])
+-- amk.logf("Опускаем флаг выброса для локации как для исключения.")
+			else
+				if loc_flag == 2 or loc_flag == 1.5 or
+					(loc_flag == 0.5 and k == cur_lname) or
+					(loc_flag == 1 and k ~= cur_lname) then
+						blow_flag = true
+-- amk.logf("На локации " .. k .. " возможно обновление аномалий.")
+				else
+-- amk.logf("На локации " .. k .. " обновление аномалий невозможно.")
+				end
+			end
+		end
+	end
+return blow_flag
+end
+
+
+-- Получаем статус аномалии
+function get_anomaly_mode(anom_id)
+if not anom_id then return "" end
+	local sobj = alife():object(anom_id)
+	if sobj then
+		--[[local tbl = m_net_utils.get_anomaly_data(sobj)
+		local cd = tbl.custom
+		cd = m_net_utils.parse_custom_data(cd)
+		if cd and cd.m_anom and cd.m_anom.status then
+			return cd.m_anom.status
+		end]]
+		local pk = get_netpk(sobj):get()
+		local cd = pk.custom_data:getTable()
+		return cd.m_anom and cd.m_anom.status or ""
+	end
+	return ""
+end
+
+-- Устанавливаем статус аномалии
+function set_anomaly_mode(anom_id, status)
+	local sobj = alife():object(anom_id)
+	local pk = get_netpk(sobj)
+	local data = pk:get()
+	local cd = data.custom_data:getTable()
+	cd.m_anom = {status = status}
+	pk:set(data)
+--[[	local tbl = m_net_utils.get_anomaly_data(sobj)
+	tbl.custom = modify_anomaly_custom_data(tbl.custom,status)
+	m_net_utils.set_anomaly_data(tbl, sobj)]]
+end
+
+--[[function modify_anomaly_custom_data(cd,status)
+	cd = m_net_utils.parse_custom_data(cd)
+	if not cd then cd = {} end
+	if not cd.m_anom then cd.m_anom = {} end
+	cd.m_anom.status = status
+	return m_net_utils.gen_custom_data(cd)
+end]]
+
+
+-- Чистим и релизим аномалии по спискам
+function remove_anom()
+	if list_del_anom_id then
+-- amk.logf("Список удаляемых аномалий существует.")
+		restr_reset()
+		release_anom()
+-- amk.logf("Очистим список удаляемых аномалий.")
+		list_del_anom_id = nil
+		anom_to_del_exist = false
+	end
+end
+
+
+function soft_restr_reset()
+	local sim = alife()
+	list_mob_id = {}
+	list_stalk_id = {}
+
+	for i = 0, 65534 do
+		local sobj = sim:object(i)
+		if sobj then
+			if IsStalker(sobj) then
+				--log1("object "..tostring(i).." is stalker")
+				get_stalker(sobj)
+			elseif IsMonster(sobj) then
+				--log1("object "..tostring(i).." is monster")
+				get_mob(sobj)
+			end
+		end
+	end
+	restr_reset()
+end
+
+function emergency_restr_reset()
+	local sim = alife()
+	list_mob_id = {}
+	list_stalk_id = {}
+
+	for i = 0, 65534 do
+		local sobj = sim:object(i)
+		if sobj then
+			--log1("object "..tostring(i).." with clsid "..tostring(sobj:clsid()))
+			if IsStalker(sobj) then
+				--log1("object "..tostring(i).." is stalker")
+				get_stalker(sobj)
+			elseif IsMonster(sobj) then
+				--log1("object "..tostring(i).." is monster")
+				get_mob(sobj)
+			end
+		end
+	end
+
+	mob_restr_reset_emerg()
+	stalker_restr_reset_emerg()
+end
+
+
+function isSomeRestriction(obj)
+	local _clsid = get_clsid(obj)
+	return IsAnomaly(obj) or 				-- аномалия
+		_clsid == clsid.level_changer or 	-- переход
+		_clsid == clsid.smart_terrain or 	-- смарт
+		_clsid == clsid.space_restrictor or	-- рестриктор
+		_clsid == clsid.script_zone or
+		_clsid == clsid.smart_zone or
+		_clsid == clsid.respawn or
+		_clsid == clsid.zone or
+		_clsid == clsid.script_restr
+end
+
+function mob_restr_reset_emerg()
+	for k,v in pairs(list_mob_id) do
+	-- log1("Зачищается моб с идентификатором: "..tostring(v))
+		if v then
+			local sobj = alife():object(v)
+			if sobj then
+	-- log1("Моб существует.")
+				local need_erasing = false
+	
+			--	local pk = xs_netpk.monster(sobj)
+			--	if pk:isOk() then
+					--local data = pk:get()
+					-- print_table_inlog_v2(data.dynamic_out_restrictions, "!!MON_OUT ["..v.."]")
+					-- print_table_inlog_v2(data.dynamic_in_restrictions, "!!MON_IN ["..v.."]")
+					
+					for k, v in pairs(data.dynamic_out_restrictions) do
+						local check_obj = alife():object(v)
+						if not (check_obj and isSomeRestriction(check_obj)) then		-- такая проверка нужна на случай, если кого-то уже заспавнили с тем же id. 
+							log1("Обнаружен удаленный рестриктор "..tostring(v))							need_erasing = true
+							data.dynamic_out_restrictions[k] = nil
+						end
+					end
+					for k, v in pairs(data.dynamic_in_restrictions) do
+						local check_obj = alife():object(v)
+						if not (check_obj and isSomeRestriction(check_obj)) then
+							log1("Обнаружен удаленный рестриктор "..tostring(v))
+							need_erasing = true
+							data.dynamic_in_restrictions[k] = nil
+						end
+					end	
+
+					-- print_table_inlog_v2(data.dynamic_out_restrictions, "!!MON_OUT ["..v.."]")
+					-- print_table_inlog_v2(data.dynamic_in_restrictions, "!!MON_IN ["..v.."]")					
+					if need_erasing then
+						log1("Зачищены удаленные рестрикторы у моба "..tostring(v))
+					--	pk:set(data)
+					end
+				--end	
+			end
+		end
+	end
+end
+
+function stalker_restr_reset_emerg()
+	for k,v in pairs(list_stalk_id) do
+	-- log1("Зачищается сталкер с идентификатором: "..tostring(v))
+		if v then
+			local sobj = alife():object(v)
+			if sobj then
+	-- log1("Сталкер существует.")
+				local need_erasing = false
+	
+				local pk = get_netpk(sobj)
+				if pk:isOk() then
+					local data = pk:get()
+					-- print_table_inlog_v2(data.dynamic_out_restrictions, "!!STALK_OUT ["..v.."]")
+					-- print_table_inlog_v2(data.dynamic_in_restrictions, "!!STALK_IN ["..v.."]")
+					
+					for k, v in pairs(data.dynamic_out_restrictions) do
+						local check_obj = alife():object(v)
+						if not (check_obj and isSomeRestriction(check_obj)) then
+							log1("Обнаружен удаленный рестриктор "..tostring(v))
+							need_erasing = true
+							data.dynamic_out_restrictions[k] = nil
+						end
+					end
+					for k, v in pairs(data.dynamic_in_restrictions) do
+						local check_obj = alife():object(v)
+						if not (check_obj and isSomeRestriction(check_obj)) then
+							log1("Обнаружен удаленный рестриктор "..tostring(v))
+							need_erasing = true
+							data.dynamic_in_restrictions[k] = nil
+						end
+					end	
+
+					-- print_table_inlog_v2(data.dynamic_out_restrictions, "!!MON_OUT ["..v.."]")
+					-- print_table_inlog_v2(data.dynamic_in_restrictions, "!!MON_IN ["..v.."]")					
+					if need_erasing then
+						log1("Зачищены удаленные рестрикторы у сталкера "..tostring(v))
+						pk:set(data)
+					end
+				end
+			end
+		end
+	end
+end
+
+
+-- Сбрасываем рестрикторы мобов и сталкеров
+function restr_reset()
+	mob_restr_reset()
+	stalker_restr_reset()
+end
+
+function mob_restr_reset()
+	for k,v in pairs(list_mob_id) do
+-- amk.logf("Зачищается моб с идентификатором: "..tostring(v))
+		if v then
+			local sobj = alife():object(v)
+			if sobj then
+-- amk.logf("Моб существует.")
+				-- local tbl = m_net_utils.get_monster_data(sobj)
+				-- local current_restriction = tbl.crvu32u16u2
+				local pk = get_netpk(sobj)
+				local data = pk:get()
+				local current_restriction = data.dynamic_in_restrictions --tbl.crvu32u16u2
+				
+				for r_num,r_id in pairs(current_restriction) do
+-- if r_id then amk.logf("r_id = " .. r_id) end
+					if list_del_anom_id[r_id] ~= nil then
+-- amk.logf("Зачищается аномалия с идентификатором: "..tostring(r_id))
+						alife():remove_in_restriction(sobj, r_id)
+						list_del_anom_id[r_id] = nil
+					end
+				end
+			end
+		end
+	end
+end
+
+function stalker_restr_reset()
+	for k,v in pairs(list_stalk_id) do
+-- amk.logf("Зачищается сталкер с идентификатором: "..tostring(v))
+		if v then
+			local sobj = alife():object(v)
+			if sobj then
+-- amk.logf("Сталкер существует.")
+				-- local tbl = m_net_utils.get_stalker_data(sobj)
+				local pk = get_netpk(sobj)
+				local data = pk:get()
+				local current_restriction = data.dynamic_in_restrictions --tbl.crvu32u16u2
+
+				for r_num,r_id in pairs(current_restriction) do
+-- if r_id then amk.logf("r_id = " .. r_id) end
+					if list_del_anom_id[r_id] ~= nil then
+-- amk.logf("Зачищается аномалия с идентификатором: "..tostring(r_id))
+						alife():remove_in_restriction(sobj, r_id)
+						list_del_anom_id[r_id] = nil
+					end
+				end
+			end
+		end
+	end
+end
+
+
+-- Релизим аномалии по списку удаляемых аномалий на уровне
+function release_anom()
+	for k,v in pairs(list_del_anom_id) do
+		if v then
+			local sobj = alife():object(v)
+			if sobj then
+-- amk.logf("Релизится аномалия с идентификатором: "..tostring(v))
+				alife():release(sobj, true)
+				list_del_anom_id[k] = nil
+			end
+		end
+	end
+end
+
+
+--[[function isAnomaly(obj)
+	if (obj:clsid() > 167 and obj:clsid() < 180) then
+		return true
+	end
+	return false
+end]]
+
+
+function isLc(obj)
+local obj_sect = obj:section_name()
+	if string_find(obj_sect, "level_changer") then
+		return true
+	end
+	return false
+end
+
+
+-- Рожание артефактов в Выброс
+function spawn_blow_art(obj_id)
+
+	if obj_id == nil then return end
+	local an_obj = alife():object(obj_id)
+	local anom_sect = an_obj:section_name()
+	if string_find(anom_sect, "handmade_") then return end
+	local noart_chk = string_find(anom_sect, "noartf_", 1, true)
+	if noart_chk then
+		anom_sect = string.sub(anom_sect,(noart_chk + 7),string.len(anom_sect))
+		anom_sect = "zone_"..anom_sect
+-- amk.logf("ARTF_D Dinamic anomaly found - restored its parent: "..tostring(anom_sect))
+	end		
+	local rand_chk = utils.cfg_get_number(system_ini(), anom_sect, "artefact_spawn_probability", an_obj, false, 0.1)
+-- amk.logf("Проверим, будет ли пробовать рожать артефакт аномалия: "..tostring(anom_sect))
+	if math.random() <= rand_chk * spawn_blow_art_probe then
+-- amk.logf("Вызов парсера секции...")
+		local art_section = death_artefact.parse_string_arts(anom_sect)
+-- amk.logf("Секция определена...")
+		if art_section then
+-- amk.logf("Выясним позицию аномалии: "..tostring(anom_sect))
+			local pos = an_obj.position
+			pos.y = pos.y + 1
+-- amk.logf("Выясним вертексы аномалии: "..tostring(anom_sect))
+			local lv, gv = an_obj.m_level_vertex_id, an_obj.m_game_vertex_id
+			alife():create(tostring(art_section), pos, lv, gv)
+--			amk.quest_spawn(tostring(art_section), 1, pos, 1, lv, gv)
+-- amk.logf("В Выброс заспавнен артефакт: "..tostring(art_section))
+		end
+	end
+
+end
+
+
+function anomaly_position_choice(lname, psy)
+
+	if not lname then 
+		lname = level.name()
+	end
+
+	if not level_vertexes[lname] or level_vertexes[lname][3] == 0 then return false end
+	local gvn,gvx,lvx = level_vertexes[lname][1], level_vertexes[lname][2], level_vertexes[lname][3]
+
+	local new_lv = math.random(1,lvx)
+	local pos = level.vertex_position(new_lv)
+
+	while check_lvids_forbidden(new_lv) or chek_exclusion_position(pos, lname, psy) do
+		new_lv = math.random(1,lvx)
+		pos = level.vertex_position(new_lv)
+	end
+	
+	local new_gv = 0
+	local min_dist = 100000
+	-- подбираем геймвертекс
+	for a = gvn, gvx do
+		local tmp = game_graph():vertex(a):game_point()
+		if tmp:distance_to(pos) < min_dist then
+			min_dist = tmp:distance_to(pos)
+			new_gv = a
+		end
+	end
+
+	if new_gv > 0 and game_graph():valid_vertex_id(new_gv) then
+		return pos, new_lv, new_gv
+	else
+		return false
+	end
+
+end
+
+
+function check_lvids_forbidden(lvids)
+	if lvids then
+		if lvids_forbidden[lvid] == true then
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
+
+
+local anom_prefix = "noartf_"
+
+local anom_types = {
+l01_escape =   {mosquito_bald     = 0.3,
+				gravi_zone        = 0.25,
+				mincer            = 0.25,
+				witches_galantine = 0.1,
+				zharka_static     = 0.1
+				},
+l02_garbage =  {mosquito_bald     = 0.2,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.2,
+				zharka_static     = 0.15,
+				buzz              = 0.05
+				},
+l03_agroprom = {mosquito_bald     = 0.2,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.25,
+				zharka_static     = 0.1,
+				buzz              = 0.05
+				},
+l04_darkvalley = {mosquito_bald   = 0.2,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.2,
+				zharka_static     = 0.15,
+				buzz              = 0.05
+				},
+l05_bar =      {mosquito_bald     = 0.2,
+				gravi_zone        = 0.2,
+				mincer            = 0.3,
+				witches_galantine = 0.15,
+				zharka_static     = 0.15
+				},
+l06_rostok =   {mosquito_bald     = 0.1,
+				gravi_zone        = 0.1,
+				mincer            = 0.15,
+				witches_galantine = 0.25,
+				zharka_static     = 0.4
+				},
+l07_military = {mosquito_bald     = 0.1,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.3,
+				zharka_static     = 0.15,
+				buzz              = 0.05
+				},
+l08_yantar =   {mosquito_bald     = 0.05,
+				gravi_zone        = 0.15,
+				mincer            = 0.15,
+				witches_galantine = 0.25,
+				zharka_static     = 0.15,
+				buzz              = 0.25
+				},
+l10_radar =    {mosquito_bald     = 0.1,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.2,
+				zharka_static     = 0.2,
+				buzz              = 0.1
+				},
+l11_pripyat =  {mosquito_bald     = 0.1,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.2,
+				zharka_static     = 0.2,
+				buzz              = 0.1
+				},
+l12_stancia =  {mosquito_bald     = 0.17,
+				gravi_zone        = 0.17,
+				mincer            = 0.17,
+				witches_galantine = 0.17,
+				zharka_static     = 0.17,
+				buzz              = 0.15
+				},
+other =        {mosquito_bald     = 0.2,
+				gravi_zone        = 0.2,
+				mincer            = 0.2,
+				witches_galantine = 0.2,
+				zharka_static     = 0.2
+				}
+}
+
+local anom_power = {
+l01_escape =     {{postfix = "_weak", val =   1}, {postfix = "_average", val = 0.3}, {postfix = "_strong", val = 0.01}},
+l02_garbage =    {{postfix = "_weak", val =   1}, {postfix = "_average", val = 0.6}, {postfix = "_strong", val = 0.05}},
+l03_agroprom =   {{postfix = "_weak", val = 0.8}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.2}},
+l04_darkvalley = {{postfix = "_weak", val = 0.7}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.3}},
+l05_bar =        {{postfix = "_weak", val =   1}, {postfix = "_average", val = 0.6}, {postfix = "_strong", val =  0.1}},
+l06_rostok =     {{postfix = "_weak", val = 0.6}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.3}},
+l07_military =   {{postfix = "_weak", val = 0.3}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.6}},
+l08_yantar =     {{postfix = "_weak", val = 0.7}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.3}},
+l10_radar =      {{postfix = "_weak", val = 0.2}, {postfix = "_average", val = 0.6}, {postfix = "_strong", val =    1}},
+l11_pripyat =    {{postfix = "_weak", val = 0.1}, {postfix = "_average", val = 0.5}, {postfix = "_strong", val =    1}},
+l12_stancia =    {{postfix = "_weak", val = 0.1}, {postfix = "_average", val = 0.4}, {postfix = "_strong", val =    1}},
+other =          {{postfix = "_weak", val = 0.6}, {postfix = "_average", val =   1}, {postfix = "_strong", val =  0.3}}
+}
+
+local anoms_sections = {
+	buzz              = {"buzz",              {shtype=0, radius=1.5, center={0,0,0}}},
+	gravi_zone        = {"gravi_zone",        {shtype=0, radius=3,   center={0,0,0}}},
+	mincer            = {"mincer",            {shtype=0, radius=4,   center={0,0,0}}},
+	mosquito_bald     = {"mosquito_bald",     {shtype=0, radius=3,   center={0,0,0}}},
+	witches_galantine = {"witches_galantine", {shtype=0, radius=4,   center={0,0,0}}},
+	zharka_static     = {"zharka_static",     {shtype=1, v1={1,0,0}, v2={0,5,0}, v3={0,0,1}, offset={0,0,0}}}
+}
+
+
+function anomaly_section_choice(levelname)
+
+	local anom_to_spawn = nil
+	local name_anom_to_spawn = nil
+	local postfix_anom_to_spawn = nil
+	local anom_table_name = {}
+	local anom_table_postfix = {}
+
+	if anom_types[levelname] then
+		anom_table_name = anom_types[levelname]
+	else
+		anom_table_name = anom_types.other
+	end
+
+	local type_choose = math.random()
+	local b1, b2 = 0.0, 0.0
+	for k,v in pairs(anom_table_name) do
+		b2 = b2 + v
+		if type_choose >= b1 and type_choose <= b2 then
+			name_anom_to_spawn = anoms_sections[k][1]
+			break
+		end
+		b1 = b2
+	end
+
+--	name_anom_to_spawn = anom_table_name[math.random(table.getn(anom_table_name))]
+
+	if anom_power[levelname] then
+		anom_table_postfix = anom_power[levelname]
+	else
+		anom_table_postfix = anom_power.other
+	end
+
+	local spawn_choose = math.random()
+-- amk.logf("spawn_choose = "..tostring(spawn_choose))
+	local low_level = 0.0
+
+	table.sort(anom_table_postfix,function(a,b) return a.val < b.val end)
+
+	for key, value in pairs(anom_table_postfix) do
+-- amk.logf(tostring(value.postfix).." = "..tostring(value.val))
+		if spawn_choose < value.val and spawn_choose >= low_level then
+			postfix_anom_to_spawn = value.postfix
+		end
+		low_level = value.val
+	end
+-- amk.logf("postfix_anom_to_spawn = "..tostring(postfix_anom_to_spawn))
+-- amk.logf("low_level = "..tostring(low_level))
+
+	if name_anom_to_spawn and postfix_anom_to_spawn then
+		anom_to_spawn = anom_prefix .. name_anom_to_spawn .. postfix_anom_to_spawn
+	end
+
+	local coef_effective_radius = 1
+	if 	system_ini():line_exist(anom_to_spawn, "effective_radius") then
+		coef_effective_radius = system_ini():r_string(anom_to_spawn, "effective_radius")
+	end
+-- amk.logf("Коэффициент эффективного радиуса выбран: " .. coef_effective_radius)
+
+	local section = anoms_sections[name_anom_to_spawn]
+	local shape1 = section[2]
+	local shapes = {}
+	shapes[1] = {}
+	shapes[1].shtype = shape1.shtype
+	if shape1.shtype == 0 then
+		shapes[1].radius = shape1.radius * coef_effective_radius
+		shapes[1].center = vector():set(shape1.center[1],shape1.center[2],shape1.center[3])
+	else
+		shapes[1].v1 = vector():set(shape1.v1[1],shape1.v1[2],shape1.v1[3])
+		shapes[1].v2 = vector():set(shape1.v2[1],shape1.v2[2],shape1.v2[3])
+		shapes[1].v3 = vector():set(shape1.v3[1],shape1.v3[2],shape1.v3[3])
+		shapes[1].offset = vector():set(shape1.offset[1],shape1.offset[2],shape1.offset[3])
+	end
+
+	return anom_to_spawn, shapes
+
+end
+
+
+
+function del_anomaly(obj_pos)
+local obj = level_object_by_sid (8354)
+ local obj_pos = obj:position()
+ local r = 10
+ local levelname = level.name()
+ if list_anom_id then
+  if list_anom_id[levelname] ~= nil then
+   local list_loc_anom_id = list_anom_id[levelname]
+   for k,v in pairs(list_loc_anom_id) do
+    if v then
+     local obj = level.object_by_id( v )
+	if obj and chek_exclusion_anomaly( v ) and obj:position():distance_to_sqr(obj_pos)<r*r then
+      delete_anom( v )
+     end
+    end
+   end
+  end
+ end
+end
+
+
+
+function del_anomaly2(obj_pos)
+local obj = level_object_by_sid(37)
+ local obj_pos = obj:position()
+ local r = 5
+ local levelname = level.name()
+ if list_anom_id then
+  if list_anom_id[levelname] ~= nil then
+   local list_loc_anom_id = list_anom_id[levelname]
+   for k,v in pairs(list_loc_anom_id) do
+    if v then
+	local sobj = alife():object(v)
+	if sobj and chek_exclusion_anomaly( v ) and sobj.position:distance_to_sqr(obj_pos)<r*r then
+	alife():release(sobj, true)
+    end
+    end
+   end
+  end
+ end
+end
+
+----------------------------------------------------------------------------------
+
+function del_level_anomalys1()	--	удалить все аномалии на текущем уровне;
+ local sim = alife()
+ for i=1,65534 do
+  local obj = level.object_by_id(i)
+  if obj and IsAnomaly(obj) and chek_exclusion_anomaly( i ) then
+   local so = sim:object(i) if so then sim:release( so ) end
+  end
+ end
+end
+
+
+function del_level_anomalys2()	--	удалить все аномалии на текущем уровне;
+local sim = alife()
+local levelname = level.name()
+ if list_anom_id then
+  if list_anom_id[levelname] ~= nil then
+   local list_loc_anom_id = list_anom_id[levelname]
+   for k,v in pairs(list_loc_anom_id) do
+    if v then
+	local obj = level.object_by_id(v)
+	if obj and chek_exclusion_anomaly( v ) then
+	local so = sim:object(v) if so then sim:release( so ) end
+	end
+	end
+ end
+end
+end
+end
+	
+	
+
+
+
+--------- Спавн динамических рандомных аномалий для OGSЕ 0.6.9.х --------------
+      ---- корректировка секторов для OGSE - - KamikaZze & Dusty79 ----
+		--- предопределение типов аномалий по локациям Dusty79 ----
+    --- код спавна артов на месте аномалий KamikaZze, интеграция Dusty79 ----
+	--- Перекомпоновка и реализация удаления аномалий Dusty79 08_10_2009 ---
+					--- Использованы материалы АМК мода ---
+-------------- Copyright 2007-2009 DEXXX, Offbar, KamikaZze, Dusty79 -----------
+
+--[[
+
+If you're going to use the whole of this script or its parts in your own creative 
+developments for the S.T.A.L.K.E.R. game, please don't become such a goddamn 
+motherfucker like the notorious author of the ABC Mod - Carbrobro. Leave the 
+copyrights, note the real author(s) and don't claim others' ideas and their 
+realization to be your own ones. It's just simple Modmakers' Ethics. Thank you!
+
+Если вы собираетесь использовать данный скрипт целиком или частично в своих 
+разработках по игре S.T.A.L.K.E.R., пожалуйста не опускайтесь до уровня печально 
+известного автора ABC мода - Carbrobro. Не удаляйте копирайты, указывайте настоящего 
+автора(ов) и не выдавайте чужие идеи и их реализацию за свои. Ведь это элементарная 
+этика модостроителей! Спасибо за понимание.
+
+]]--

@@ -1,0 +1,22 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+hunter2_deadly_wind_info} sr_idle@2
+
+[sr_idle@2]
+on_actor_not_in_zone = garb_stalker_vagon_zone_big | sr_particle %=garb_mobs_atak_zone3_spawn =play_snd_from_obj(8234:anomaly\teleport_work_2)%
+
+[sr_particle]
+name = anomaly2\teleport_out
+path = garb_mobs_atak_zone3_point
+mode = 2
+looped = false
+on_signal = particle_end | sr_idle@3
+
+[sr_idle@3]
+on_info = {+izlom_garb_ataker1_dead +izlom_garb_ataker2_dead +izlom_garb_ataker3_dead +boar_garb_ataker1_dead +boar_garb_ataker2_dead +boar_garb_ataker3_dead +pseudo_garb_ataker1_dead +pseudo_garb_ataker2_dead +pseudo_garb_ataker3_dead} sr_idle@4
+
+; Секция ожидания срабатывания таймера
+[sr_idle@4]
+on_info = {+gar_mobs_atak_zones_recharge} sr_idle@2

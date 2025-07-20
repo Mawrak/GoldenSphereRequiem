@@ -1,0 +1,19 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+on_info = {+subj5_machines_task} ph_idle@2
+
+[ph_idle@2]
+tips     = x18radpit_manom_button_use1
+on_use    = {=actor_has_item(radpit_manometr)} ph_idle@3 %=remove_item(radpit_manometr) =play_snd(interface\inv_attach_addon) +x18_radpit_manom_installed%
+
+[ph_idle@3]
+tips     = x18radpit_manom_button_use2
+on_use    =  {~25} nil %=send_tip(x18radpit_manom_tip1:default) +radpit_pressure_high%, {~45} nil %=send_tip(x18radpit_manom_tip2:default) +radpit_pressure_low%, {~75} nil %=send_tip(x18radpit_manom_tip1:default) +radpit_pressure_high%, nil %=send_tip(x18radpit_manom_tip2:default) +radpit_pressure_low%
+
+
+

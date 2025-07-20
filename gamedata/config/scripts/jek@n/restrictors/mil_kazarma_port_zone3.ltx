@@ -1,0 +1,42 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_info = {+mil_kazarma2_portzones} sr_particle@red
+;active = sr_particle@red
+
+
+[sr_particle@white]
+;name = anomaly2\group_items\teleport_spark_out_monolit_small1_00
+name = monsters\group\polter_trail_01
+path = mil_kazarma_zone3_point
+mode = 2
+looped = false
+on_actor_inside = sr_particle@white %=mil_kazarma_port_actor_goback%
+on_timer = 7000 | sr_particle@blue
+
+[sr_particle@blue]
+;name = anomaly2\group_items\teleport_spark_out_monolit_small2_00
+name = monsters\group\polter_trail_02
+path = mil_kazarma_zone3_point
+mode = 2
+looped = false
+on_actor_inside = sr_particle@white %=mil_kazarma_port_actor_goback%
+on_timer = 5000 | sr_particle@red
+
+[sr_particle@red]
+;name = anomaly2\group_items\teleport_spark_out_monolit_small3_00
+name = monsters\group\polter_trail_03
+path = mil_kazarma_zone3_point
+mode = 2
+looped = false
+on_info = {+mil_kazarm_portzones_off} nil
+on_timer = 1200 | sr_particle@white
+
+
+
+
+
+
+
+

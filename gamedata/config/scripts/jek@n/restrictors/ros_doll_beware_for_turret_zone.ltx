@@ -1,0 +1,16 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {=actor_has_item(wonder_doll) +wonderdoll_first_talk} sr_idle@2 %=send_tip(ros_turrets_dollhelp_tip:doll) =play_snd(characters_voice\woman\fight\tolls\tolls_1)%
+
+
+; Подчищаем дохлых мобов на стройке:
+[sr_idle@2]
+on_actor_inside = {+saharov_flash_task +ros_stroyka_atack_mob1dead +ros_stroyka_atack_mob2dead +ros_stroyka_atack_mob3dead +ros_stroyka_atack_mob4dead +ros_stroyka_atack_mob5dead +ros_stroyka_atack_mob6dead +ros_stroyka_atack_mob7dead +ros_stroyka_atack_mob8dead} sr_idle@3 %=delete_ros_stroyka_atack_mobs%
+
+[sr_idle@3]
+on_actor_outside = sr_idle@2
+
+
+

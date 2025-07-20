@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+
+<background x="800" y="-10" width="250" height="700">
+	<texture>ui\ui_mm_right_bordr</texture>
+</background>
+
+<back_video x="0" y="-40" width="880" height="1120" stretch="1">   
+    </back_video>
+
+	<back_movie x="-1750" y="0" width="300" height="800">
+		<texture x="0" y="0" width="300" height="800">ui\ui_mm_main_back_crop</texture>
+	</back_movie>
+	
+	<fire_movie x="-525" y="-459" width="128" height="256">
+		<texture>ui\ui_mm_fire</texture>
+	</fire_movie>
+
+	<back_movie_night x="-11148" y="-11110" width="1024" height="768">
+		<texture x="0" y="0" width="1024" height="768">ui\ui_mm_night_back_crop</texture>
+	</back_movie_night>
+
+	<back_movie_night_wide x="-11148" y="-11110" width="1024" height="768">
+		<texture x="0" y="0" width="1024" height="768">ui\ui_mm_night_back</texture>
+	</back_movie_night_wide>
+
+	<back_movie_wide x="-11148" y="-11110" width="1024" height="768">
+		<texture x="0" y="0" width="1024" height="768">ui\ui_mm_main_back</texture>
+	</back_movie_wide>
+
+	<shniaga_wnd x="720" y="350" width="392" height="280">
+		<buttons_region	x="110" y="0" width="164" height="280" always_show_scroll="false"/>
+		
+		<shniaga x="9" y="0" width="392" height="73">
+			<texture>ui\doll\button_invisible</texture>			
+			<magnifire x="76" y="22" width="232" height="60" stretch="1">
+
+        <y_offset>0</y_offset>
+			</magnifire>
+			
+			<left_anim x="9943" y="37" width="55" height="55" stretch="1" heading="1" alignment="c">
+				<texture>ui_menu_bigroll_l</texture>
+			</left_anim>			
+			<right_anim x="9300" y="37" width="55" height="55" stretch="1" heading="1" alignment="c">
+				<texture>ui_menu_bigroll_r</texture>
+			</right_anim>
+			<left_grating x="9990" y="4" width="55" height="67">
+				<texture>ui_menu_grating_l</texture>
+			</left_grating>
+			<right_grating x="9337" y="4" width="55" height="67">
+				<texture>ui_menu_grating_r</texture>
+			</right_grating>
+		</shniaga>		
+	</shniaga_wnd>
+	
+	<menu_main btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_new_game"	caption="ui_mm_newgame" />
+		<btn name="btn_load"		caption="ui_mm_load_game" />
+
+		<btn name="btn_options"		caption="ui_mm_options_n" />
+		<btn name="btn_credits"		caption="ui_mm_credits" />
+		<btn name="btn_quit"		caption="ui_mm_quit2windows" />
+	</menu_main>
+	
+	<menu_main_last_save btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_new_game"	caption="ui_mm_newgame" />
+		<btn name="btn_load"		caption="ui_mm_load_game" />
+		<btn name="btn_lastsave"	caption="ui_mm_last_save" />
+
+		<btn name="btn_options"		caption="ui_mm_options_n" />
+		<btn name="btn_credits"		caption="ui_mm_credits" />
+		<btn name="btn_quit"		caption="ui_mm_quit2windows" />
+	</menu_main_last_save>
+	
+	<menu_new_game btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_novice"		caption="ui_mm_novice" />
+		<btn name="btn_stalker"		caption="ui_mm_stalker" />
+		<btn name="btn_veteran"		caption="ui_mm_veteran" />
+		<btn name="btn_master"		caption="ui_mm_master" />
+		<btn name="btn_new_back"	caption="ui_mm_back" />
+	</menu_new_game>
+	
+	<menu_main_single btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_ret"			caption="ui_mm_return_game" />
+		<btn name="btn_lastsave"	caption="ui_mm_last_save" />
+		<btn name="btn_load"		caption="ui_mm_load_game" />
+		<btn name="btn_save"		caption="ui_mm_save_game" />
+		<btn name="btn_options"		caption="ui_mm_options_n" />
+		<btn name="btn_credits"		caption="ui_mm_credits" />
+		<btn name="btn_quit_to_mm"	caption="ui_mm_quit_game" />
+		<btn name="btn_quit"		caption="ui_mm_quit2windows" />
+	</menu_main_single>
+	
+	<menu_main_single_dead btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_lastsave"	caption="ui_mm_last_save" />
+		<btn name="btn_load"		caption="ui_mm_load_game" />
+		<btn name="btn_options"		caption="ui_mm_options_n" />
+		<btn name="btn_credits"		caption="ui_mm_credits" />
+		<btn name="btn_quit_to_mm"	caption="ui_mm_quit_game" />
+		<btn name="btn_quit"		caption="ui_mm_quit2windows" />
+	</menu_main_single_dead>
+	
+	<menu_main_mm btn_height="30" font="letterica18" a="255" r="235" g="235" b="118">
+		<btn name="btn_ret"			caption="ui_mm_return_game" />
+		<btn name="btn_options"		caption="ui_mm_options_n" />
+    <btn name="btn_multiplayer"	caption="ui_mm_multiplayer_n" />
+    <btn name="btn_credits"		caption="ui_mm_credits" />
+		<btn name="btn_quit_to_mm"	caption="ui_mm_disconnect" />
+		<btn name="btn_quit"		caption="ui_mm_quit2windows" />
+	</menu_main_mm>
+	
+	<menu_sound random="0" >
+		<!--whell_sound>car\apc_run</whell_sound>
+		<whell_click>car\test_car_stop</whell_click-->
+		
+		<menu_music>music\ogsm_music</menu_music>
+		
+		<!--menu_music>music\guitar_2</menu_music>
+		<menu_music>music\guitar_1</menu_music>
+		<menu_music>music\guitar_3</menu_music-->
+		
+	</menu_sound>
+
+	<static_version x="820" y="40" width="200" height="30">
+		<text align="c" font="graffiti19" a="200" r="255" g="18" b="18" complex_mode="1">ui_mm_mod_name</text>
+	</static_version>
+
+	<ogsm_version x="15" y="720" width="100" height="30">
+		<text align="l" font="graffiti19" r="165" g="163" b="166" complex_mode="0"/>
+	</ogsm_version>	
+	
+</window>

@@ -1,0 +1,24 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+garb_foto_task} sr_idle@2 %+garb_hangar_anomaly_start%
+
+[sr_idle@2]
+on_info = {+garb_hangar_anomaly_foto} sr_particle@1
+
+[sr_particle@1]
+name = anomaly2\psi_antenna
+path = garb_heap_body_zone_point
+mode = 2
+looped = false
+on_signal = particle_end | sr_particle@2 %=play_snd_from_obj(8471:anomaly\emi_blowout)%
+on_info = {+garb_ufo_task_done} nil
+
+[sr_particle@2]
+name = anomaly2\psi_antenna
+path = garb_heap_body_zone_point
+mode = 2
+looped = false
+on_signal = particle_end | sr_particle@1 %=play_snd_from_obj(8471:anomaly\emi_blowout)%
+on_info = {+garb_ufo_task_done} nil

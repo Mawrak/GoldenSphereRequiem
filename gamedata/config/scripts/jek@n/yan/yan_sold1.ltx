@@ -1,0 +1,241 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+threshold = threshold@yan_sold1
+on_death = death
+
+
+[walker@start]
+path_walk = yan_sold1_walk1
+path_look = yan_sold1_look1
+on_timer = 1 | walker@1 %=make_invulnerable%
+
+
+; Патрулируем периметр двора вокруг забора:
+[walker@1]
+path_walk = yan_sold1_walk1
+path_look = yan_sold1_look1
+danger = danger_condition
+;combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+;on_timer = 18000 | walker@2
+
+
+[walker@2]
+path_walk = yan_sold1_walk2
+path_look = yan_sold1_look2
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@2_1
+
+[walker@2_1]
+path_walk = yan_sold1_walk2
+path_look = yan_sold1_look2
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@3
+
+
+[walker@3]
+path_walk = yan_sold1_walk3
+path_look = yan_sold1_look3
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@3_1
+
+[walker@3_1]
+path_walk = yan_sold1_walk3
+path_look = yan_sold1_look3
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@4
+
+
+[walker@4]
+path_walk = yan_sold1_walk4
+path_look = yan_sold1_look4
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@4_1
+
+[walker@4_1]
+path_walk = yan_sold1_walk4
+path_look = yan_sold1_look4
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@5
+
+
+[walker@5]
+path_walk = yan_sold1_walk5
+path_look = yan_sold1_look5
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@5_1
+
+[walker@5_1]
+path_walk = yan_sold1_walk5
+path_look = yan_sold1_look5
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@6
+
+
+[walker@6]
+path_walk = yan_sold1_walk6
+path_look = yan_sold1_look6
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@6_1
+
+[walker@6_1]
+path_walk = yan_sold1_walk6
+path_look = yan_sold1_look6
+danger = danger_condition
+combat_ignore_cond = always
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@7
+
+
+[walker@7]
+path_walk = yan_sold1_walk7
+path_look = yan_sold1_look7
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@7_1
+
+[walker@7_1]
+path_walk = yan_sold1_walk7
+path_look = yan_sold1_look7
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@8
+
+
+[walker@8]
+path_walk = yan_sold1_walk8
+path_look = yan_sold1_look8
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@8_1
+
+[walker@8_1]
+path_walk = yan_sold1_walk8
+path_look = yan_sold1_look8
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_timer = 5000 | walker@1_1
+
+
+[walker@1_1]
+path_walk = yan_sold1_walk1
+path_look = yan_sold1_look1
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = patrol
+def_state_moving2 = patrol
+def_state_moving3 = patrol
+on_info = {+yan_bunker_atack_start} walker@defense1
+on_signal       = arrived | walker@1
+
+
+
+; на защиту двора:
+[walker@defense1]
+path_walk = yan_sold1_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = always
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_signal       = arrived | walker@defense2 %=play_snd_from_obj(8681:characters_voice\scenario\garbage\junkyard_1)%
+
+[walker@defense2]
+path_walk = yan_sold1_walk_defense
+path_look = yan_sold_comander_look_defense
+danger = danger_condition
+combat_ignore_cond = {-yan_bunker_atack_start}
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-yan_bunker_atack_start} walker@1
+
+
+
+
+
+
+[threshold@yan_sold1]
+max_ignore_distance = 15
+ignore_monster = 0
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+yan_sold1_dead%

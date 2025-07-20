@@ -1,0 +1,182 @@
+[wpn_scope]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency = 
+class			= WP_SCOPE
+cform           = skeleton
+$prefetch 		= 32
+
+
+
+
+;Оптический прицел ПСО-1
+[wpn_addon_scope]:wpn_scope
+$spawn			= "weapons\addons\scope" ; option for Level Editor
+visual          = weapons\upgrade\wpn_scope.ogf
+description		= enc_addon_scope
+cost			= 5000
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		= addon_scope
+inv_name_short	= addon_scope
+inv_weight		= 0.4
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 5
+inv_grid_y			= 8
+scope_texture		= wpn\old_scopes\wpn_crosshair_pso
+scope_zoom_factor	= 35
+
+
+
+
+;Оптический прицел ACOG 3,5х
+[wpn_addon_acog]:wpn_scope
+$spawn			= "weapons\addons\scope_acog" ; option for Level Editor
+visual          = weapons\addons\acog.ogf
+description		= enc_addon_scope_acog
+
+cost			= 8000
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		= addon_scope_acog
+inv_name_short	= addon_scope_acog
+inv_weight		= 0.39
+
+inv_grid_width			= 1
+inv_grid_height		= 1
+inv_grid_x			= 6
+inv_grid_y			= 7
+scope_texture		= wpn\old_scopes\wpn_crosshair_acog
+scope_zoom_factor	= 35
+
+
+
+
+; прицел для М-16
+[wpn_addon_m16_scope]:wpn_scope
+$spawn			= "weapons\addons\scope_scope2" ; option for Level Editor
+visual          = weapons\addons\scope2.ogf
+description		= enc_addon_scope2
+
+cost			= 8500
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		    = addon_scope2
+inv_name_short	    = addon_scope2
+inv_weight		    = 0.45
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 7
+inv_grid_y			= 7
+scope_texture		= wpn\old_scopes\wpn_crosshair_simple
+scope_zoom_factor	= 30
+
+
+
+; прицел для Мосинки
+[wpn_scope_mosin]:wpn_scope
+$spawn			= "weapons\addons\scope_scope2" ; option for Level Editor
+visual          = weapons\upgrade\wpn_scope.ogf
+description		= wpn_scope_mosin_descr
+
+cost			= 5000
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		    = wpn_scope_mosin
+inv_name_short	    = wpn_scope_mosin
+inv_weight		    = 0.4
+
+inv_grid_width		= 2
+inv_grid_height		= 1
+inv_grid_x			= 7
+inv_grid_y			= 6
+scope_texture		= wpn\old_scopes\wpn_crosshair_mosin
+scope_zoom_factor	= 25
+
+
+
+; прицел для СКС
+[wpn_addon_scope_sks]:wpn_scope
+visual          = weapons\upgrade\wpn_scope.ogf
+description		= wpn_addon_scope_sks_descr
+
+cost			= 5500
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		    = wpn_addon_scope_sks
+inv_name_short	    = wpn_addon_scope_sks
+inv_weight		    = 0.35
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 6
+inv_grid_y			= 9
+scope_texture		= wpn\old_scopes\wpn_crosshair_sks
+scope_zoom_factor	= 30
+
+
+
+
+
+;Оптический прицел SUSAT
+[wpn_addon_scope_susat]:wpn_scope
+$spawn			= "weapons\addons\scope_susat" ; option for Level Editor
+visual          = weapons\upgrade\wpn_scope_susat.ogf
+description		= enc_addon_scope_susat
+
+cost			= 3400
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		= addon_scope_susat
+inv_name_short	= addon_scope_susat
+inv_weight		    = 0.41
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 5
+inv_grid_y			= 9
+scope_texture		= wpn\old_scopes\wpn_crosshair_susat
+scope_zoom_factor	= 28
+
+
+
+
+;Оптический прицел для АКСУ:
+[wpn_addon_scope_aksu]:wpn_scope
+$spawn			= "weapons\addons\scope_susat" ; option for Level Editor
+visual          = weapons\upgrade\wpn_scope_susat.ogf
+description		= addon_scope_aksu_descr
+
+cost			= 3000
+
+holder_range_modifier	= 1.5
+holder_fov_modifier		= 0.8
+
+inv_name		= addon_scope_aksu_name
+inv_name_short	= addon_scope_aksu_name
+inv_weight		    = 0.38
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 9
+inv_grid_y			= 29
+scope_texture		= wpn\old_scopes\wpn_crosshair_aksu
+scope_zoom_factor	= 32
+
+
+
+

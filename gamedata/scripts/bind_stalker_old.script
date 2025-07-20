@@ -1,0 +1,883 @@
+function init    (obj)
+	xr_motivator.AddToMotivator(obj)
+end
+
+--[[function actor_init    (npc)
+	npc:bind_object(actor_binder(npc))
+end]]
+
+--/ -----------------------------------------------------------------
+--/#+# [se_stor] организуем внешний доступ к биндеру актора:
+--/ -----------------------------------------------------------------
+function actor_init(npc)
+	_G.g_bind_actor = actor_binder(npc)
+	npc:bind_object(_G.g_bind_actor)
+end
+function save(...)
+	_G.g_bind_actor:ext_save(...)
+end
+function load(...)
+	_G.g_bind_actor:ext_load(...)
+end
+
+local game_difficulty_by_num = {
+	[0] = "gd_novice",
+	[1] = "gd_stalker",
+	[2] = "gd_veteran",
+	[3] = "gd_master"
+	}
+
+lasthealth  = 0
+lasttime	= 0
+post_process = 0
+local weapon_hide = false
+
+----------------------------------------------------------------------------------------------------------------------
+class "actor_binder" (object_binder)
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:__init (obj) super(obj)
+	self.bCheckStart = false
+	self.weather_manager = level_weathers.WeatherManager()
+	self.actor_detector = xr_detector.actor_detector()
+	if (m_timers) then m_timers.start() end --/#+# for update timers
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:net_spawn(data)
+	-- printf("actor net spawn")
+_G.gs_debug = command_line():find("-dbg")~=nil
+if gs_debug then
+	_G.state = 0
+	level.add_call(function() return _G.state ~= 0 end, function()
+	 get_hud():AddCustomStatic("cs_radiation_danger", true):wnd():SetTextST(string.format("Игра преврана!!!"))
+	dbglog("stop!!! %d", _G.state)
+	
+	for k , v in pairs(_G.sw_names) do dbglog(">>%s",v) end
+	log1(debug.traceback('stop!!!'))
+	 get_console():execute("flush")
+	 get_console():show()
+	end)
+end
+	level.show_indicators()
+	
+	self.bCheckStart = true
+	self.weapon_hide = false 
+	weapon_hide = false 
+
+	if object_binder.net_spawn(self,data) == false then
+		return false
+	end
+
+	db.add_actor(self.object)
+
+	if self.st.disable_input_time == nil then
+		level.enable_input()
+	end
+
+	self.weather_manager:reset()
+
+	if(actor_stats.add_to_ranking~=nil)then
+		actor_stats.add_to_ranking(self.object:id())
+	end
+
+	death_manager.init_drop_settings()
+
+	amk.on_game_load()
+	starvation.on_game_load()
+	
+	if xrs_ai then
+		xrs_ai.actor_net_spawn(self)
+	end
+   
+	if rx_ai then
+		rx_ai.actor_net_spawn()
+	end
+	
+
+	--// xr_companion
+	local actor_comm = db.actor:character_community()
+	for k, v in pairs(xr_companion.companions) do
+		if v == actor_comm then
+			xr_companion.companions[k] = "companion"
+		end
+	end
+	--// xr_companion
+	
+	return true
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:net_destroy()
+	if(actor_stats.remove_from_ranking~=nil)then
+		actor_stats.remove_from_ranking(self.object:id())
+	end
+	db.del_actor(self.object)
+
+    sr_light.clean_up ()
+
+	self.object:set_callback(callback.inventory_info, nil)
+	self.object:set_callback(callback.article_info, nil)
+	self.object:set_callback(callback.on_item_take, nil)
+	self.object:set_callback(callback.on_item_drop, nil)
+	self.object:set_callback(callback.task_state, nil)
+	self.object:set_callback(callback.level_border_enter, nil)
+	self.object:set_callback(callback.level_border_exit, nil)
+	self.object:set_callback(callback.take_item_from_box, nil)
+    self.object:set_callback(callback.use_object, nil)
+	self.object:set_callback(callback.on_key_press, nil)
+	self.object:set_callback(callback.on_item_belt, nil)
+	self.object:set_callback(callback.on_item_ruck, nil)
+	self.object:set_callback(callback.on_item_slot, nil)
+                
+	if sr_psy_antenna.psy_antenna then
+		sr_psy_antenna.psy_antenna:destroy()
+		sr_psy_antenna.psy_antenna = false
+	end
+
+	xr_sound.stop_all_sound_object()
+
+	object_binder.net_destroy(self)
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:reinit()
+	object_binder.reinit(self)
+
+	local npc_id = self.object:id()
+
+	db.storage[npc_id] = { }
+
+	self.st = db.storage[npc_id]
+	self.st.pstor = nil
+
+	self.next_restrictors_update_time = -10000
+
+	self.object:set_callback(callback.inventory_info, self.info_callback, self)
+	self.object:set_callback(callback.article_info, self.article_callback, self)
+	self.object:set_callback(callback.on_item_take, self.on_item_take, self)
+	self.object:set_callback(callback.on_item_drop, self.on_item_drop, self)
+	self.object:set_callback(callback.trade_sell_buy_item, self.on_trade, self) -- for game stats
+	self.object:set_callback(callback.task_state, self.task_callback, self)
+	self.object:set_callback(callback.level_border_enter, self.level_border_enter, self)
+	self.object:set_callback(callback.level_border_exit, self.level_border_exit, self)
+	self.object:set_callback(callback.take_item_from_box, self.take_item_from_box, self)
+	self.object:set_callback(callback.use_object, self.use_object, self)
+	--self.object:set_callback(callback.death,self.death_callback,self)
+	self.object:set_callback(callback.hit,self.hit_callback,self)
+	self.object:set_callback(callback.on_key_press, self.on_key_press, self)	-- нажатие клавиши
+	self.object:set_callback(callback.on_item_belt, self.on_item_belt, self)	-- перемещение на пояс
+	self.object:set_callback(callback.on_item_ruck, self.on_item_ruck, self)	-- перемещение в рюкзак
+	self.object:set_callback(callback.on_item_slot, self.on_item_slot, self)	-- перемещение в слот
+
+		--/#+# [lua_helper] ------------------------------------------------
+	if event then event("actor_stor"):once(true):trigger() --/#!#> событие: инициализация 'storage' актора
+	elseif lua_helper.Init_ActorPStor then lua_helper.Init_ActorPStor()
+	end
+	--/< ---------------------------------------------------------------
+end
+
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:on_item_slot(item)
+	inventory.update()
+end
+
+function actor_binder:on_item_ruck(item)
+	inventory.update()
+	addon_pnv.check_ruck(item)
+end
+
+function actor_binder:on_item_belt(item)
+	inventory.update()
+	addon_pnv.check_belt(item)
+end
+
+function actor_binder:take_item_from_box(box, item)
+	addon.take_from_box(box)
+	local story_id = box:story_id()
+	if story_id == nil then
+		return
+	end
+
+--[[
+	local respawner = se_respawn.get_respawner_by_parent(story_id)
+	if respawner == nil then
+		return
+	end
+
+	respawner:remove_spawned(item:id())
+
+	local smart_terrain = db.strn_by_respawn[respawner:name()]
+	if smart_terrain == nil then
+		return
+	end
+
+	local npc = smart_terrain.gulag:get_nearest_online_obj(db.actor:position())
+    if npc ~= nil then
+	    xr_sound.set_sound_play(npc, "reac_box")
+	    xr_gulag.setGulagEnemy(smart_terrain:name() , db.actor)
+    end
+]]
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:level_border_enter(npc, info_id)
+	self.actor_detector:actor_enter()
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:level_border_exit(npc, info_id)
+	self.actor_detector:actor_exit()
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:info_callback(npc, info_id)
+	-- printf("*INFO*: npc='%s' id='%s'", npc:name(), info_id)
+	--' Сюжет
+	level_tasks.proceed(self.object)
+	-- Отметки на карте
+	level_tasks.process_info_portion(info_id)
+	amk.on_info_update(info_id)
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:on_trade (item, sell_bye, money)
+    if sell_bye == true then
+       game_stats.money_trade_update (money)
+    else
+       game_stats.money_trade_update (-money)
+    end
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:article_callback(npc, group, name, article_type)
+	if device().precache_frame >1 then return end
+
+	if group == "Diary" then
+		news_manager.send_encyclopedy("diary", group)
+		amk.send_tip(game.translate_string(name), "Заметка в журнале:", nil, 7)
+	elseif group == "Mutants" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Заметка о мутантах:", nil, 7)
+	elseif group == "Artifacts" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Заметка об артефактах:", nil, 7)
+	elseif group == "Anomalies" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Заметка об аномалиях:", nil, 7)
+	elseif group == "Locations" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Информация о локации:", nil, 7)
+	elseif group == "Zone-story" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "История Зоны:", nil, 7)
+	elseif group == "Stories" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Местный фольклор:", nil, 7)
+	elseif group == "memuars" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Личная заметка:", nil, 7)
+	elseif group == "Found_PDA" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Получены данные:", nil, 7)
+	elseif group == "st_operation_agroprom" or group == "LabX18_information" or group == "aes_military_task" then
+		news_manager.send_encyclopedy("encyclopedy", group)
+		amk.send_tip(game.translate_string(name), "Заметка в журнале:", nil, 7)
+	end
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:on_item_take (obj)
+    level_tasks.proceed(self.object)
+    amk.on_item_take(obj)
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:on_item_drop (obj)
+    level_tasks.proceed(self.object)
+    amk.on_item_drop(obj)
+end
+----------------------------------------------------------------------------------------------------------------------
+
+function actor_binder:task_callback(_task, _objective, _state)
+	task_manager.task_callback(_task:get_id(), _objective:get_idx(), _state)
+	if _objective:get_idx() == 0 then
+		if _state == task.fail then
+			news_manager.send_task(db.actor, "fail", _task, _objective)
+		elseif _state == task.completed then
+			task_manager.reward_by_task(_task)
+			news_manager.send_task(db.actor, "complete", _task, _objective)
+		else
+			news_manager.send_task(db.actor, "new", _task, _objective)
+		end
+	else
+		if _task:get_objective(0):get_state() == task.in_progress then
+			news_manager.send_task(db.actor, "update", _task, _objective)
+		end
+	end
+end
+
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:map_location_added_callback(spot_type_str, object_id)
+	if (false==app_ready()) or (device().precache_frame>1) then return end
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:update(delta) 
+	object_binder.update(self, delta) 
+
+	local time = time_global() 
+
+	game_stats.update (delta, self.object)
+
+	self.weather_manager:update() 
+
+	self.actor_detector:update() 
+
+	xr_sound.update_actor() 
+	
+	--' Проверка потери жизни
+--[[
+	if self.object.health - lasthealth > 0.001 or
+	   self.object.health - lasthealth < -0.001 then
+		printf("%f | %f", self.object.health, self.object.health - lasthealth, game.time() - lasttime)
+		lasthealth = self.object.health
+		lasttime = game.time()
+	end
+]]
+	if self.st.disable_input_time ~= nil and
+	   game.get_game_time():diffSec(self.st.disable_input_time) >= self.st.disable_input_idle
+	then
+		level.enable_input()
+		self.st.disable_input_time = nil
+	end 
+	if self.st.sleep_relocate_time ~= nil and
+	   game.get_game_time():diffSec(self.st.sleep_relocate_time) >= self.st.sleep_relocate_idle
+	then
+		self.object:set_actor_position(self.st.sleep_relocate_point)
+		local dir = self.st.sleep_relocate_point:sub(self.st.sleep_relocate_look)
+		self.object:set_actor_direction(dir:getH())
+		self.st.sleep_relocate_time = nil
+	end 
+
+	if weapon_hide == true or self.object:is_talking() then
+		if self.weapon_hide == false then
+			self.object:hide_weapon()
+			self.weapon_hide = true
+		end
+	else
+		if self.weapon_hide == true then
+			self.object:restore_weapon()
+			self.weapon_hide = false
+		end
+	end 
+
+	if self.next_restrictors_update_time < time then
+		self.next_restrictors_update_time = time + 200
+if gs_debug then	_G.state = 1 _G.sw_names = {} end
+		bind_restrictor.actor_update(delta)
+if gs_debug then	_G.state = 0 end
+		bind_mteleport.actor_update(delta) 
+		task_manager.actor_update() 
+	end
+
+	if post_process ~= 0 then
+		if post_process:update () == true then
+		   post_process = 0
+		end
+	end 
+
+	if sr_psy_antenna.psy_antenna then
+		sr_psy_antenna.psy_antenna:update(delta)
+	end 
+	
+	if self.object.radiation >= 0.7 then
+		local hud = get_hud()
+		local custom_static = hud:GetCustomStatic("cs_radiation_danger")
+		if custom_static == nil then
+			hud:AddCustomStatic("cs_radiation_danger", true)
+			hud:GetCustomStatic("cs_radiation_danger"):wnd():SetTextST("st_radiation_danger")
+		end
+	else
+		local hud = get_hud()
+		local custom_static = hud:GetCustomStatic("cs_radiation_danger")
+		if custom_static ~= nil then
+			hud:RemoveCustomStatic("cs_radiation_danger")
+		end
+	end 
+
+
+ 	if self.bCheckStart then
+		printf("SET DEFAULT INFOS")
+
+		if not has_alife_info("storyline_actor_start") and
+		   (level.name() == "l01_escape")
+		then
+			self.object:give_info_portion("storyline_actor_start")
+			_G.g_start_avi = true
+			printf("*AVI* RUN START AVI")
+		end
+
+		if not has_alife_info("global_dialogs") then
+			self.object:give_info_portion("global_dialogs")
+		end
+
+		if not has_alife_info("level_changer_icons") then
+			self.object:give_info_portion("level_changer_icons")
+			level.add_pp_effector ("agr_u_fade.ppe", 204406, false)
+		end
+
+		level_tasks.add_lchanger_location()
+		self.bCheckStart = false
+	end 
+
+	amk.on_actor_update() 
+	
+	if xrs_ai then xrs_ai.actor_update(delta) end 
+
+	addon_keylogger.update()
+
+    if rx_ai then rx_ai.actor_update() end
+	
+	_sdata.vis_int()
+
+	addon.starvation_update(delta)
+	
+	xr_companion.reset_enemy_by_time()
+	
+-- Дебаг-отладка:
+if command_line():find('-dbg') then
+	local target = level.get_target_obj()
+	if target then
+	local st = db.storage[target:id()]
+	local lgc = "none"
+	if st and st.active_section then lgc = st.active_section end
+	local sid = target:story_id()
+	if sid==-1 or sid>655350 then sid = "none" else sid = tostring(sid) end
+	local vis = target:get_visual_name() or "none"
+	vis = vis:gsub("\\","\\ ")
+	get_hud():AddCustomStatic("cs_radiation_danger", true):wnd():SetTextST(string.format("section = %s, name = %s, dist = %.2f, scheme = %s,\\n sid = %s, visual = %s",target:section(), target:name(),level.get_target_dist(), lgc, sid, vis))
+	else
+	local vec = db.actor:position()
+	local lv = db.actor:level_vertex_id()
+	local gv = db.actor:game_vertex_id()
+	get_hud():AddCustomStatic("cs_radiation_danger", true):wnd():SetTextST(string.format("[%.3f][%.3f][%.3f][%d][%d]",vec.x,vec.y,vec.z,lv,gv))
+	end
+end
+
+
+end
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:save(packet)
+	--/#+# for debug --------------------------------------------------
+	local size = packet:w_tell()
+	--/<---------------------------------------------------------------
+	addon.on_game_save()
+	starvation.on_game_save()
+	
+	if rx_ai then rx_ai.actor_save(packet) end
+	
+	local save_treasure_manager = true
+
+	printf("actor_binder:save(): self.object:name()='%s'", self.object:name())
+	object_binder.save(self, packet)
+
+	if save_treasure_manager == true then
+		packet:w_u8(level.get_game_difficulty() + 128)
+	else
+		packet:w_u8(level.get_game_difficulty())
+	end
+
+	if self.st.disable_input_time == nil then
+		packet:w_bool(false)
+	else
+		packet:w_bool(true) 
+		utils.w_CTime(packet, self.st.disable_input_time)
+	end
+
+	xr_logic.pstor_save_all(self.object, packet)
+	-- self.weather_manager:save(packet)
+
+	-- sr_psy_antenna.save( packet )
+
+	-- if save_treasure_manager == true then
+		-- treasure_manager.save(packet)
+	-- end
+
+	-- task_manager.save(packet)
+	-- self.actor_detector:save(packet)
+	
+		--/#+# вызов сохранений во внешних модулях ------------------------
+	if to_log then to_log(script_name()..":save:size=["..(packet:w_tell() - size).."]") end --/#~#
+	if se_stor then
+		if event then --/ вызов через 'систему сигналов'
+			event("actor_saved"):trigger() --/#!#> событие: 'окончание сохранения данных актора'
+		elseif type(se_stor.save) == 'function' then --/ 'прямой' вызов
+			if (m_timers) then m_timers.save() end --/ for timers
+			se_stor.save()
+		end
+	elseif (m_timers) then m_timers.save() 
+	end
+	
+end
+
+--/#+# [se_stor] сохранение в чанках данных из внешних модулей без публичного save(): --
+function actor_binder:ext_save(pk)
+	self.weather_manager:save(pk)
+	self.actor_detector:save(pk)
+end
+
+----------------------------------------------------------------------------------------------------------------------
+function actor_binder:load(reader)
+	--/#+# for debug --------------------------------------------------
+	local size = reader:r_tell()
+	--/<---------------------------------------------------------------
+	
+	printf("actor_binder:load(): self.object:name()='%s'", self.object:name())
+	object_binder.load(self, reader)
+	printf("actor_binder:object_binder.load(): self.object:name()='%s'", self.object:name())
+
+	local game_difficulty = reader:r_u8()
+
+	local load_treasure_manager = false
+	if game_difficulty >= 128 then
+		game_difficulty = game_difficulty - 128
+		load_treasure_manager = true
+	end
+
+	if game_difficulty_by_num[game_difficulty] ~= nil then -- изменено KamikaZze с целью отладки 25/02/2009
+		get_console():execute("g_game_difficulty "..game_difficulty_by_num[game_difficulty])
+	else 	
+		get_console():execute("g_game_difficulty ".."gd_master")
+	end
+
+	if reader:r_eof() then
+		abort("SAVE FILE IS CORRUPT")
+	end
+
+	local stored_input_time = reader:r_u8()
+	if stored_input_time == true then
+		self.st.disable_input_time = utils.r_CTime(reader)
+	end
+
+	xr_logic.pstor_load_all(self.object, reader)
+	-- self.weather_manager:load(reader)
+
+	-- sr_psy_antenna.load(reader)
+
+	-- if load_treasure_manager == true then
+		-- treasure_manager.load(reader)
+	-- end
+
+	-- task_manager.load(reader)
+	-- self.actor_detector:load(reader)
+	
+		--/#+# вызов загрузки во внешних модулях --------------------------
+	if to_log then to_log(script_name()..":load:size=["..(reader:r_tell() - size).."]") end --/#~#
+	if se_stor then
+		if event then --/ вызов через 'систему сигналов'
+			event("actor_load"):trigger() --/#!#> событие: 'загружены данные актора' (для инициализации стораджа актора)
+		elseif type(se_stor.save) == 'function' then --/ 'прямой' вызов
+			se_stor.load()
+			if (m_timers) then m_timers.load() end --/ for timers
+		end
+	elseif (m_timers) then m_timers.load() --/ for timers
+	end
+end
+
+--/#+# [se_stor] загрузка данных из чанков во внешние модули без публичного save(): ----
+function actor_binder:ext_load(pk)
+	self.weather_manager:load(pk)
+	self.actor_detector:load(pk)
+end
+----------------------------------------------------------------------------------------------------------------------
+
+function hide_weapon()
+	weapon_hide = true
+end
+function restore_weapon()
+	weapon_hide = false
+end
+
+function actor_binder:use_object(obj)
+	item_sounds.use_snd(obj)
+	_tracking_of_mobile_all.on_use_object(obj)
+	healing.check_medkit(obj) -- лечилки
+	sleep_manager.check_sleep_item(obj) -- матрас энергетик и dix
+	starvation.on_item_use(obj)
+	if db.actor:object("af_bottle") == nil then
+		intoxication.use_bad_food(obj)
+	end
+end
+
+
+-- Коллбэк на смерть актора -----------------------------------------------------------------------------------------------------------
+--function actor_binder:death_callback(victim,who)
+--end
+
+-- Коллбэк на нажатие клавиш: --------------------------------------------------------------------------------------------------------
+function actor_binder:on_key_press(key)
+	if key == DIK_keys.DIK_F6 then addon_2.quicksave_message() end
+	if key == DIK_keys.DIK_SPACE then addon.hit_actor_up() end
+	if key == DIK_keys.DIK_K then addon_dialogs.faint_bodies_check() end
+end
+
+
+
+-- Коллбэк на хит актора -----------------------------------------------------------------------------------------------------------
+function actor_binder:hit_callback(obj, amount, local_direction, who, bone_index)
+
+if who and who:id()~=db.actor:id() and amount > 0 then
+
+local p = 0.3	--	порог урона, выше которого мы получаем травму;
+local h=hit()
+local diff = level.get_game_difficulty()
+
+if diff == 0 then hit_diff = 1.0
+elseif diff == 1 then hit_diff = 1.2
+elseif diff == 2 then hit_diff = 1.3
+elseif diff == 3 then hit_diff = 1.4 
+end
+
+if has_alife_info("arts_powerup_neutral") then psy_pwr = 0.25
+else psy_pwr = 0.55
+end
+
+
+-- Любой хит: ----------------------------------
+if db.actor:dont_has_info("arts_powerup_stone") then
+	if amount > 0.08 then
+		addon.actor_hit_effect()
+	end
+elseif has_alife_info("arts_powerup_stone") then
+	local addhealth = amount*0.5
+	local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = hlth + addhealth
+			db.actor:heal_wounds(1.5)
+		end
+end
+
+-- Артефакт "Кожа": ----------------------------------------
+if inventory.belt["af_skin"] and amount > 0.01 then
+	local item_s6 = db.actor:item_in_slot(6)
+	if item_s6 ~= nil then
+	cond6 = item_s6:condition()
+		if cond6 < 0.999 and cond6 > 0.10 then
+			item_s6:set_condition(cond6+0.08)
+		end
+	end
+end
+
+-- Арбалет: ----------------------------
+if who and who.active_item and who:active_item() and who:active_item():section()=="wpn_crossbow" then
+    addon_dialogs.rad_crossbow_seek_effect()
+end
+
+-- Пси-винтовка: ----------------------------
+if who and who.active_item and who:active_item() and who:active_item():section()=="wpn_psy" then
+addon.act_hit_head_indication3()	--	индикация;
+	if db.actor.psy_health > 0.45 then
+         h.type = hit.telepatic
+		 h.power = psy_pwr
+         h.impulse = 0
+         h.draftsman = db.actor
+		 h.bone = "bip01_spine"	--	должна учитываться защита комбеза
+         h.direction = vector():set(0,0,0)
+         db.actor:hit(h) 
+	elseif db.actor.psy_health < 0.45 then
+		if db.actor:dont_has_info("actor_psy_death") then
+			db.actor:give_info_portion ("actor_psy_death")
+		end
+		db.actor:kill(db.actor)
+	end
+end
+
+-- Лазер: ----------------------------
+if who and who.active_item and who:active_item() and who:active_item():section()=="wpn_laser" then
+         h.type = hit.burn
+         h.power = 0.25
+         h.impulse = 0
+         h.draftsman = db.actor
+		 h.bone = "bip01_spine"	--	должна учитываться защита комбеза
+         h.direction = vector():set(0,0,0) 
+         db.actor:hit(h) 
+		addon.laser_hit_effect()
+end
+
+-- Огнестрел общий(по методу исключения) ----------------------------
+if who and who.active_item and who:active_item() and IsStalker(who) and who:active_item():section()~="wpn_psy" and who:active_item():section()~="wpn_laser" and who:active_item():section()~="wpn_crossbow" then
+         h.type = hit.fire_wound
+         h.power = 0.5*hit_diff
+         h.impulse = 0
+         h.draftsman = db.actor
+         h.direction = db.actor:position():sub(who:position()) 
+		 h.bone = "bip01_spine"	-- должна учитываться защита комбеза
+         db.actor:hit(h)
+		 addon.actor_hit_effect()
+end
+
+-- Экспериментальный костюм: --------------------------------------------------------------------
+if IsMonster(who) and xr_conditions.actor_wears_secret_outfit() == true then
+react = sound_object("anomaly\\electra_hit")  
+react:play_at_pos(who, who:position(), sound_object.s2d)
+react.volume = 1.0
+local pos = db.actor:position()
+local fx_particle = particles_object("anomaly2\\electra2_blast_01")
+fx_particle:play_at_pos(pos)	
+        h.type = hit.shock
+        h.power = 0.6
+        h.impulse = 0
+        h.draftsman = who
+        h.direction = vector():set(0,0,0) 
+        who:hit(h) 
+end
+
+-- Артефакт "Медь": --------------------------------------------------------------------
+if IsAnomaly(who) and inventory.belt["af_bobbin"] then
+	local addhealth = amount*0.6
+	local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = hlth + addhealth
+		end
+end
+
+-- Модифицированный комбез агентов: --------------------------------------------------------------------
+if IsAnomaly(who) and xr_conditions.actor_wears_headhunter_m1outfit() == true then
+	local addhealth = amount*0.5
+	local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = hlth + addhealth
+		end
+end
+
+-- Артефакт "Желчь": --------------------------------------------------------------------
+if IsMonster(who) and inventory.belt["af_bile"] then
+local mob_id = class_id or get_clsid (who)
+	if ( mob_id == clsid.poltergeist_s or mob_id == clsid.zombie_s ) then
+		local addhealth = amount*0.6
+		local hlth = db.actor.health
+			if hlth < 1 then
+				db.actor.health = hlth + addhealth
+			end
+	end
+end
+
+-- Артефакт "Шерсть": --------------------------------------------------------------------
+if IsMonster(who) and inventory.belt["af_fur"] then
+local mob_id = class_id or get_clsid (who)
+	if ( mob_id == clsid.dog_s or mob_id == clsid.pseudodog_s ) then
+        h.type = hit.wound
+        h.power = 1.1
+        h.impulse = 0
+        h.draftsman = who
+        h.direction = vector():set(0,0,0) 
+        who:hit(h) 
+	end
+end
+
+-- ИНДИКАЦИЯ: -------------------------------------------------------
+
+-- Трамплин, Ведьмин студень и Электра(ноги):
+if IsAnomaly(who) then
+local zone_id = class_id or get_clsid (who)
+	if ( zone_id == clsid.zone_mbald_s ) then
+		if amount < p then
+			addon.act_hit_legs_indication()
+		elseif amount > p then
+			addon.act_hit_legs_indication2()
+		end
+	end
+-- Жарка, Мясорубка и Карусель(ноги, грудь):
+	if ( zone_id == clsid.zone_mincer_s ) then
+		if amount < p then
+			addon.act_hit1()
+		elseif amount > p then
+			addon.act_hit2()
+		end
+	end
+-- Бродяга Дик, Полынь-звезда, Рой(грудь, живот):
+	if ( zone_id == clsid.zone_torrid_s ) then
+		if amount < p then
+			addon.act_hit3()
+		elseif amount > p then
+			addon.act_hit4()
+		end
+	end
+-- Амёба, Лиана, Ржавые волосы(грудь, голова, руки):
+	if ( zone_id == clsid.zone_ameba_s or zone_id == clsid.zone_bfuzz_s ) then
+		if amount < p then
+			addon.act_hit5()
+		elseif amount > p then
+			addon.act_hit6()
+		end
+	end
+end
+
+-- Слепыши, крысы, тушканы(ноги):
+if IsMonster(who) then
+local mob_id = class_id or get_clsid (who)
+	if ( mob_id == clsid.dog_s or mob_id == clsid.tushkano_s ) then
+		addon.act_hit_legs_indication()
+	end
+	if mob_id == clsid.rat_s then
+		addon.act_hit_legs_indication()
+		if inventory.belt["af_rat"] then addon_2.small_add_karma() end
+	end
+-- Псевдопсы, снорки, коты(ноги, живот):
+	if ( mob_id == clsid.pseudodog_s or mob_id == clsid.psy_dog_s or mob_id == clsid.snork_s or mob_id == clsid.cat_s ) then
+		if amount < p then
+			addon.act_hit7()
+		elseif amount > p then
+			addon.act_hit8()
+		end
+	end
+-- Кабаны, плоти, бюреры(грудь, живот):
+	if ( mob_id == clsid.boar_s or mob_id == clsid.flesh_s or mob_id == clsid.burer_s ) then
+		if amount < p then
+			addon.act_hit3()
+		elseif amount > p then
+			addon.act_hit4()
+		end
+	end
+-- Зомби, изломы, кровососы(голова, грудь, руки):
+	if ( mob_id == clsid.zombie_s or mob_id == clsid.fracture_s or mob_id == clsid.bloodsucker_s ) then
+		if amount < p then
+			addon.act_hit9()
+		elseif amount > p then
+			addon.act_hit10()
+		end
+	end
+-- Псевдогиганты(грудь, ноги):
+	if ( mob_id == clsid.gigant_s ) then
+		if amount < p then
+			addon.act_hit11()
+		elseif amount > p then
+			addon.act_hit12()
+		end
+	end
+-- Химеры(грудь, руки):
+	if ( mob_id == clsid.chimera_s ) then
+		if amount < p then
+			addon.act_hit13()
+		elseif amount > p then
+			addon.act_hit14()
+		end
+	end
+-- Контролёр(голова):
+	if ( mob_id == clsid.controller_s ) then
+		if amount < p then
+			addon.act_hit_head_indication()
+		elseif amount > p then
+			addon.act_hit_head_indication2()
+		end
+	end
+end
+
+-- Индикация(огнестрел): -----------------------------------------------
+if who and who.active_item and who:active_item() and IsStalker(who) and who:active_item():section()~="wpn_psy" and who:active_item():section()~="wpn_crossbow" then
+        if bone_index == 13 or bone_index == 14 or bone_index == 15 or bone_index == 16 or bone_index == 17 then -- голова
+			addon.act_hit_head_indication()
+		elseif bone_index == 9 or bone_index == 10 or bone_index == 11 or bone_index == 18 then -- туловище
+			addon.act_hit_torso_indication()
+		elseif bone_index >= 1 and bone_index <= 8 then -- ноги
+			addon.act_hit_legs_indication()
+		elseif bone_index >= 19 and bone_index <= 42 then -- руки
+			addon.act_hit_arms_indication()
+		end
+end
+
+end
+end
+
+
+
+

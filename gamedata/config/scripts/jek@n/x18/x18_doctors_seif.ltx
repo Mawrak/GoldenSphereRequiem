@@ -1,0 +1,10 @@
+[logic]
+active = ph_idle
+
+[ph_idle]
+tips = x18doctors_seif_tip
+on_use = {=actor_has_item(x18doctors_key)} ph_idle@open %=play_snd(device\metal_small_close_stop)%
+
+[ph_idle@open]
+nonscript_usable = true
+tips = st_search_treasure

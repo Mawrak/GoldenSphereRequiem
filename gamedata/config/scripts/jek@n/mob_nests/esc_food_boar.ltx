@@ -1,0 +1,34 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_remark@sleep
+on_death = mob_death
+on_hit = mob_hit
+
+[mob_remark@sleep]
+anim = lie_sleep_0
+braindead = true
+;target = nil
+on_actor_dist_le_nvis = 35 | mob_camp@small
+
+[mob_camp@small]
+path_home = esc_minibridge_nest_center
+path_look = esc_minibridge_nest_center
+home_min_radius = 1
+home_max_radius = 4
+;on_actor_dist_le = 10 | mob_camp@big
+
+[mob_camp@big]
+path_home = esc_minibridge_nest_center
+path_look = esc_minibridge_nest_center
+home_min_radius = 1
+home_max_radius = 14
+on_actor_dist_ge = 10 | mob_camp@small
+
+
+[mob_hit]
+on_info = {=hit_by_actor} mob_camp@big
+
+[mob_death]
+on_info = %+esc_food_boar_dead =esc_food_boar_spawn_in%

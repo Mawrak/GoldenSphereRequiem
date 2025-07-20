@@ -1,0 +1,22 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+yan_vasiliev_anomaly_talk =actor_has_item(yan_anomaly_detector)} sr_particle %=spawn_yan_swamp_anomaly%
+
+[sr_particle]
+name = anomaly2\group_items\sarcofag_face_align_00
+path = yan_swamp_anomaly_point
+mode = 2
+looped = false
+on_timer = 2000 | sr_timer
+
+[sr_timer]
+type = dec
+start_value = 90000
+on_value = 0 | nil %+yan_anomaly_charge =send_tip(yan_swamp_pribor_done_tip:anomal)%
+string = yan_swamp_countdown
+on_info = {=actor_out_zone(yan_swamp_anomaly_zone)} sr_idle@2 %=send_tip(yan_swamp_pribor_error_tip:anomal)%
+
+[sr_idle@2]
+on_actor_inside = {+yan_vasiliev_anomaly_talk =actor_has_item(yan_anomaly_detector)} sr_timer

@@ -1,0 +1,10 @@
+[logic]
+active = ph_idle@start
+
+[ph_idle@start]
+tips = yan_soldiers_arsenal_use
+on_use = {+yan_sold_comander_arsenal_acess} ph_idle@open %=play_snd(device\metal_small_close_stop)%
+
+[ph_idle@open]
+nonscript_usable = true
+tips = st_search_treasure

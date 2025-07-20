@@ -1,0 +1,17 @@
+[logic]
+active = ph_sound@idle
+
+[ph_sound@idle]
+snd = silence
+looped = true
+on_info = {+yan_bunker_atack_start} ph_sound@alarm
+
+[ph_sound@alarm]
+snd = rupor_sirena
+looped = true
+on_info = {-yan_bunker_atack_start} ph_sound@stop
+
+[ph_sound@stop]
+snd = silence
+on_signal = sound_end | ph_sound@idle
+

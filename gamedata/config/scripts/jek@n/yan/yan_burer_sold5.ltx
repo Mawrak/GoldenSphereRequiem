@@ -1,0 +1,67 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_camp@0
+on_death = mob_death
+
+[mob_camp@0]
+path_home = yan_burer_sold5_walk1
+path_look = yan_burer_sold4_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_timer = 1 | mob_camp@1 %=make_invulnerable%
+
+[mob_camp@1]
+path_home = yan_burer_sold5_walk1
+path_look = yan_burer_sold4_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_info = {+yan_burers_actor_punish} mob_remark@punish1
+on_info2 = {+yan_saharov_escape} %=delme2%
+
+[mob_remark@punish1]
+anim = stand_tele_0
+braindead = true
+target = 37
+on_timer = 9000 | mob_remark@punish2 %=play_snd_from_obj(8672:characters_voice\scenario\burer_kingdom\burer_talk_1)%
+
+[mob_remark@punish2]
+anim = stand_tele_0
+braindead = true
+target = 37
+on_timer = 4000 | mob_remark@punish3 %=play_snd_from_obj(8674:characters_voice\scenario\burer_kingdom\burer_talk_3)%
+
+[mob_remark@punish3]
+anim = stand_tele_0
+braindead = true
+target = 37
+on_timer = 4000 | mob_remark@punish4 %=play_snd_from_obj(8674:characters_voice\scenario\burer_kingdom\burer_talk_6)%
+
+[mob_remark@punish4]
+anim = stand_tele_1
+braindead = true
+target = 37
+on_timer = 5000 | mob_remark@punish5 %=play_snd_from_obj(8674:characters_voice\scenario\burer_kingdom\burer_talk_2)%
+
+[mob_remark@punish5]
+anim = stand_tele_2
+braindead = true
+target = 37
+on_timer = 2000 | mob_camp@2 %=play_snd_from_obj(8674:characters_voice\scenario\burer_kingdom\burer_talk_12)%
+
+[mob_camp@2]
+path_home = yan_burer_sold5_walk1
+path_look = yan_burer_sold4_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+
+
+
+
+
+[mob_death]
+on_info = %+yan_burer_sold5_dead%

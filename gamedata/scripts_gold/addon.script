@@ -1,0 +1,3923 @@
+-- Функции с постоянной проверкой и прочее -----------------------------------------------------------------------------------------------------------------------------
+-- Created by Jek@n-limon & Charsi
+
+
+
+------------------------------------------------------------------------------------
+function ruined_docks_using()
+if ( db.actor:dont_has_info("ruin_docks_info1") and db.actor:dont_has_info("ruin_docks_info2") and db.actor:dont_has_info("ruin_docks_info3") and db.actor:dont_has_info("ruin_docks_info4") ) then
+	db.actor:give_info_portion ("ruin_docks_info1")
+elseif ( has_alife_info("ruin_docks_info1") and db.actor:dont_has_info("ruin_docks_info2") ) then
+	db.actor:give_info_portion ("ruin_docks_info2")
+elseif ( has_alife_info("ruin_docks_info1") and has_alife_info("ruin_docks_info2") and db.actor:dont_has_info("ruin_docks_info3") ) then
+	db.actor:give_info_portion ("ruin_docks_info3")
+elseif ( has_alife_info("ruin_docks_info1") and has_alife_info("ruin_docks_info2") and has_alife_info("ruin_docks_info3") and db.actor:dont_has_info("ruin_docks_info4") ) then
+	db.actor:give_info_portion ("ruin_docks_info4")
+end
+end
+
+
+-----------------------------------------------------------------------------
+function laser_hit_effect()
+local pos = db.actor:position()
+local fx_particle = particles_object("explosions\\campfire_01")
+fx_particle:play_at_pos(pos)
+local Snd = sound_object("anomaly\\buzz_hit")
+if not (Snd and Snd:playing()) then Snd:play_no_feedback(actor, sound_object.s2d, p[2] or 0, vector(), 1.0) end
+end
+
+
+function actor_hit_effect()
+if db.actor:alive() then
+if not inventory.belt["af_shell"] then
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	level.add_pp_effector("fire_hit.ppe", 2011, false)
+	soundtrack.gg_scream()
+	if not inventory.belt["af_snowball"] then
+		if db.actor:dont_has_info("pain") then
+			db.actor:give_info_portion("pain")
+			start_real_timer(15, "timer_actions.pain_timer_action1")	
+			local st = get_hud():GetCustomStatic("pain") or get_hud():AddCustomStatic("pain",true)
+			st.m_endTime = time_global()/1000 + 15
+		end
+	end
+end
+end
+end
+
+
+-- Эффекты от повреждения конечностей: ----------------------------------------------------------------------------
+
+-- Голова (периодический звон в ушах и двоение в глазах)
+-- Грудная клетка (периодический небольшой урон здоровью)
+-- Руки (невозможность прицеливания)
+-- Ноги (периодически отключается бег)
+-- Живот (периодические приступы боли)
+
+function body_damage_effects()
+	if has_alife_info("actor_damaged_arm") then
+		bad_weapon_aiming()
+	end
+	
+	-- Индикация:
+	if has_alife_info("actor_damaged_arm") then
+		bad_weapon_aiming()
+		get_hud():AddCustomStatic("act_hit_rarm_indicator",true)
+		get_hud():AddCustomStatic("act_hit_larm_indicator",true)
+	end
+	if has_alife_info("actor_damaged_head") then
+		get_hud():AddCustomStatic("act_hit_head_indicator",true)
+	end
+	if has_alife_info("actor_damaged_torso") then
+		get_hud():AddCustomStatic("act_hit_torso_indicator",true)
+	end
+	if has_alife_info("actor_damaged_leg") then
+		get_hud():AddCustomStatic("act_hit_rleg_indicator",true)
+		get_hud():AddCustomStatic("act_hit_lleg_indicator",true)
+	end
+	if has_alife_info("actor_damaged_pelvis") then
+		get_hud():AddCustomStatic("act_hit_pelvis_indicator",true)
+	end
+end
+
+
+function bad_weapon_aiming()
+local act_it = db.actor:active_item()
+if act_it then
+local zoom=67.5/device().fov
+if zoom > 1.1 then
+	start_real_timer(2, "timer_actions.bad_weapon_aiming_action")
+	db.actor:hide_weapon()
+	local st = get_hud():GetCustomStatic("act_hit_arm_think") or get_hud():AddCustomStatic("act_hit_arm_think",true)
+	st.m_endTime = time_global()/1000 + 6
+end
+end
+end
+
+function actor_damaged_head_message()
+news_manager.send_tip(db.actor, "actor_damaged_head_message_text", nil, "stalker", 15000)
+start_real_timer(2*60, "timer_actions.actor_damaged_head_action1")
+end
+
+function actor_damaged_torso_message()
+news_manager.send_tip(db.actor, "actor_damaged_torso_message_text", nil, "stalker", 15000)
+start_real_timer(1*60, "timer_actions.actor_damaged_torso_action1")
+end
+
+function actor_damaged_arm_message()
+news_manager.send_tip(db.actor, "actor_damaged_arm_message_text", nil, "stalker", 15000)
+end
+
+function actor_damaged_leg_message()
+news_manager.send_tip(db.actor, "actor_damaged_leg_message_text", nil, "stalker", 15000)
+start_real_timer(1*60, "timer_actions.actor_damaged_leg_action1")
+end
+
+function actor_damaged_pelvis_message()
+news_manager.send_tip(db.actor, "actor_damaged_pelvis_message_text", nil, "stalker", 15000)
+start_real_timer(1*60, "timer_actions.actor_damaged_pelvis_action1")
+end
+
+
+-- Значок безопасных зон: -----------------------------------------------------------------------------------------
+
+function camp_zones_indication()
+if xr_conditions.actor_in_camp_zone() == true then
+	get_hud():AddCustomStatic("shelter_static",true)
+elseif xr_conditions.actor_in_camp_zone() == false then
+	get_hud():RemoveCustomStatic("shelter_static",true)
+end
+end
+
+
+-- Индикация повреждений частей тела ГГ на худе: ---------------------------------------------------------------------------
+
+function act_hit_head_indication()
+	local st = get_hud():GetCustomStatic("act_hit_head_indicator") or get_hud():AddCustomStatic("act_hit_head_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+		addon_2.headtorch_broke()
+end
+
+function act_hit_head_indication2()
+if xr_conditions.actor_wears_head_resist() ~= true then
+	local st = get_hud():GetCustomStatic("act_hit_head_indicator") or get_hud():AddCustomStatic("act_hit_head_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+		addon_2.headtorch_broke()
+		if db.actor:dont_has_info("actor_damaged_head") then
+			db.actor:give_info_portion ("actor_damaged_head")
+		end
+end
+end
+
+function act_hit_head_indication3()
+	local st = get_hud():GetCustomStatic("act_hit_head_indicator") or get_hud():AddCustomStatic("act_hit_head_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+end
+
+
+function act_hit_torso_indication()
+	local st = get_hud():GetCustomStatic("act_hit_torso_indicator") or get_hud():AddCustomStatic("act_hit_torso_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+end
+
+function act_hit_torso_indication2()
+if xr_conditions.actor_wears_torso_resist() ~= true then
+	local st = get_hud():GetCustomStatic("act_hit_torso_indicator") or get_hud():AddCustomStatic("act_hit_torso_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	if db.actor:dont_has_info("actor_damaged_torso") then
+		db.actor:give_info_portion ("actor_damaged_torso")
+	end
+end
+end
+
+
+function act_hit_arms_indication()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	local st = get_hud():GetCustomStatic("act_hit_rarm_indicator") or get_hud():AddCustomStatic("act_hit_rarm_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if rnd == 2 then 
+	local st = get_hud():GetCustomStatic("act_hit_larm_indicator") or get_hud():AddCustomStatic("act_hit_larm_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+end
+
+function act_hit_arms_indication2()
+if xr_conditions.actor_wears_arms_resist() ~= true then
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	local st = get_hud():GetCustomStatic("act_hit_rarm_indicator") or get_hud():AddCustomStatic("act_hit_rarm_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if rnd == 2 then 
+	local st = get_hud():GetCustomStatic("act_hit_larm_indicator") or get_hud():AddCustomStatic("act_hit_larm_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if db.actor:dont_has_info("actor_damaged_arm") then
+		db.actor:give_info_portion ("actor_damaged_arm")
+	end
+end
+end
+
+
+function act_hit_legs_indication()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	local st = get_hud():GetCustomStatic("act_hit_rleg_indicator") or get_hud():AddCustomStatic("act_hit_rleg_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if rnd == 2 then 
+	local st = get_hud():GetCustomStatic("act_hit_lleg_indicator") or get_hud():AddCustomStatic("act_hit_lleg_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+end
+
+function act_hit_legs_indication2()
+if xr_conditions.actor_wears_legs_resist() ~= true then
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	local st = get_hud():GetCustomStatic("act_hit_rleg_indicator") or get_hud():AddCustomStatic("act_hit_rleg_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if rnd == 2 then 
+	local st = get_hud():GetCustomStatic("act_hit_lleg_indicator") or get_hud():AddCustomStatic("act_hit_lleg_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	end
+	if db.actor:dont_has_info("actor_damaged_leg") then
+		db.actor:give_info_portion ("actor_damaged_leg")
+	end
+end
+end
+
+function act_hit_pelvis_indication()
+	local st = get_hud():GetCustomStatic("act_hit_pelvis_indicator") or get_hud():AddCustomStatic("act_hit_pelvis_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+end
+
+function act_hit_pelvis_indication2()
+if xr_conditions.actor_wears_pelvis_resist() ~= true then
+	local st = get_hud():GetCustomStatic("act_hit_pelvis_indicator") or get_hud():AddCustomStatic("act_hit_pelvis_indicator",true)
+	st.m_endTime = time_global()/1000 + 3
+	if db.actor:dont_has_info("actor_damaged_pelvis") then
+		db.actor:give_info_portion ("actor_damaged_pelvis")
+	end
+end
+end
+
+
+function act_hit1()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_legs_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+end
+
+function act_hit2()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_legs_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+end
+
+function act_hit3()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_pelvis_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+end
+
+function act_hit4()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_pelvis_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+end
+
+function act_hit5()
+rnd = math.random(1, 3)
+	if rnd == 1 then 
+	act_hit_head_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+	if rnd == 3 then 
+	act_hit_arms_indication()
+	end
+end
+
+function act_hit6()
+rnd = math.random(1, 3)
+	if rnd == 1 then 
+	act_hit_head_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+	if rnd == 3 then 
+	act_hit_arms_indication2()
+	end
+end
+
+function act_hit7()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_pelvis_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+end
+
+function act_hit8()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_pelvis_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+end
+
+function act_hit9()
+rnd = math.random(1, 3)
+	if rnd == 1 then 
+	act_hit_head_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+	if rnd == 3 then 
+	act_hit_arms_indication()
+	end
+end
+
+function act_hit10()
+rnd = math.random(1, 3)
+	if rnd == 1 then 
+	act_hit_head_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+	if rnd == 3 then 
+	act_hit_arms_indication2()
+	end
+end
+
+function act_hit11()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_legs_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+end
+
+function act_hit12()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_legs_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+end
+
+function act_hit13()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_arms_indication()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication()
+	end
+end
+
+function act_hit14()
+rnd = math.random(1, 2)
+	if rnd == 1 then 
+	act_hit_arms_indication2()
+	end
+	if rnd == 2 then 
+	act_hit_torso_indication2()
+	end
+end
+
+
+
+
+
+
+-- Прицеливание из пси-винтовки(только в Т-костюме): ---------------------------------------------------------------------------------------------------
+function check_spec_gun_aiming()
+local act_it = db.actor:active_item()
+if act_it and ( string.find(act_it:section(), "wpn_psy") or string.find(act_it:section(), "wpn_laser") ) then
+local zoom=67.5/device().fov
+local scope = 0
+	if system_ini():line_exist(act_it:section(), "scope_status") then
+		scope = system_ini():r_u32(act_it:section(), "scope_status")
+	end
+local addonf = rx_utils.get_weapon_data(alife():object(act_it:id())).addon_flags
+	zoom=(zoom-1)*1.5+1	
+	if zoom < 1.001 then zoom = 1.001 end
+if zoom > 1.1 and (scope == 1 or (scope == 2 and bit_and(addonf, 1) == 1) or string.find(act_it:section(), "wpn_binoc")) then
+	spec_gun_aiming_think()
+end
+end
+end
+
+function spec_gun_aiming_think()
+	local st = get_hud():GetCustomStatic("spec_gun_aiming_think") or get_hud():AddCustomStatic("spec_gun_aiming_think",true)
+	st.m_endTime = time_global()/1000 + 1
+end
+
+
+-- Эффекты от распада артефактов: --------------------------------------------------------------------------------
+
+function artefacts_activation_effects()
+	if has_alife_info("arts_powerup_fire") then
+		get_hud():AddCustomStatic("arts_firepower",true)
+	elseif db.actor:dont_has_info("arts_powerup_fire") then
+		get_hud():RemoveCustomStatic("arts_firepower",true)
+	end
+	if has_alife_info("arts_powerup_stone") then
+		get_hud():AddCustomStatic("arts_stonepower",true)
+	elseif db.actor:dont_has_info("arts_powerup_stone") then
+		get_hud():RemoveCustomStatic("arts_stonepower",true)
+	end
+	if has_alife_info("arts_powerup_steel") then
+		get_hud():AddCustomStatic("arts_steelpower",true)
+			addon.armor_art_healing2()
+			addon.weapon1art_healing2()
+			addon.weapon2art_healing2()
+	elseif db.actor:dont_has_info("arts_powerup_steel") then
+		get_hud():RemoveCustomStatic("arts_steelpower",true)
+	end
+	if has_alife_info("arts_powerup_veget") then
+		get_hud():AddCustomStatic("arts_vegetpower",true)
+	elseif db.actor:dont_has_info("arts_powerup_veget") then
+		get_hud():RemoveCustomStatic("arts_vegetpower",true)
+	end
+	if has_alife_info("arts_powerup_glass") then
+		get_hud():AddCustomStatic("arts_glasspower",true)
+			arts_glasspower_effect1()
+			arts_glasspower_effect2()
+	elseif db.actor:dont_has_info("arts_powerup_glass") then
+		get_hud():RemoveCustomStatic("arts_glasspower",true)
+	end
+	if has_alife_info("arts_powerup_neutral") then
+		get_hud():AddCustomStatic("arts_neutralpower",true)
+			addon.psy_healing()
+	elseif db.actor:dont_has_info("arts_powerup_neutral") then
+		get_hud():RemoveCustomStatic("arts_neutralpower",true)
+	end
+end
+
+function arts_activation_interface_start()
+if has_alife_info("af_pult_use") then
+	if ( db.actor:dont_has_info("arts_powerup_fire") and 
+		db.actor:dont_has_info("arts_powerup_stone") and 
+		db.actor:dont_has_info("arts_powerup_steel") and
+		db.actor:dont_has_info("arts_powerup_veget") and
+		db.actor:dont_has_info("arts_powerup_glass") and
+		db.actor:dont_has_info("arts_powerup_neutral") ) then
+			addon_devices.artefact_activation_start()
+			soundtrack.af_pult_use()
+	elseif ( has_alife_info("arts_powerup_fire") or
+		has_alife_info("arts_powerup_stone") or
+		has_alife_info("arts_powerup_steel") or
+		has_alife_info("arts_powerup_veget") or
+		has_alife_info("arts_powerup_glass") or
+		has_alife_info("arts_powerup_neutral") ) then
+			local st = get_hud():GetCustomStatic("arts_powerup_denied") or get_hud():AddCustomStatic("arts_powerup_denied",true)
+			st.m_endTime = time_global()/1000 + 5
+			soundtrack.arts_activation_interface_acess()
+	end
+end
+end
+
+
+function arts_firepower_effect1()	--	на мутантов
+    for k, v in pairs (db.storage) do
+    local mob = level.object_by_id(k)
+	if ( mob and IsMonster(mob) and mob:alive() and mob:position():distance_to(db.actor:position()) < 5 and mob:section() ~= "^ovcharka" and mob:section() ~= "^dar_izlom_werwolf" ) then
+			
+			react = sound_object("anomaly\\buzz_hit")  
+            react:play_at_pos(mob, mob:position(), sound_object.s2d)
+            react.volume = 1.0
+			
+			local pos = mob:position()
+			--local fx_particle = particles_object("explosions\\fire_01")
+			local fx_particle = particles_object("explosions\\group_items\\expl_glow_grenade_dust")
+			fx_particle:play_at_pos(pos)
+			
+		local hit = hit()
+		hit.direction = vector():set(0, 0, 0)
+		hit.impulse = 0
+		hit.draftsman = db.actor
+		hit.power = 1.5
+		hit.type = hit.burn
+		mob:hit(hit)
+	end
+end
+end
+
+function arts_firepower_effect2()	--	на людей
+    for k, v in pairs (db.storage) do
+        local stalker = level.object_by_id(k)
+        if ( stalker and IsStalker(stalker) and stalker:alive() and stalker:id()~=db.actor:id() and amk.get_npc_relation(stalker,db.actor)=="enemy" and stalker:section() ~= "^rad_fenix" and stalker:position():distance_to(db.actor:position()) < 5 ) then
+ 					
+				react = sound_object("anomaly\\buzz_hit")  
+				react:play_at_pos(stalker, stalker:position(), sound_object.s2d)
+				react.volume = 1.0
+				
+				local pos = stalker:position()
+				--local fx_particle = particles_object("explosions\\fire_01")
+				local fx_particle = particles_object("explosions\\group_items\\expl_glow_grenade_dust")
+				fx_particle:play_at_pos(pos)
+					
+				local hit = hit()
+				hit.direction = vector():set(0, 0, 0)
+				hit.impulse = 0
+				hit.draftsman = db.actor
+				hit.power = 0.8
+				hit.type = hit.burn
+				stalker:hit(hit)
+        end
+    end
+end
+
+
+function artefact_fire_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("explosions\\group_items\\expl_mushroom_wave2")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\anomaly_gravy_hit1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+function artefact_stone_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("anomaly2\\anotests\\anomaly_00")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\electra_hit_1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+function artefact_steel_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("anomaly2\\electra2_blast_01")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\electra_hit_1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+function artefact_veget_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("nature\\tree_leaves_stormy_00")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\electra_hit_1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+function artefact_glass_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("ghoul\\fx-06-blue-glow_00")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\electra_hit_1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+function artefact_neutral_particle()
+local pos = db.actor:position()
+local fx_particle = particles_object("ghoul\\anomal-06-black-holes_00")
+fx_particle:play_at_pos(pos)
+local snd = xr_sound.get_safe_sound_object("anomaly\\electra_hit_1")
+snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+end
+
+
+
+function veget_arts_effect()
+local hunger = starvation.get_hunger()
+starvation.set_hunger(1.0)
+local thirst = starvation.get_thirst()
+starvation.set_thirst(1.0)
+	db.actor:give_info_portion ("tea_effect")
+	local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = 1.0
+		end
+	db.actor:heal_wounds(1.5)
+	if timer_exists("pain_timer") then
+		get_timer("pain_timer"):remove()
+	end
+	db.actor:disable_info_portion("pain")
+	db.actor.psy_health = 1.0
+	db.actor.radiation = - 1.0
+	db.actor:disable_info_portion("sickness")
+end
+
+
+
+
+function teleport_to_vis_obj()
+if has_alife_info("arts_powerup_glass") then
+	local target = level.get_target_obj()
+	if target ~= nil then
+		local pos = target:position()
+		if target:position():distance_to(db.actor:position()) < 50 then
+			db.actor:set_actor_position(pos)
+			db.actor:disable_info_portion("arts_powerup_glass")
+			level.add_pp_effector("teleport.ppe", 2009, false)
+			soundtrack.lift_up()
+				--if timer_exists("arts_powerup_glass_timer") then
+					--get_timer("arts_powerup_glass_timer"):remove()
+				--end
+		elseif target:position():distance_to(db.actor:position()) > 50 then
+			local st = get_hud():GetCustomStatic("teleport_to_vis_obj_denied") or get_hud():AddCustomStatic("teleport_to_vis_obj_denied",true)
+			st.m_endTime = time_global()/1000 + 5
+		end
+	end
+end
+end
+
+
+
+function psy_healing()
+local hlth = db.actor.psy_health
+	if hlth < 0.25 then
+		db.actor.psy_health = 1.0
+		db.actor:disable_info_portion("arts_powerup_neutral")
+		get_timer("arts_powerup_neutral_timer"):remove()
+	end
+end
+
+
+function arts_glasspower_effect1()	--	прикручиваем зрение мутантов
+    for k, v in pairs (db.storage) do
+    local mob = level.object_by_id(k)
+	if ( mob and IsMonster(mob) and mob:alive() and mob:position():distance_to(db.actor:position()) < 50 and mob:section() ~= "^ovcharka" and mob:section() ~= "^dar_izlom_werwolf" ) then
+		local range = mob:range()
+		local fov = mob:fov()
+			mob:set_range(1)
+			mob:set_fov(25)
+	end
+end
+end
+
+function arts_glasspower_effect2()	--	прикручиваем зрение людей
+    for k, v in pairs (db.storage) do
+    local stalker = level.object_by_id(k)
+        if ( stalker and IsStalker(stalker) and stalker:alive() and stalker:id()~=db.actor:id() and amk.get_npc_relation(stalker,db.actor)=="enemy" and stalker:section() ~= "^rad_fenix" and stalker:position():distance_to(db.actor:position()) < 50 ) then
+ 			local range = stalker:range()
+			local fov = stalker:fov()
+				stalker:set_range(5)
+				stalker:set_fov(25)
+        end
+    end
+end
+
+------------------------------------------------------------------------------------------------------------------
+function quicksave_debug()
+news_manager.send_tip(db.actor, "quicksave_debug_tip")
+end
+
+-------------------------------------------------------------------------------------------------			
+			
+			
+
+
+function enemy_armor_pierced_indicator()
+--get_hud():RemoveCustomStatic("enemy_armor_hold",true)
+--	local st = get_hud():GetCustomStatic("enemy_armor_pierced") or get_hud():AddCustomStatic("enemy_armor_pierced",true)
+--	st.m_endTime = time_global()/1000 + 1
+end
+
+function enemy_armor_hold_indicator()
+get_hud():RemoveCustomStatic("enemy_armor_pierced",true)
+	local st = get_hud():GetCustomStatic("enemy_armor_hold") or get_hud():AddCustomStatic("enemy_armor_hold",true)
+	st.m_endTime = time_global()/1000 + 1
+end
+
+
+-- Счётчики ------------------------------------------------------------------------------------
+
+-- добавляем к счётчику единицу: ----------------------------
+function new_counter_up()
+	xr_logic.pstor_store(actor, my_new_counter, xr_logic.pstor_retrieve(actor, p[1], 0) + 1)
+end
+
+-- отнимаем от счётчика единицу: ----------------------------
+function new_counter_down()
+	xr_logic.pstor_store(actor, my_new_counter, xr_logic.pstor_retrieve(actor, p[1], 0) - 1)
+end
+
+-- проверяем значение счётчика и в зависимости от результата производим действие: --------------
+function check_counter()
+	local c = xr_logic.pstor_retrieve(actor, "my_new_counter", 0)
+	if c < 1 then
+		news_manager.send_tip(actor, "gar_actor_looser", 0, "dolg", 0)
+	end
+end
+
+
+
+-- Заспавнить нужный предмет в инвентарный ящик по его SID: -----------------------------------------------------------------------------
+-- недостаток: после сейв-лоада вещи пропадают.
+function qqq()
+local sbox = alife():story_object(sid)
+if sbox then
+ alife():create("medkit",vector(),0,0,sbox.id)
+end
+end
+
+
+-- Эффект артефакта "Гравицаппа" -----------------------------------------------------------------------------------------
+
+function hit_actor_up()
+if inventory.belt["af_gravitsappa"] then
+	local pos = db.actor:position()
+	alife():create('script_impulse_obj', vector():set(pos.x, pos.y+8, pos.z), db.actor:level_vertex_id(), db.actor:game_vertex_id())
+end
+end
+
+
+-- Проверка наличия энного колл-тва итемов нужного типа у актора:	---------------------------------------------------
+function actor_has_items(ItemSec, CntItems)
+	if not CntItems or CntItems == 1 then
+		return db.actor:object(ItemSec)
+	end
+
+	if type(CntItems) ~= "number" then
+		CntItems = 1
+	end
+	local oActor = db.actor
+	local iCnt = 0
+	if oActor and ItemSec then
+		oActor:iterate_inventory(
+				function (dummy, oItem)
+					if oItem:section() == ItemSec then
+						iCnt = iCnt + 1
+						if iCnt >= CntItems then
+							return true
+						end
+					end
+				end
+			,nil)
+	end
+	return iCnt >= CntItems
+end
+
+-- пример:	
+--	return addon.actor_has_items("stebel_ri", 3)
+
+
+-- Автолечилка ран от Сахарова: ------------------------------------------------------------------------------------------
+
+function saharov_medbox_update()
+	if ( inventory.belt["saharov_medbox"] and has_alife_info("saharov_medbox_ready") ) then
+		if db.actor:get_bleeding() > 0.1 then
+			db.actor:heal_wounds(1.5) 
+			db.actor:disable_info_portion("saharov_medbox_ready")
+			news_manager.send_tip(db.actor, "saharov_medbox_tip", nil, "anomal", 8000)
+			soundtrack.saharov_medbox_snd()
+			start_real_timer(15, "timer_actions.saharov_medbox_timer_action")
+		end
+	end
+end
+
+-- Отображение индикатора боли на худе: ----------------------------------------------------------------------------------
+
+function pain_hud_indication()
+if has_alife_info("pain") then 
+	local st = get_hud():GetCustomStatic("pain") or get_hud():AddCustomStatic("pain",true)
+	st.m_endTime = time_global()/1000 + 5
+end
+end
+
+
+-- Спавн объекта по его spawn_story_id ----------------------------------------------------------------------------------
+
+function create_object_by_spawn_story_id(input)
+ local p = type(input) == 'table' and input[1] or input
+ local t = type(p)
+ if not (t == "string" or t == "number") then return end
+
+ local id = 0
+ if t == "string" then
+  id = tonumber(p) or spawn_story_ids[p]
+  if not id then return end
+ else
+  id = p
+ end
+
+ local spawn_id = alife():spawn_id(id)
+ local obj
+ if spawn_id then
+  obj = alife():create(spawn_id)
+ end
+
+ if obj then
+  local s = type(input) == 'table' and type(input[2]) == 'string' and input[2]
+  local h = type(input) == 'table' and type(input[3]) == 'string' and input[3]
+  if s and h then
+   level.map_add_object_spot_ser(obj.id, s, h)
+  end
+ end
+end
+
+--применение
+--	create_object_by_spawn_story_id(spawn_story_id обекта)
+-- можно с меткой
+--	create_object_by_spawn_story_id({spawn_story_id обекта, тип метки, подсказка метки})
+
+
+
+-- Спавн без lvid и gvid (метод неэффективен, т.к. работает только для текущей локации) ----------------------------------------------------------------------------------------
+
+function script_spawn(section_name, level_name, position)
+	local level_vertex_id, game_vertex_id = utils2.get_top_graph_ids(level_name)
+	local se_obj = alife():create(section_name, position, level_vertex_id, game_vertex_id)
+	if se_obj == nil then
+		abort("can't create '%s' at (%f,%f,%f)")
+	end
+end
+
+-- пример:
+-- addon.script_spawn("vodka", "l01_escape", vector():set(-232.44,-20.47,-478.94) )
+----------------------------------------------------------------------------------------------------------------
+
+
+-- Эффекты костюмов: --------------------------------------------------------------------------------------------
+
+function outfit_effects()
+
+if xr_conditions.actor_wears_victims_outfit() == true then	--	костюм облучённого(выводит радиацию)
+local rad = db.actor.radiation
+	if rad > 0.002 then
+		db.actor.radiation = - 0.0001
+	end
+end
+
+--if ( ogsm_quests.drunk() == true and xr_conditions.actor_wears_forester_outfit() == true ) then	--	костюм лесника(выводит алкоголь и улучшает эффект аптечек)
+-- alife():create('otrezvin', db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+-- db.actor:eat(db.actor:object("otrezvin"))
+-- otrezvin_autouse()
+-- перенесено в tracking_of_mobile.script
+--end
+
+--if xr_conditions.actor_wears_madmans_outfit() == true then	--	костюм зомбированного(замедляет жажду и голод)
+-- перенесено
+--end
+
+if xr_conditions.actor_wears_licvidator_outfit() == true then	--	костюм ликвидатора(здоровье восстанавливается быстрее)
+local hlth = db.actor.health
+if hlth < 1 then
+	db.actor.health = 0.000018
+end
+end
+
+--if xr_conditions.actor_wears_smuggler_outfit() == true then	--	костюм контрабандиста(антирады действуют лучше + выгоднее цены)
+-- перенесено в tracking_of_mobile.script
+--end
+
+if xr_conditions.actor_wears_courier_outfit() == true then	--	костюм посыльного(стамина восстанавливается быстрее)
+local pwr = db.actor.power
+if pwr < 1 then
+	db.actor.power = 0.00009
+end
+end
+
+
+end
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function otrezvin_autouse()
+local sobj = alife():create("otrezvin", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+
+function kefir_autouse()
+local sobj = alife():create("kefir", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+
+function vodka_autouse()
+local sobj = alife():create("vodka", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+
+function medkit_autouse()
+local sobj = alife():create("medkit", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+
+function bandage_autouse()
+local sobj = alife():create("bandage", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+
+function antirad_autouse()
+local sobj = alife():create("antirad", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+level.add_call(
+function() return level.object_by_id(sobj.id)~=nil end,
+function()
+ local obj = level.object_by_id(sobj.id)
+ db.actor:eat(obj)
+end)
+end
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+
+function montirovka_use() -- монтировка
+
+end
+-------------------------------------------------------------------------------------------------------------------
+
+
+function check_binder()
+local st = get_hud():GetCustomStatic("binder") or get_hud():AddCustomStatic("binder",true)
+st.m_endTime = time_global()/1000 + 1
+end
+
+
+
+function remove_items(sect, cnt)
+cnt = cnt or 1
+ local actor, sim = db.actor, alife()
+ local i = actor:object_count() - 1
+ while (i>0 and cnt>0) do
+  local item = actor:object(i)
+  if item and item:section()==sect then
+   local soItem = sim:object(item:id())
+   if soItem then
+    cnt = cnt - 1
+    sim:release(soItem, true)
+   end
+  end
+  i = i - 1
+ end
+end
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+function tea_effect()
+	if has_alife_info("tea_effect") and db.actor.power<=0.15 then
+	db.actor.power = 0.4
+	end
+end
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+function deadman_head_effect()
+	if db.actor:object("deadman_head") ~= nil then
+	db.actor.psy_health = -0.000005
+	end
+end
+
+
+-- Копаем лопатой ------------------------------------------------------------------------------------------------------------------------------------------
+function shovel_use()
+local grave1 = level_object_by_sid( 8248 ) -- могила у вагончика на Свалке
+local grave2 = level_object_by_sid( 8274 ) -- могила у екскаватора на Свалке
+local grave2 = level_object_by_sid( 8407 ) -- могила на холме, Агро
+
+local cross1 = level_object_by_sid( 8284 )
+local cross2 = level_object_by_sid( 8285 )
+local cross3 = level_object_by_sid( 8286 )
+local cross4 = level_object_by_sid( 8287 )
+local cross5 = level_object_by_sid( 8288 )
+local cross6 = level_object_by_sid(8293)
+local cross7 = level_object_by_sid(8294)
+local cross8 = level_object_by_sid(8295)
+local cross9 = level_object_by_sid(8296)
+local cross10 = level_object_by_sid(8297)
+local cross11 = level_object_by_sid(8298)
+local cross12 = level_object_by_sid(8299)
+local cross13 = level_object_by_sid(8300)
+local cross14 = level_object_by_sid(8301)
+local cross15 = level_object_by_sid(8302)
+
+	if grave1 ~= nil and grave1:position():distance_to_sqr(db.actor:position()) <= 2*2 then
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if grave2 ~= nil and grave2:position():distance_to_sqr(db.actor:position()) <= 2*2 then
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if ( xr_conditions.actor_in_zone(nil,nil,{"obelisk_nopass_particle_zone"}) and db.actor:dont_has_info("deadmans_head_finded") ) then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.obelisk_dig_result")
+	end
+
+	if cross1 ~= nil and cross1:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave1_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross2 ~= nil and cross2:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave2_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross3 ~= nil and cross3:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave3_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross4 ~= nil and cross4:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave4_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross5 ~= nil and cross5:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave5_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross6 ~= nil and cross6:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave6_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross7 ~= nil and cross7:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave7_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross8 ~= nil and cross8:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave8_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross9 ~= nil and cross9:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave9_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross10 ~= nil and cross10:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave10_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross11 ~= nil and cross11:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave11_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross12 ~= nil and cross12:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave12_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross13 ~= nil and cross13:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave13_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross14 ~= nil and cross14:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave14_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+	if cross15 ~= nil and cross15:position():distance_to_sqr(db.actor:position()) <= 2*2 and db.actor:dont_has_info("grave15_destroying") and db.actor:object("deadman_head") ~= nil then
+	addon_devices.shovel_visualisation()
+	level.disable_input()
+	start_real_timer(8, "xr_effects.grave_dig_results")
+	end
+
+end
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function heli_cargo_items_spawn()
+	if has_alife_info("actor_order_seva") then
+		amk.spawn_item_in_inv("scientific_outfit")
+		news_manager.send_tip(db.actor, "unboxing_seva")
+		db.actor:disable_info_portion("actor_order_seva")
+	elseif has_alife_info("actor_order_berill") then
+		amk.spawn_item_in_inv("specops_outfit")
+		news_manager.send_tip(db.actor, "unboxing_berill")
+		db.actor:disable_info_portion("actor_order_berill")
+	elseif has_alife_info("actor_order_bronik") then
+		amk.spawn_item_in_inv("killer_outfit")
+		news_manager.send_tip(db.actor, "unboxing_bronik")
+		db.actor:disable_info_portion("actor_order_bronik")
+	elseif has_alife_info("actor_order_skafandr") then
+		amk.spawn_item_in_inv("ecolog_outfit")
+		news_manager.send_tip(db.actor, "unboxing_skafandr")
+		db.actor:disable_info_portion("actor_order_skafandr")
+	elseif has_alife_info("actor_order_ekzo") then
+		amk.spawn_item_in_inv("neytral_exo_antigas_outfit")
+		news_manager.send_tip(db.actor, "unboxing_ekzo")
+		db.actor:disable_info_portion("actor_order_ekzo")
+
+	elseif has_alife_info("actor_order_akm") then
+		amk.spawn_item_in_inv("wpn_akm")
+		news_manager.send_tip(db.actor, "unboxing_akm")
+		db.actor:disable_info_portion("actor_order_akm")
+	elseif has_alife_info("actor_order_pkm") then
+		amk.spawn_item_in_inv("wpn_pkm")
+		news_manager.send_tip(db.actor, "unboxing_pkm")
+		db.actor:disable_info_portion("actor_order_pkm")
+	elseif has_alife_info("actor_order_winchester") then
+		amk.spawn_item_in_inv("wpn_w1200")
+		news_manager.send_tip(db.actor, "unboxing_winchester")
+		db.actor:disable_info_portion("actor_order_winchester")
+	elseif has_alife_info("actor_order_sayga") then
+		amk.spawn_item_in_inv("wpn_sayga1")
+		news_manager.send_tip(db.actor, "unboxing_sayga")
+		db.actor:disable_info_portion("actor_order_sayga")
+	elseif has_alife_info("actor_order_m16") then
+		amk.spawn_item_in_inv("wpn_m16")
+		news_manager.send_tip(db.actor, "unboxing_m16")
+		db.actor:disable_info_portion("actor_order_m16")
+	elseif has_alife_info("actor_order_vintorez") then
+		amk.spawn_item_in_inv("wpn_vintorez")
+		news_manager.send_tip(db.actor, "unboxing_vintorez")
+		db.actor:disable_info_portion("actor_order_vintorez")
+	elseif has_alife_info("actor_order_usas") then
+		amk.spawn_item_in_inv("wpn_usas12")
+		news_manager.send_tip(db.actor, "unboxing_usas")
+		db.actor:disable_info_portion("actor_order_usas")
+	elseif has_alife_info("actor_order_aug") then
+		amk.spawn_item_in_inv("wpn_aug")
+		news_manager.send_tip(db.actor, "unboxing_aug")
+		db.actor:disable_info_portion("actor_order_aug")
+	elseif has_alife_info("actor_order_wa2000") then
+		amk.spawn_item_in_inv("wpn_wa2000")
+		news_manager.send_tip(db.actor, "unboxing_wa2000")
+		db.actor:disable_info_portion("actor_order_wa2000")
+
+	elseif has_alife_info("actor_order_ammo545x39") then
+		amk.spawn_ammo_in_inv("ammo_5.45x39_fmj", 400)
+		amk.spawn_ammo_in_inv("ammo_5.45x39_ap", 100)
+		news_manager.send_tip(db.actor, "unboxing_545x39")
+		db.actor:disable_info_portion("actor_order_ammo545x39")
+	elseif has_alife_info("actor_order_ammo556x45") then
+		amk.spawn_ammo_in_inv("ammo_5.56x45_ss190", 400)
+		amk.spawn_ammo_in_inv("ammo_5.56x45_ap", 100)
+		news_manager.send_tip(db.actor, "unboxing_556x45")
+		db.actor:disable_info_portion("actor_order_ammo556x45")
+	elseif has_alife_info("actor_order_ammo_shotgun") then
+		amk.spawn_ammo_in_inv("ammo_12x70_buck", 120)
+		amk.spawn_ammo_in_inv("ammo_12x76_zhekan", 50)
+		news_manager.send_tip(db.actor, "unboxing_drob")
+		db.actor:disable_info_portion("actor_order_ammo_shotgun")
+	elseif has_alife_info("actor_order_ammo762x54") then
+		amk.spawn_ammo_in_inv("ammo_7.62x54_7h1", 250)
+		news_manager.send_tip(db.actor, "unboxing_762x54")
+		db.actor:disable_info_portion("actor_order_ammo762x54")
+	elseif has_alife_info("actor_order_ammo762x51") then
+		amk.spawn_ammo_in_inv("ammo_7.62x51_fmj", 200)
+		amk.spawn_ammo_in_inv("ammo_7.62x51_ap", 100)
+		news_manager.send_tip(db.actor, "unboxing_762x51")
+		db.actor:disable_info_portion("actor_order_ammo762x51")
+	elseif has_alife_info("actor_order_ammo762x39") then
+		amk.spawn_ammo_in_inv("ammo_7.62x39_fmj", 300)
+		amk.spawn_ammo_in_inv("ammo_7.62x39_ap", 100)
+		news_manager.send_tip(db.actor, "unboxing_762x39")
+		db.actor:disable_info_portion("actor_order_ammo762x39")
+	elseif has_alife_info("actor_order_ammo9x18") then
+		amk.spawn_ammo_in_inv("ammo_9x18_fmj", 500)
+		amk.spawn_ammo_in_inv("ammo_9x18_pmm", 150)
+		news_manager.send_tip(db.actor, "unboxing_9x18")
+		db.actor:disable_info_portion("actor_order_ammo9x18")
+	elseif has_alife_info("actor_order_ammo9x19") then
+		amk.spawn_ammo_in_inv("ammo_9x19_fmj", 400)
+		amk.spawn_ammo_in_inv("ammo_9x19_pbp", 100)
+		amk.spawn_ammo_in_inv("ammo_11.43x23_fmj", 300)
+		news_manager.send_tip(db.actor, "unboxing_9x19")
+		db.actor:disable_info_portion("actor_order_ammo9x19")
+	elseif has_alife_info("actor_order_ammo_rare") then
+		amk.spawn_ammo_in_inv("ammo_9x39_sp5", 200)
+		news_manager.send_tip(db.actor, "unboxing_ammo_rare")
+		db.actor:disable_info_portion("actor_order_ammo_rare")
+
+	elseif has_alife_info("actor_order_explosive") then
+		amk.spawn_ammo_in_inv("grenade_f1", 3)
+		amk.spawn_ammo_in_inv("grenade_rgd5", 5)
+		amk.spawn_ammo_in_inv("ammo_og-7b", 2)
+		amk.spawn_ammo_in_inv("af_mine", 3)
+		amk.spawn_item_in_inv("bomba")
+		amk.spawn_item_in_inv("bomba_big")
+		amk.spawn_item_in_inv("detonator")
+		amk.spawn_item_in_inv("powder")
+		news_manager.send_tip(db.actor, "unboxing_explosive")
+		db.actor:disable_info_portion("actor_order_explosive")
+	elseif has_alife_info("actor_order_fuel") then
+		amk.spawn_item_in_inv("mobile_tank_full")
+		amk.spawn_item_in_inv("mobile_tank_full")
+		news_manager.send_tip(db.actor, "unboxing_fuel")
+		db.actor:disable_info_portion("actor_order_fuel")
+	elseif has_alife_info("actor_order_repare") then
+		amk.spawn_item_in_inv("repair_kit")
+		amk.spawn_item_in_inv("repair_kit")
+		amk.spawn_item_in_inv("armor_remkit")
+		amk.spawn_item_in_inv("armor_remkit")
+		amk.spawn_item_in_inv("weapon_remkit")
+		amk.spawn_item_in_inv("weapon_remkit")
+		amk.spawn_item_in_inv("weapon_remkit")
+		news_manager.send_tip(db.actor, "unboxing_repare")
+		db.actor:disable_info_portion("actor_order_repare")
+	elseif has_alife_info("actor_order_items") then
+		amk.spawn_item_in_inv("mobile_changer_33")
+		amk.spawn_item_in_inv("amk_metka")
+		amk.spawn_item_in_inv("af_nightvision_1")
+		amk.spawn_item_in_inv("detector_advances")
+		amk.spawn_item_in_inv("flare_2")
+		amk.spawn_item_in_inv("hand_radio_f")
+		amk.spawn_item_in_inv("mre")
+		amk.spawn_item_in_inv("mre")
+		amk.spawn_item_in_inv("flyaga_full")
+		amk.spawn_item_in_inv("matches")
+		amk.spawn_item_in_inv("bowler")
+		news_manager.send_tip(db.actor, "unboxing_items")
+		db.actor:disable_info_portion("actor_order_items")
+	elseif has_alife_info("actor_order_medicine") then
+		amk.spawn_item_in_inv("bipsizon")
+		amk.spawn_item_in_inv("yod")
+		amk.spawn_item_in_inv("yod")
+		amk.spawn_item_in_inv("yod")
+		amk.spawn_item_in_inv("yod")
+		amk.spawn_item_in_inv("antirad")
+		amk.spawn_item_in_inv("antirad")
+		amk.spawn_item_in_inv("antirad")
+		amk.spawn_item_in_inv("antirad")
+		amk.spawn_item_in_inv("medkit")
+		amk.spawn_item_in_inv("medkit")
+		amk.spawn_item_in_inv("medkit")
+		amk.spawn_item_in_inv("medkit")
+		amk.spawn_item_in_inv("medkit")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("bandage")
+		amk.spawn_item_in_inv("ibuprophen")
+		amk.spawn_item_in_inv("ibuprophen")
+		amk.spawn_item_in_inv("ibuprophen")
+		amk.spawn_item_in_inv("gidroperit")
+		amk.spawn_item_in_inv("gidroperit")
+		amk.spawn_item_in_inv("gidroperit")
+		amk.spawn_item_in_inv("gidroperit")
+		amk.spawn_item_in_inv("vodka")
+		amk.spawn_item_in_inv("vint")
+		news_manager.send_tip(db.actor, "unboxing_medicine")
+		db.actor:disable_info_portion("actor_order_medicine")
+	end
+end
+
+
+
+function esc_heli_items_spawn()
+local karma = starvation.get_karma()
+	if karma>=0.5 then
+	amk.spawn_item_in_inv("specops_outfit")
+	amk.spawn_item_in_inv("wpn_akm")
+	amk.spawn_item_in_inv("wpn_aps")
+	amk.spawn_item_in_inv("medkit_army")
+	amk.spawn_item_in_inv("medkit_army")
+	amk.spawn_item_in_inv("medkit_army")
+	amk.spawn_item_in_inv("antirad")
+	amk.spawn_item_in_inv("antirad")
+	amk.spawn_item_in_inv("dix")
+	amk.spawn_item_in_inv("yod")
+	amk.spawn_item_in_inv("bandage")
+	amk.spawn_item_in_inv("bandage")
+	amk.spawn_item_in_inv("bandage")
+	amk.spawn_item_in_inv("ibuprophen")
+	amk.spawn_item_in_inv("gidroperit")
+	amk.spawn_item_in_inv("grenade_rgd5")
+	amk.spawn_item_in_inv("irp-b")
+	amk.spawn_item_in_inv("flyaga_full")
+	amk.spawn_ammo_in_inv("ammo_7.62x39_fmj", 70)
+	amk.spawn_ammo_in_inv("ammo_7.62x39_ap", 30)
+	amk.spawn_ammo_in_inv("ammo_9x18_fmj", 120)
+	news_manager.send_tip(db.actor, "unboxing_esc_helicargo1")
+
+	elseif karma<0.5 then
+	amk.spawn_item_in_inv("soldier_outfit")
+	amk.spawn_item_in_inv("medic_bag")
+	amk.spawn_item_in_inv("medic_bag")
+	amk.spawn_item_in_inv("equipment_bag")
+	amk.spawn_item_in_inv("wpn_ak74u")
+	amk.spawn_ammo_in_inv("ammo_5.45x39_fmj", 200)
+	news_manager.send_tip(db.actor, "unboxing_esc_helicargo2")
+	end
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function script_anomals_actor_hit()
+local suit = db.actor:item_in_slot(6)
+local obj1 = level_object_by_sid( 8079 ) -- мясорубка на ж\д полотне, Кордон
+local obj2 = level_object_by_sid( 8205 ) -- мясорубка у туннеля в ТД, Кордон
+local obj3 = level_object_by_sid( 8077 ) -- летающая электра в туннеле на Кордоне. Убивает мгновенно, если не надет скафандр
+local obj4 = level_object_by_sid( 8336 ) -- летающий рой в коридоре, Долина. Убивает мгновенно, если нету артефакта "Улей"
+
+	if obj1 ~= nil and obj1:position():distance_to_sqr(db.actor:position())  <= 4*4 then
+		give_bonebreak_portion()
+	level.add_cam_effector("camera_effects\\fusker.anm", 999, false, "")
+	end
+	if obj2 ~= nil and obj2:position():distance_to_sqr(db.actor:position())  <= 4*4 then
+		give_bonebreak_portion()
+	level.add_cam_effector("camera_effects\\fusker.anm", 999, false, "")
+	end
+
+	if obj3 ~= nil and obj3:position():distance_to_sqr(db.actor:position()) <= 7*7 and suit == nil then
+	xr_effects.kill_actor()
+	xr_effects.play_shock_on_actor()
+	elseif obj3 ~= nil and obj3:position():distance_to_sqr(db.actor:position()) <= 7*7 and suit:section() ~= "ecolog_outfit" then
+	xr_effects.kill_actor()
+	xr_effects.play_shock_on_actor()
+	elseif obj3 ~= nil and obj3:position():distance_to_sqr(db.actor:position()) <= 7*7 and suit:section() == "ecolog_outfit" then
+	suit:set_condition(0)
+	addon_dialogs.esc_tunnel_skafandr_breaking_think()
+	end
+
+	if obj4 ~= nil and ( obj4:position():distance_to(db.actor:position()) <= 3*3 and db.actor:object("af_hive") == nil and db.actor:dont_has_info("dar_nedostroyka_task") ) then
+	xr_effects.kill_actor()
+	end
+
+end
+
+
+-- Боль и переломы -------------------------------------------------------------------------------------------------------------------------
+function pain_start()
+
+end
+
+function pain_visual_effect()
+local hud = get_hud()
+if has_alife_info("pain") then hud:AddCustomStatic("pain", true)
+elseif db.actor:dont_has_info("pain") then hud:RemoveCustomStatic("pain", true)
+end
+end
+
+
+function bonebreak_effect()
+local hud = get_hud()
+	if has_alife_info("bonebreak") then hud:AddCustomStatic("bonebreak", true) 
+	addon.actor_always_hit()
+	elseif db.actor:dont_has_info("bonebreak") then hud:RemoveCustomStatic("bonebreak", true)
+	end
+end
+
+function actor_always_hit()
+	local hit = hit()
+	hit.direction = vector():set(0, 0, 0)
+	hit.impulse = 0
+	hit.draftsman = db.actor
+	hit.power = 0.0001
+	hit.type = hit.explosion
+	db.actor:hit(hit)
+end
+
+function give_bonebreak_portion()
+	if db.actor:dont_has_info("bonebreak") then
+	db.actor:give_info_portion ("bonebreak")
+	soundtrack.bone_breaking()
+	soundtrack.gg_scream()
+	end
+end
+
+
+function start_narko_addiction_timer()
+-- amk.start_timer("narko1",1000)
+--start_real_timer(1000, "timer_actions.narko_timer_action")
+end
+
+
+
+-- Аномалия Полынь-звезда -----------------------------------------------------------------------------------------------------------------------------
+
+function actor_star1_hit()
+local obj = level_object_by_sid( 8195 )
+	if obj:position():distance_to_sqr(db.actor:position()) <= 50 then
+	actor_psy_hit()
+	esc_star_soundplay()
+	level.add_cam_effector("punch_effector.anm", 999, false, "")
+	end
+end
+
+function actor_psy_hit()
+	local hit = hit()
+	hit.direction = vector():set(0, 0, 0)
+	hit.impulse = 0
+	hit.draftsman = db.actor
+	hit.power = 0.01
+	hit.type = hit.telepatic
+	db.actor:hit(hit)
+end
+
+
+function esc_star_soundplay1()
+local snd_obj = xr_sound.get_safe_sound_object([[script_replics\megafon\music\megafon_music_14]])
+local obj = level_object_by_sid( 8195 )
+	snd_obj:play_at_pos(obj, obj:position(), sound_object.s3d)
+end
+
+function esc_star_soundplay2()
+local snd_obj = xr_sound.get_safe_sound_object([[script_replics\megafon\music\megafon_music_11]])
+local obj = level_object_by_sid( 8195 )
+	snd_obj:play_at_pos(obj, obj:position(), sound_object.s3d)
+end
+
+function esc_star_soundplay3()
+local snd_obj = xr_sound.get_safe_sound_object([[script_replics\megafon\music\megafon_music_5]])
+local obj = level_object_by_sid( 8195 )
+	snd_obj:play_at_pos(obj, obj:position(), sound_object.s3d)
+end
+
+
+-- Патроны для самопала ---------------------------------------------------------------------------------------------------------------------
+
+function powder_used()
+local news_text1 = "Заряды для самопала собраны"
+local news_text2 = "Для изготовления зарядов нужны подшипники"
+	if db.actor:object("bearing") ~= nil then
+		addon_devices.samopal_ammo_preparing()
+		db.actor:give_game_news(news_text1, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	end
+	if db.actor:object("bearing") == nil then
+		--amk.spawn_item_in_inv("powder")
+		db.actor:give_game_news(news_text2, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	end
+end
+
+
+-- Сумки и пачки: ----------------------------------------------------------------------------------------------------------------------------
+
+function equipment_bag_use()
+local karma = starvation.get_karma()
+	if karma<0.5 then
+	addon_devices.equipment_bag_use1()
+	soundtrack.equipment_bag_comment1() -- плохой лут
+	end
+	if karma>=0.5 then
+	addon_devices.equipment_bag_use2()
+	soundtrack.equipment_bag_comment2() -- хороший лут
+	end
+end
+
+function medic_pack_use()
+local karma = starvation.get_karma()
+	if karma<0.5 then
+	addon_devices.medic_pack_use1()
+	soundtrack.equipment_bag_comment3() -- плохой лут
+	end
+	if karma>=0.5 then
+	addon_devices.medic_pack_use2()
+	soundtrack.equipment_bag_comment2() -- хороший лут
+	end
+end
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Проверка на пси-винтовку до нужного времени
+
+function remove_psy_gun_without_suit()
+	local gun = db.actor:item_in_slot(2)
+	if gun and gun:section() == "wpn_psy" and ( xr_conditions.actor_wears_headhunter_outfit() == false and xr_conditions.actor_wears_headhunter_m1outfit() == false ) then
+		local pos = db.actor:position()
+		local fx_particle_1 = "anomaly2\\group_items\\electra2_flash"
+		db.actor:move_to_ruck(gun)
+		fx_particle_1 = particles_object(fx_particle_1)
+		fx_particle_1:play_at_pos(pos)
+		soundtrack.electroshock()
+		db.actor.health = - 0.1
+	end
+end
+
+function change_psy_gun()
+if db.actor:object("wpn_psy_npc") ~= nil then
+	-- amk.remove_item_from_inventory(db.actor:object("wpn_psy_npc"),actor)
+	addon.remove_items("wpn_psy_npc", 1)
+	amk.spawn_item_in_inv("wpn_psy")
+	end
+end
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function use_flyaga_empty()
+local news_text = "Найдите водоем"
+if ( xr_conditions.actor_in_zone(nil,nil,{"agr_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"agr_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"agr_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle4"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle5"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle6"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle4"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle5"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle6"})  or xr_conditions.actor_in_zone(nil,nil,{"mil_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"mil_puddle2"})	) then
+soundtrack.flyaga_bul_bul()
+flyaga_empty_fulling()
+elseif (	xr_conditions.actor_out_zone(nil,nil,{"agr_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"agr_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"agr_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle2"}) or  xr_conditions.actor_out_zone(nil,nil,{"garb_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle4"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle5"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle6"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle4"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle5"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle6"}) or xr_conditions.actor_out_zone(nil,nil,{"mil_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"mil_puddle2"})		) then
+db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+end
+end
+
+function flyaga_empty_fulling()
+amk.remove_item(db.actor:object("flyaga_empty"))
+amk.spawn_item_in_inv("flyaga_bad")
+end
+
+function gidroperit_used()
+local news_text1 = "Вода обеззаражена"
+local news_text2 = "Нету грязной воды"
+	if db.actor:object("flyaga_bad") ~= nil  then
+		amk.remove_item(db.actor:object("flyaga_bad"))
+		amk.spawn_item_in_inv("flyaga_full")
+		db.actor:give_game_news(news_text1, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	elseif db.actor:object("flyaga_bad") == nil then
+		amk.spawn_item_in_inv("gidroperit")
+		db.actor:give_game_news(news_text2, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	end
+end
+
+
+
+
+
+function use_unic_flyaga_empty()
+local news_text = "Найдите водоем"
+if (	xr_conditions.actor_in_zone(nil,nil,{"agr_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"agr_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"agr_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle4"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle5"}) or xr_conditions.actor_in_zone(nil,nil,{"garb_puddle6"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle3"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle4"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle5"}) or xr_conditions.actor_in_zone(nil,nil,{"dar_puddle6"}) or xr_conditions.actor_in_zone(nil,nil,{"predb_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"predb_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"yan_puddle1"}) or xr_conditions.actor_in_zone(nil,nil,{"yan_puddle2"}) or xr_conditions.actor_in_zone(nil,nil,{"yan_puddle3"})	) then
+soundtrack.flyaga_bul_bul()
+unic_flyaga_empty_fulling()
+elseif (	xr_conditions.actor_out_zone(nil,nil,{"agr_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"agr_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"agr_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle2"}) or  xr_conditions.actor_out_zone(nil,nil,{"garb_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle4"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle5"}) or xr_conditions.actor_out_zone(nil,nil,{"garb_puddle6"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle3"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle4"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle5"}) or xr_conditions.actor_out_zone(nil,nil,{"dar_puddle6"}) or xr_conditions.actor_out_zone(nil,nil,{"predb_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"predb_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"yan_puddle1"}) or xr_conditions.actor_out_zone(nil,nil,{"yan_puddle2"}) or xr_conditions.actor_out_zone(nil,nil,{"yan_puddle3"})	) then
+db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+end
+end
+
+function unic_flyaga_empty_fulling()
+amk.remove_item(db.actor:object("unic_flyaga_empty"))
+amk.spawn_item_in_inv("unic_flyaga_full")
+end
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- local fx_particle = "explosions\\group_items\\campfire_01_flame00"
+
+-- Спички: ----------------------------------------------
+function matches_use()
+local news_text = "Вы не у костра"
+if ( xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0000"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0001"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0002"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0003"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0004"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0005"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0006"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0007"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0008"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0009"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0010"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0011"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0012"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0013"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0014"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0015"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0016"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0017"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"obelisk_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"kpp_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"scient_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"dar_kamp_koster1_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"dar_holm_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"mil_village_dedok_house_pechka_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"predb_fabrik_koster_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"yan_bunker_yard_koster_snd_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"agr_kamp_koster1_particle_zone"}) ) then
+
+addon_devices.matches_use()
+
+else
+db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+alife():create('matches', vector(),0,0,0)
+end
+end
+
+-- Зажигалка: ---------------------------------------------------------------
+function lighter_use()
+local news_text = "Вы не у костра"
+if ( xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0000"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0001"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0002"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0003"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0004"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0005"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0006"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0007"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0008"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0009"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0010"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0011"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0012"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0013"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0014"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0015"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0016"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"camp_fire_0017"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"obelisk_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"kpp_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"scient_kamp_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"dar_kamp_koster1_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"dar_holm_koster_particle_zone"}) or 
+xr_conditions.actor_in_zone(nil,nil,{"mil_village_dedok_house_pechka_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"predb_fabrik_koster_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"yan_bunker_yard_koster_snd_zone"}) or
+xr_conditions.actor_in_zone(nil,nil,{"agr_kamp_koster1_particle_zone"}) ) then
+
+addon_devices.matches_use()
+
+else
+db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+end
+end
+
+
+function bowler_use()
+local news_text1 = "Нужен котелок"
+local news_text2 = "Нужна вода"
+	if db.actor:object("bowler") ~= nil and db.actor:object("flyaga_full") ~= nil then
+		addon_devices.bowler_intrface_start()
+	elseif db.actor:object("bowler") == nil then
+		db.actor:give_game_news(news_text1, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	elseif db.actor:object("flyaga_full") == nil then
+	db.actor:give_game_news(news_text2, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	end
+end
+
+
+function teapot_use()
+	if db.actor:object("flyaga_full") == nil then
+		db.actor:give_game_news("Нужна вода", "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	else
+		addon_devices.use_teapot()
+	end
+end
+
+
+
+function sickness_visual_effect()
+	local hud = get_hud()
+	if has_alife_info("sickness") then
+		hud:AddCustomStatic("sick", true)
+	else
+		hud:RemoveCustomStatic("sick")
+	end
+end
+
+function mixture_bad_work_think()
+	local st = get_hud():GetCustomStatic("mixture_bad_work_think") or get_hud():AddCustomStatic("mixture_bad_work_think",true)
+	st.m_endTime = time_global()/1000 + 5
+end
+
+function mixture_bad_work()
+	local rnd = math.random(1, 4)
+	if rnd == 1 then 
+		db.actor:give_info_portion("miksture_drink")
+		start_real_timer(1000, "timer_actions.miksture_timer_action")
+		db.actor:disable_info_portion("sickness")
+	else
+		mixture_bad_work_think()
+	end
+end
+
+function pnv_sound()
+snd_obj = sound_object("weapons\\nv_loop")  
+	if not snd_obj:playing() then
+	snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+	end
+end
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function remove_sigaret_without_fire()
+local text = "Нечем прикуривать"
+local sig = db.actor:active_item()
+	if (sig and sig:section() == "sigarets" ) and ( db.actor:object("matches") == nil and db.actor:object("lighter") == nil ) then		
+	amk.remove_item(db.actor:object("sigarets"))
+	amk.spawn_item_in_inv("sigarets")	
+	db.actor:give_game_news(text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+	addon.actor_disable_inventory()
+	end
+end
+
+
+
+function actor_hitted_rad()
+  if db.actor then
+if db.actor.radiation > 0.5 then
+	level.add_pp_effector("psy_antenna.ppe", 999, false)
+end
+end
+end
+
+function on_item_take(obj)
+end
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Болеем Чернобыльской чумой от контакта с зараженными зомби или крысами. Симптомы проявляються раз в 4 часа, всего проявлений 6(т.е. в нашем распоряжении сутки). Через 4 часа после шестого проявления наступает смерь, если не принято лекаство.-------------------------------------------------
+
+function sickness()
+	rnd = math.random(1, 3)
+	if rnd == 1 then 
+		soundtrack.sick_1()
+	elseif rnd == 2 then 
+		soundtrack.sick_2()
+	elseif rnd == 3 and db.actor:dont_has_info("sickness") then 
+		soundtrack.sick_5()
+		level.add_pp_effector("duality_circle.ppe", 999, false)
+		news_manager.send_tip(db.actor, "sickness_phase_1")
+		addon.sickness_phase_1()
+	end
+end
+
+function sickness_phase_1()
+	db.actor:give_info_portion("sickness")
+	start_real_timer(1800, "timer_actions.sick1timer_action")
+end
+
+function sickness_phase_2()
+	soundtrack.sick_4()
+	level.add_pp_effector("duality_circle.ppe", 999, false)
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	news_manager.send_tip(db.actor, "sickness_phase_2")
+	start_real_timer(1800, "timer_actions.sick2timer_action")
+end
+
+function sickness_phase_3()
+	soundtrack.sick_4()
+	level.add_pp_effector("duality_circle.ppe", 999, true)
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	news_manager.send_tip(db.actor, "sickness_phase_3")
+	start_real_timer(1800, "timer_actions.sick3timer_action")
+end
+
+function sickness_phase_4()
+	soundtrack.sick_4()
+	level.add_pp_effector("duality_circle.ppe", 999, true)
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	news_manager.send_tip(db.actor, "sickness_phase_4")
+	start_real_timer(1800, "timer_actions.sick4timer_action")
+end
+
+function sickness_phase_5()
+	soundtrack.sick_4()
+	level.add_pp_effector("duality_circle.ppe", 999, false)
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	news_manager.send_tip(db.actor, "sickness_phase_4")
+	start_real_timer(1800, "timer_actions.sick5timer_action")
+end
+
+function sickness_phase_6()
+	soundtrack.sick_4()
+	level.add_pp_effector("duality_circle.ppe", 999, false)
+	level.add_cam_effector("camera_effects\\head_shot.anm", 999, false, "")
+	news_manager.send_tip(db.actor, "sickness_phase_4")
+	start_real_timer(1800, "timer_actions.sick6timer_action")
+end
+
+function pizdets()
+	news_manager.send_tip(db.actor, "sickness_phase_5")
+	db.actor:kill(db.actor)
+end
+
+
+--Чинилка для брони---------------------------------------------------------------------------------------------------------------------------------------------------
+function armor_remkit_use()
+	local item_s6 = db.actor:item_in_slot(6)
+	if item_s6 == nil then
+        local news_text = "%c[255,160,160,160]Ремонт комплект:\\n%c[255,255,0,0]Ремонт невозможен: нужно одеть коcтюм."
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+        alife():create("armor_remkit", db.actor:position(), 1, db.actor:game_vertex_id(), db.actor:id())
+    elseif item_s6:condition() < 0.20 then
+        local news_text = "%c[255,160,160,160]Ремонт комплект:\\n%c[255,255,0,0]Ремонт невозможен: костюм слишком сильно повреждён."
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+        alife():create("armor_remkit", db.actor:position(), 1, db.actor:game_vertex_id(), db.actor:id())
+    elseif item_s6:condition() > 0.999 then
+        local news_text = "%c[255,160,160,160]Ремонт комплект:\\n%c[255,255,0,0]Ремонт невозможен: %c[255,0,255,0]костюм в отличном состоянии."
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+        alife():create("armor_remkit", db.actor:position(), 1, db.actor:game_vertex_id(), db.actor:id())
+    else
+		item_s6:set_condition(1)
+        local snd_obj = xr_sound.get_safe_sound_object([[interface\inv_detach_addon]])
+        snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+        local news_text = "%c[255,160,160,160]Ремонт комплект:\\n%c[255,0,255,0]Ремонт костюма завершен."
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+			if inventory.belt["anomal_gloves"] then
+				xr_effects.karma_up()
+			end
+    end
+end
+------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--Чинилка для оружия---------------------------------------------------------------------------------------------------------------------------------------------------
+function weapon_remkit_repare2slot()
+	local item_s2 = db.actor:item_in_slot(2)
+	if item_s2 == nil then
+    elseif item_s2:condition() < 0.30 then
+        local news_text = "Оружие сильно повреждено"
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+    elseif item_s2:condition() > 0.9 or item_s2:condition() == 0.9 then
+        local news_text = "Оружие не нуждается в чистке"
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+    else
+		item_s2:set_condition(0.9)
+        local snd_obj = xr_sound.get_safe_sound_object([[scripts\remkit\ui_repairweapon_06]])
+        snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+	amk.remove_item(db.actor:object("weapon_remkit"))
+	level.disable_input()
+	start_real_timer(5, "timer_actions.cleanweap_timer_action")
+	db.actor:hide_weapon()
+    end
+end
+
+function weapon_remkit_repare1slot()
+	local item_s1 = db.actor:item_in_slot(1)
+	if item_s1 == nil then
+    elseif item_s1:condition() < 0.30 then
+        local news_text = "Оружие сильно повреждено"
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+    elseif item_s1:condition() > 0.9 or item_s1:condition() == 0.9 then
+        local news_text = "Оружие не нуждается в чистке"
+        db.actor:give_game_news(news_text, "ui\\ui_iconsTotal", Frect():set(83,470,83,47), 1000, 5000)
+    else
+		item_s1:set_condition(0.9)
+        local snd_obj = xr_sound.get_safe_sound_object([[interface\inv_detach_addon]])
+        snd_obj:play_no_feedback(db.actor, sound_object.s2d, 0, vector(), 1.0)
+	amk.remove_item(db.actor:object("weapon_remkit"))
+	level.disable_input()
+	start_real_timer(5, "timer_actions.cleanweap_timer_action")
+	db.actor:hide_weapon()
+    end
+end
+------------------------------------------------------------------------------------------------------------------------------------------
+
+-- с вещами прихватываем и рюкзачок 
+
+function take_from_box(box)
+	if box:is_inv_box_empty() and (string.find(box:section(),"^m_taynik_") or string.find(box:section(),"^val_taynik_") or box:section()=="m_ruck2") then
+		level.start_stop_menu(level.main_input_receiver(),true)
+		amk.spawn_item_in_inv("mobile_changer_33")
+		amk.remove_item(box)
+	end
+end
+
+function on_game_load()
+end
+
+function on_game_save()
+end
+
+local strv_time = 0
+function starvation_update(delta)
+	local tg = time_global()
+	if tg > strv_time then
+	strv_time = tg + 60
+	if xr_conditions.actor_wears_madmans_outfit() then
+		starvation.on_update2()
+	else
+		starvation.on_update1()
+	end
+	end
+end
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function kost_p(who, bone_index)
+
+--// Локальные переменные
+----------------
+local kuda = ""
+local ra
+local fp
+local item = db.actor:item_in_slot(6)
+----------------
+
+--//Проверка и названия костей
+if item then
+if bone_index>0 and who and who:id() == db.actor:id() and item:section()=="sensor_outfit" then
+  if bone_index == 1 then
+    kuda = "Противник ранен в левую ногу"
+  elseif bone_index == 2 then
+    kuda = "Противник ранен в левую голень"
+  elseif bone_index == 3 or bone_index == 4 then
+    kuda = "Противник ранен в левую стопу"
+  elseif bone_index == 5 then
+    kuda = "Противник ранен в правую ногу"
+  elseif bone_index == 6 then
+    kuda = "Противник ранен в правую голень"  
+  elseif bone_index == 7 or bone_index == 8 then
+    kuda = "Противник ранен в правую стопу"
+  elseif bone_index == 9 then
+    kuda = "Противник ранен в живот" 
+  elseif bone_index == 10 then
+    kuda = "Противник ранен в корпус"
+  elseif bone_index == 11 then
+    kuda = "Противник ранен в грудь"  
+  elseif bone_index == 12 then
+    kuda = "Противник ранен в шею"
+  elseif bone_index == 13 then
+    kuda = "Противник ранен в голову"
+  elseif bone_index == 14 then
+    kuda = "Противник ранен в левый глаз"  
+  elseif bone_index == 15 then
+    kuda = "Противник ранен в правый глаз"  
+  elseif bone_index == 16 then
+    kuda = "Противник ранен в переносицу"
+  elseif bone_index == 17 then
+    kuda = "Противник ранен в челюсть"
+  elseif bone_index == 18 then
+    kuda = "Противник ранен в левый бок"
+  elseif bone_index == 19 then
+    kuda = "Противник ранен в левое плечо"
+  elseif bone_index == 20 then
+    kuda = "Противник ранен в левое предплечье"  
+  elseif bone_index >= 21 and bone_index <= 30 then
+    kuda = "Противник ранен в левую кисть"
+  elseif bone_index == 31 then
+    kuda = "Противник ранен в правый бок"
+  elseif bone_index == 32 then
+    kuda = "Противник ранен в правое плечо"    
+  elseif bone_index == 33 then
+    kuda = "Противник ранен в правое предплечье"    
+  elseif bone_index >= 34 and bone_index <= 43 then
+    kuda = "Противник ранен в правую кисть"  
+  elseif bone_index == 44 then
+    kuda = "Противник ранен в бедро"       
+  end
+  news_manager.send_tip(db.actor, kuda, nil, nil, 1000)
+end
+end
+end
+
+
+function sensor_outfit_regeneration()
+local pow = db.actor.power
+local outfit = db.actor:item_in_slot(6)
+	if outfit == nil then 
+	return 
+	end
+	if outfit:section()=="sensor_outfit" then
+	local outfit_condition = outfit:condition()
+		if outfit_condition < 0.7 then
+		db.actor.power = -0.4
+		outfit:set_condition(1)
+  		news_manager.send_tip(db.actor, "Броня восстанавливается...", nil, nil, 1000)
+		end
+	end 
+end 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function knife1_use() -- охотничий
+	local knife = db.actor:item_in_slot(0)
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	end
+	alife():create('wpn_knife', vector(), 0, 0, 0)
+end
+
+function knife2_use() -- штык-нож
+	local knife = db.actor:item_in_slot(0)
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+ 
+
+
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+
+	end
+	alife():create('wpn_knife2', vector(), 0, 0, 0)
+end
+
+
+function knife3_use() -- спецназовский нож
+local knife = db.actor:item_in_slot(0)
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+	end
+	alife():create('wpn_knife3', vector(), 0, 0, 0)
+end
+
+
+function knife4_use() -- американский нож
+local knife = db.actor:item_in_slot(0)
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+ 
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife) amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+ 
+	end
+	alife():create('wpn_knife4', vector(), 0, 0, 0)
+end
+
+
+function knife5_use() -- именной нож
+	local knife = db.actor:item_in_slot(0)
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	end
+	alife():create('wpn_knife5', vector(), 0, 0, 0)
+end
+
+function knife6_use() -- армейский нож
+	local knife = db.actor:item_in_slot(0)
+
+	if knife ~= nil and knife:section()=="wpn_knife" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_montirovka" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('montirovka', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_1', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife2_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_2', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife3_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_3', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife4_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_4', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife5_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_5', vector(), 0, 0, 0)
+
+	elseif knife ~= nil and knife:section()=="wpn_knife6_up1" then
+	db.actor:drop_item(knife)
+	amk.remove_item(knife)
+	alife():create('knife_6', vector(), 0, 0, 0)
+
+	end
+	alife():create('wpn_knife6', vector(), 0, 0, 0)
+end
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function flare1_use() -- фонарик слабый
+	local flare = db.actor:item_in_slot(9)
+	if flare and flare:section()=="device_torch" then
+		db.actor:drop_item(flare)
+		amk.remove_item(flare)
+		alife():create('flare_1', vector(), 0, 0, 0)
+	elseif flare and flare:section()=="device_torch2" then
+		db.actor:drop_item(flare)
+		amk.remove_item(flare)
+		alife():create('flare_2', vector(), 0, 0, 0)
+	end
+	alife():create('device_torch', vector(), 0, 0, 0)
+end
+
+function flare2_use() -- фонарик сильный
+	local flare = db.actor:item_in_slot(9)
+	if flare and flare:section()=="device_torch" then
+		db.actor:drop_item(flare)
+		amk.remove_item(flare)
+		alife():create('flare_1', vector(), 0, 0, 0)
+	elseif flare and flare:section()=="device_torch2" then
+		db.actor:drop_item(flare)
+		amk.remove_item(flare)
+		alife():create('flare_2', vector(), 0, 0, 0)
+	end
+	alife():create('device_torch2', vector(), 0, 0, 0)
+end
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function binocl1_use() -- бинокль армейский с целеуловителем
+	local bino = db.actor:item_in_slot(4)
+	if bino ~= nil and bino:section()=="wpn_binoc" then
+		db.actor:drop_item(bino)
+		amk.remove_item(bino)
+		alife():create('binocl_army', vector(), 0, 0, 0)
+	elseif bino ~= nil and bino:section()=="wpn_binoc_bpo" then
+		db.actor:drop_item(bino)
+		amk.remove_item(bino)
+		alife():create('binocl_civil', vector(), 0, 0, 0)
+	end
+	alife():create('wpn_binoc', vector(), 0, 0, 0)
+end
+
+function binocl2_use() -- бинокль охотничий
+	local bino = db.actor:item_in_slot(4)
+	if bino ~= nil and bino:section()=="wpn_binoc" then
+		db.actor:drop_item(bino)
+		amk.remove_item(bino)
+		alife():create('binocl_army', vector(), 0, 0, 0)
+	elseif bino ~= nil and bino:section()=="wpn_binoc_bpo" then
+		db.actor:drop_item(bino)
+		amk.remove_item(bino)
+		alife():create('binocl_civil', vector(), 0, 0, 0)
+	end
+	alife():create('wpn_binoc_bpo', vector(), 0, 0, 0)
+end
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+-- Аномальные зоны -----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+function strange_zone1_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone1_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone2_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone2_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone3_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone3_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone4_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone4_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone5_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone5_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone6_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone6_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function strange_zone7_charged_tip()
+	if db.actor:object("afscanner") ~= nil then
+	news_manager.send_tip(db.actor, "strange_zone7_charged_tip", nil, "anomal", 5000)
+	soundtrack.new_art_birth()
+	end
+end
+
+function fake_art_effect(t)
+	local snd = xr_sound.get_safe_sound_object([[anomaly\bfuzz_blowout]])
+	snd:play_no_feedback(db.actor, sound_object.s3d, 0, vector():set(t.posx, t.posy, t.posz), 1.0)
+end
+
+function spawn_fake_arts()
+	local art_section = "fake_art" .. math.random(1, 3)
+	local pos = db.actor:position()
+	local n = math.random(-3,3)
+	pos.x = pos.x + n
+	pos.y = pos.y + 4
+	pos.z = pos.z - n
+	local sobj = alife():create( art_section, pos, db.actor:level_vertex_id(), db.actor:game_vertex_id())
+	start_real_timer(3, "addon.delete_art", {art_id = sobj.id})
+	start_real_timer(1, "addon.fake_art_effect", {posx = pos.x, posy = pos.y, posz = pos.z})
+end
+
+function delete_art(t)
+	local sobj = alife():object(t.art_id)
+	if sobj then
+		alife():release(sobj, true)
+		news_manager.send_tip(db.actor, "delete_art_strangezone", nil, "anomal", 5000)
+		db.actor:give_info_portion("fakeart_deleted")
+	end
+end
+
+function afscanner_impulse1()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone1"}) and db.actor:dont_has_info("strangezone1_off") and db.actor:dont_has_info("af_invis1_1_birth") ) then
+		db.actor:give_info_portion("af_invis1_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone1"}) and has_alife_info("strangezone1_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse2()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone2"})  and db.actor:dont_has_info("strangezone2_off") and db.actor:dont_has_info("af_invis2_1_birth") ) then
+		db.actor:give_info_portion("af_invis2_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone2"}) and has_alife_info("strangezone2_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse3()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone3"})  and db.actor:dont_has_info("strangezone3_off") and db.actor:dont_has_info("af_invis3_1_birth") ) then
+		db.actor:give_info_portion("af_invis3_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone3"}) and has_alife_info("strangezone3_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse4()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone4"})  and db.actor:dont_has_info("strangezone4_off") and db.actor:dont_has_info("af_invis4_1_birth") ) then
+		db.actor:give_info_portion("af_invis4_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone4"}) and has_alife_info("strangezone4_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse5()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone5"}) and db.actor:dont_has_info("strangezone5_off") and db.actor:dont_has_info("af_invis5_1_birth") ) then
+		db.actor:give_info_portion("af_invis5_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone5"}) and has_alife_info("strangezone5_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse6()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone6"})  and db.actor:dont_has_info("strangezone6_off") and db.actor:dont_has_info("af_invis6_1_birth") ) then
+		db.actor:give_info_portion("af_invis6_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone6"}) and has_alife_info("strangezone6_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+
+function afscanner_impulse7()
+	if ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone7"})  and db.actor:dont_has_info("strangezone7_off") and db.actor:dont_has_info("af_invis7_1_birth") ) then
+		db.actor:give_info_portion("af_invis7_1_birth")
+		spawn_fake_arts()
+		soundtrack.afscanner_click3()
+	elseif ( xr_conditions.actor_in_zone(nil,nil,{"strange_zone7"}) and has_alife_info("strangezone7_off") ) then
+		news_manager.send_tip(db.actor, "strangezone_empty", nil, "anomal", 5000)
+		soundtrack.afscanner_click2()
+	end
+end
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function fake_arts_delete()
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone1_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_ballast', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_ballast_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone1_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis1_1_birth")
+		strangezone1_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone1_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_roll', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_roll_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone1_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis1_1_birth")
+		strangezone1_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone1_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_ballast', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_ballast_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone1_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis1_1_birth")
+		strangezone1_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone2_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_coal', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_coal_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone2_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis2_1_birth")
+		strangezone2_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone2_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_scale', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_scale_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone2_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis2_1_birth")
+		strangezone2_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone2_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_bitum', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_bitum_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone2_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis2_1_birth")
+		strangezone2_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone3_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_steel_nut', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_steel_nut_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone3_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis3_1_birth")
+		strangezone3_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone3_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_bearing', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_bearing_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone3_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis3_1_birth")
+		strangezone3_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone3_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_steel_nut', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_steel_nut_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone3_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis3_1_birth")
+		strangezone3_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone4_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_frog', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_frog_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone4_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis4_1_birth")
+		strangezone4_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone4_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_sagebrush', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_sagebrush_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone4_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis4_1_birth")
+		strangezone4_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone4_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_chestnut', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_chestnut_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone4_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis4_1_birth")
+		strangezone4_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone5_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_glass', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_glass_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone5_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis5_1_birth")
+		strangezone5_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone5_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_glass', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_glass_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone5_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis5_1_birth")
+		strangezone5_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone5_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_teardrop', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_teardrop_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone5_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis5_1_birth")
+		strangezone5_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone6_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_spiral', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_spiral_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone6_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis6_1_birth")
+		strangezone6_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone6_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_cristallic', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_cristallic_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone6_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis6_1_birth")
+		strangezone6_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone6_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_cristallic', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_cristallic_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone6_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis6_1_birth")
+		strangezone6_timer_start()
+	end
+
+	if ( db.actor:object("fake_art1") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone7_sound"}) ) then
+		addon.remove_items("fake_art1", 1)
+		alife():create('af_egg', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_egg_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone7_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis7_1_birth")
+		strangezone7_timer_start()
+	end
+	if ( db.actor:object("fake_art2") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone7_sound"}) ) then
+		addon.remove_items("fake_art2", 1)
+		alife():create('af_egg', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_egg_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone7_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis7_1_birth")
+		strangezone7_timer_start()
+	end
+	if ( db.actor:object("fake_art3") and xr_conditions.actor_in_zone(nil,nil,{"strange_zone7_sound"}) ) then
+		addon.remove_items("fake_art3", 1)
+		alife():create('af_hole', vector(), 0, 0, 0)
+		news_manager.send_tip(db.actor, "af_hole_collected", nil, "artefact", 7000)
+		db.actor:give_info_portion("strangezone7_off")
+		news_manager.send_tip(db.actor, "strange_zone_af_gathered", nil, "anomal", 5000)
+		db.actor:disable_info_portion("af_invis7_1_birth")
+		strangezone7_timer_start()
+	end
+end
+
+
+
+function strangezone1_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone1timer_action")
+	else
+		start_real_timer(20*60, "timer_actions.strangezone1timer_action")
+	end
+end
+
+function strangezone2_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone2timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone2timer_action")
+	end
+end
+
+function strangezone3_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone3timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone3timer_action")
+	end
+end
+
+function strangezone4_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone4timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone4timer_action")
+	end
+end
+
+function strangezone5_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone5timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone5timer_action")
+	end
+end
+
+function strangezone6_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone6timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone6timer_action")
+	end
+end
+
+function strangezone7_timer_start()
+	if db.actor:dont_has_info("arts_powerup")  then
+		start_real_timer(30*60, "timer_actions.strangezone7timer_action")
+	else 
+		start_real_timer(20*60, "timer_actions.strangezone7timer_action")
+	end
+end
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+--added_stalbar_2009
+-- Рандом координат и спавн на уровнях  
+function quest_spawn(obj_name, total, posit, y_offset, lv, gv)
+	local zombie_index
+	local new_pos
+	local x_offset = 0
+	local z_offset = 0
+	local spawn_item
+	local spawn_obj
+	local obj
+	local obj2
+	for zombie_index=1, total do
+		x_offset = math.random(40)-20
+		z_offset = math.random(40)-20
+		if( x_offset < 2 and x_offset > -2 ) then
+			x_offset = -2
+		end
+		if( z_offset < 2 and z_offset > -2 ) then
+			z_offset = -2
+		end
+		new_pos = posit
+		new_pos.x = new_pos.x + x_offset
+		new_pos.y = new_pos.y + y_offset
+		new_pos.z = new_pos.z + z_offset
+		spawn_item = alife():create("bolt", new_pos, lv, gv) 
+		obj = alife():object(spawn_item.id)
+--		log1("bolt_spawned-----------------------")
+		if obj then
+			local lvid, gvid = obj.m_level_vertex_id, obj.m_game_vertex_id
+			if game_graph():valid_vertex_id(gvid) then
+				local lv = game_graph():vertex(gvid):level_vertex_id()
+				local pos = obj.position
+				local spawn_pos = level.vertex_position(lv)
+--				log1("obj_bolt_".."_obj_id_"..obj.id.."_lvid_"..lvid.."_gvid_"..gvid)
+--				log1("pos_x_"..pos.x.."_pos_y_"..pos.y.."_pos_z_"..pos.z)
+--				alife():release(obj, true)
+				spawn_obj = alife():create(obj_name, spawn_pos, lv, gvid)
+--				obj2 = alife():object(spawn_obj.id)
+--				local lvid2, gvid2 = obj2.m_level_vertex_id, obj2.m_game_vertex_id
+--				local pos2 = obj2.position
+--				log1("obj2_"..obj_name.."_obj_id_"..obj2.id.."_lvid2_"..lvid2.."_gvid2_"..gvid2)
+--				log1("pos2_x_"..pos2.x.."_pos2_y_"..pos2.y.."_pos2_z_"..pos2.z)
+			end
+		end	
+	end
+end
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+function actor_disable_inventory()
+	-- закрываем верхнее окно
+	local wnd = level.main_input_receiver()
+	if wnd then
+		wnd:GetHolder():start_stop_menu(wnd, true)
+	end
+end
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+function spawn_turret_case()
+ local sim = alife()
+ local sobj = alife():create("turret_case", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id())
+ sim:assign_story_id(sobj.id, story_ids.turret_case)
+end
+
+function release_personal_turret()
+	local sim = alife()
+	for i=1,65534 do
+	local sobj = sim:object(i)
+		if sobj and sobj:name():find("^personal_turret") then
+		sim:release(sobj,true)
+		end
+	end
+end
+
+function release_turret_case()
+	local sobj = alife():story_object(story_ids.turret_case)
+	alife():release(sobj)
+end
+
+function turret_case_activate()
+	level.disable_input()
+	addon_devices.use_turret_interface_uninstalling()
+	start_real_timer(5, "timer_actions.turret2timer_action")
+end
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+function invisible_outfit_wear()
+	local suit = db.actor:item_in_slot(6)
+	if suit then
+		db.actor:drop_item(suit)
+		amk.remove_item(suit)
+		alife():create('invisible_outfit', vector(),0,0,0)
+		alife():create("pervert_zombied", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id())
+		you_are_zombied_think()
+	else
+		alife():create('invisible_outfit', vector(),0,0,0)
+		alife():create("pervert_zombied", db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id())	
+		you_are_zombied_think()
+	end
+end
+
+function you_are_zombied_think()
+	local st = get_hud():GetCustomStatic("you_are_zombied_think") or get_hud():AddCustomStatic("you_are_zombied_think",true)
+	st.m_endTime = time_global()/1000 + 50
+end
+
+
+function invisible_outfit_wear2()
+	local suit = db.actor:item_in_slot(6)
+	if suit then
+		db.actor:drop_item(suit)
+		amk.remove_item(suit)
+		alife():create('invisible_outfit', vector(),0,0,0)
+	else
+		alife():create('invisible_outfit', vector(),0,0,0)
+	end
+end
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+-- Автосъедаемые записки, блокноты, планшеты и прочее: --------------------------------------------------------------------------------------------------------------------------
+
+function autoattachable_items(obj)
+	local sect = obj:section()
+	if sect == "dar_explorors_zapiska1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dar_explorors_zapiska1_info")
+		news_manager.send_tip(db.actor, "dar_explorors_zapiska1_info_text", nil, "info", 16000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "madhunter_diary" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("madhunter_info")
+		news_manager.send_tip(db.actor, "madhunter_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "ratter_diary" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("ratter_diary_info")
+		news_manager.send_tip(db.actor, "ratter_diary_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "dar_zapravka_suicider_zapis" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dar_zapravka_suicider_info")
+		-- news_manager.send_tip(db.actor, "dar_zapravka_suicider_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "dar_krane_sniper_diary" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dar_krane_sniper_diary_info")
+		-- news_manager.send_tip(db.actor, "dar_krane_sniper_diary_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if db.actor:object("dar_oficer_planshet") ~= nil then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dar_oficer_planshet_info")
+		-- news_manager.send_tip(db.actor, "dar_oficer_planshet_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect =="dar_farm_seif_docs" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dar_farm_seif_docs_info")
+		-- news_manager.send_tip(db.actor, "dar_farm_seif_docs_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "dyatlovs_group_man3_zapis" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dyatlovs_group_zapis2_info")
+		-- news_manager.send_tip(db.actor, "dyatlovs_group_zapis2_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "dyatlovs_man_pda1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dyatlovs_man_pda_info")
+		news_manager.send_tip(db.actor, "dyatlovs_man_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "dyatlovs_man_pda2" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("dyatlovs_man_pda2_info")
+		news_manager.send_tip(db.actor, "dyatlovs_man_pda2_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "agr_fabrik_papka" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("agr_fabrik_papka_info")
+		news_manager.send_tip(db.actor, "agr_fabrik_papka_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "garb_convoy_scientist_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("garb_convoy_deadscientist_info")
+		-- news_manager.send_tip(db.actor, "agr_fabrik_papka_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "ochkarik_lamp_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("ochkarik_lamp_info")
+		-- news_manager.send_tip(db.actor, "ochkarik_lamp_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "esc_madhunter_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("esc_madhunter_pda_info")
+		news_manager.send_tip(db.actor, "esc_madhunter_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "x18oficer_book" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("x18oficer_info")
+		news_manager.send_tip(db.actor, "x18oficer_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "bar_bunkerzombie_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("bar_bunkerzombie_pda_info")
+		news_manager.send_tip(db.actor, "bar_bunkerzombie_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+	if sect == "camerer_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("wonder_task_done5")
+		news_manager.send_tip(db.actor, "camerer_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "bar_karlik_docs1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("bar_karlik_docs_info1")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text1", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "bar_karlik_docs2" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("bar_karlik_docs_info2")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "ros_hunter2_diary1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("ros_hunter2_diary1_info")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "ros_house_diary1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("ros_house_diary1_info")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "ros_master_note" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("ros_master_note_info")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "faint_man1_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("faint_man1_pda_info")
+		-- news_manager.send_tip(db.actor, "bar_karlik_docs_info_info_text2", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "yan_lost_hunter_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("yan_lost_hunter_pda_info")
+		--news_manager.send_tip(db.actor, "yan_lost_hunter_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "mil_military_docks1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("mil_military_docks1_info")
+		--news_manager.send_tip(db.actor, "mil_military_docks1_info_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "mil_military_docks2" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("mil_military_docks2_info")
+		--news_manager.send_tip(db.actor, "mil_military_docks2_info_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "rad_lost_pda1" then
+		amk.remove_item(obj)
+		xr_effects.radar_lost_pda_collect()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "rad_lost_pda2" then
+		amk.remove_item(obj)
+		xr_effects.radar_lost_pda_collect()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "rad_lost_pda3" then
+		amk.remove_item(obj)
+		xr_effects.radar_lost_pda_collect()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "rad_lost_pda4" then
+		amk.remove_item(obj)
+		xr_effects.radar_lost_pda_collect()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "rad_abdul_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("rad_abdul_lost")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "deadmask_diary1" then
+		amk.remove_item(obj)
+		--db.actor:give_info_portion ("deadmask_diary1_info")
+		xr_effects.deadmask_diary_info_action()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "deadmask_diary2" then
+		amk.remove_item(obj)
+		--db.actor:give_info_portion ("deadmask_diary2_info")
+		xr_effects.deadmask_diary_info_action()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "deadmask_diary3" then
+		amk.remove_item(obj)
+		--db.actor:give_info_portion ("deadmask_diary3_info")
+		xr_effects.deadmask_diary_info_action()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "deadmask_diary4" then
+		amk.remove_item(obj)
+		--db.actor:give_info_portion ("deadmask_diary4_info")
+		xr_effects.deadmask_diary_info_action()
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "x10agent4pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("x10_agent4_info")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "pri_detsad_car_dokuments" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("pri_detsad_car_dokuments_info")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "pri_avtostation_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("pri_agents_meet_task")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "pri_abdul_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("pri_abdul_last_talk2")
+		news_manager.send_tip(db.actor, "pri_abdul_zapiska_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "hermit_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("hermit_pda_info")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "kontrab4_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_village_grass_info")
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_firest_komander_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_firest_komander_zapiska_info")
+		news_manager.send_tip(db.actor, "predb_firest_komander_zapiska_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_base_comp_parol_list" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_base_comp_acess")
+		news_manager.send_tip(db.actor, "predb_base_comp_parol_tip", nil, "info", 8000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_king_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_king_zapiska_info")
+		news_manager.send_tip(db.actor, "predb_king_zapiska_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_marod1_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_marod1_pda_info")
+		news_manager.send_tip(db.actor, "predb_marod1_pda_info_text", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_unkn_stalker_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_unkn_stalker_info")
+		news_manager.send_tip(db.actor, "predb_unkn_stalker_zapiska_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_kontrab_bloknot" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("kontrab_bloknot_info")
+		news_manager.send_tip(db.actor, "predb_kontrab_bloknot_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_army_docks_1" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("predb_army_docks_1_info")
+		news_manager.send_tip(db.actor, "predb_army_docks_1_tip", nil, "info", 12000)
+		news_manager.send_tip(db.actor, "predb_army_docks_1_tip2", nil, "stalker", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_zaurus_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("zaurus_info")
+		news_manager.send_tip(db.actor, "zaurus_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "predb_kaban_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("kaban_pda_info")
+		news_manager.send_tip(db.actor, "kaban_pda_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "mil_deadman_pda" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("mil_body1_info")
+		--news_manager.send_tip(db.actor, "mil_body1_info_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+	
+	if sect == "mil_swamper_zapiska" then
+		amk.remove_item(obj)
+		db.actor:give_info_portion ("mil_swamper_info")
+		news_manager.send_tip(db.actor, "mil_swamper_zapiska_tip", nil, "info", 12000)
+		addon_dialogs.actor_disable_inventory()
+		return
+	end
+
+end
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-- Артефакт "Хамелеон" --------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function af_chamelleon_use()
+	local hud = get_hud()
+	hud:RemoveCustomStatic("karma4")
+	hud:RemoveCustomStatic("karma2")
+	hud:RemoveCustomStatic("karma3")
+	hud:RemoveCustomStatic("karma1")
+	if inventory.belt["chamelleon"] then
+	local karma = starvation.get_karma()
+		if karma>=0.9 then
+			hud:AddCustomStatic("karma1",true) 
+		elseif karma>0.5 then
+			hud:AddCustomStatic("karma2",true)
+		elseif karma<=0.5 and karma>0.2 then
+			hud:AddCustomStatic("karma3",true) 
+		elseif karma<0.2 then
+			hud:AddCustomStatic("karma4",true) 
+		end
+	end
+end
+
+
+
+
+-- МАГНИТ -------------------------------------------------------------------------------------------------------------------------------
+
+function teleport_to_t_part()
+local sobj = alife():story_object(8487)
+local pos = sobj.position
+local sobjlvl = game_graph():vertex(sobj.m_game_vertex_id):level_id()
+local actorlvl = alife():level_id()
+-- Сработало
+	if actorlvl == sobjlvl then 
+	level.add_pp_effector("teleport.ppe", 2007, false)
+	soundtrack.lift_up()
+	delete_t_part()
+	db.actor:set_actor_position(pos)
+	db.actor:disable_info_portion("teleport_part_indtalled")
+-- Не сработало
+	else
+	amk.spawn_item_in_inv("t_akumulator2") 
+	news_manager.send_tip(db.actor, "teleport_part_too_far", nil, "anomal", 6000)
+	actor_disable_inventory()
+	end
+end
+
+function delete_t_part()
+    local obj = alife():story_object(8487)
+    if obj then
+    alife():release(obj)
+    end
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+function set_actor_karma()
+rnd = math.random(1, 7)
+if rnd == 1 then 
+starvation.set_karma(0.4)
+end
+if rnd == 2 then 
+starvation.set_karma(0.2)
+end
+if rnd == 3 then 
+starvation.set_karma(0.6)
+end
+if rnd == 4 then 
+starvation.set_karma(0.7)
+end
+if rnd == 5 then 
+starvation.set_karma(0.1)
+end
+if rnd == 6 then 
+starvation.set_karma(0.8)
+end
+if rnd == 7 then 
+starvation.set_karma(0.3)
+end
+end
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+-- [22:37:33] Charsi: это в ogsm_anomaly.script напиши
+
+function del_anomaly(obj_pos)
+ local r = 10
+ local levelname = level.name()
+ if list_anom_id then
+  if list_anom_id[levelname] ~= nil then
+   local list_loc_anom_id = list_anom_id[levelname]
+   for k,v in pairs(list_loc_anom_id) do
+    if v then
+     local obj = level.object_by_id( v )
+     if obj and obj:position():distance_to_sqr(obj_pos)<r*r then
+      delete_anom( v )
+     end
+    end
+   end
+  end
+ end
+end
+
+
+-- Сердце ликвидатора ---------------------------------------------------------------------------------------------------------------
+
+function af_licvidator_use()
+    for k, v in pairs (db.storage) do
+    local mob = level.object_by_id(k)
+	if mob and IsMonster(mob) and mob:alive() and mob:position():distance_to(db.actor:position()) < 35 then
+			if  ( mob:section() == "^esc_atp_controler" and mob:alive()
+			or mob:section() == "^m_controller_e" and mob:alive()
+			or mob:section() == "^m_controller_normal" and mob:alive()
+			or mob:section() == "^m_controller_act" and mob:alive()
+			or mob:section() == "^controller_tubeman" and mob:alive() ) then
+			return false 
+			end
+		local hit = hit()
+		hit.direction = vector():set(0, 1, 0)
+		hit.impulse = 200
+		hit.draftsman = mob
+		hit.power = 20.0
+		hit.type = hit.wound
+		mob:hit(hit)
+	end
+end
+end
+
+
+
+function af_likvidator_empty_think()
+local st = get_hud():GetCustomStatic("af_likvidator_empty_think") or get_hud():AddCustomStatic("af_likvidator_empty_think",true)
+st.m_endTime = time_global()/1000 + 3
+end
+
+
+function script_arts_recharge()
+	if db.actor:object("af_guider_uncharge") ~= nil then
+	amk.remove_item(db.actor:object("af_guider_uncharge"))
+	amk.spawn_item_in_inv("af_guider")
+	end
+	if db.actor:object("af_licvidator_empty") ~= nil then
+	amk.remove_item(db.actor:object("af_licvidator_empty"))
+	amk.spawn_item_in_inv("af_licvidator")
+	end
+	if db.actor:object("af_zuda_empty") ~= nil then
+	amk.remove_item(db.actor:object("af_zuda_empty"))
+	amk.spawn_item_in_inv("af_zuda")
+	end
+	if db.actor:object("af_watch_empty") ~= nil then
+	amk.remove_item(db.actor:object("af_watch_empty"))
+	amk.spawn_item_in_inv("af_watch")
+	end
+end
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function set_start_addiction()
+local addiction = starvation.get_addiction()
+starvation.set_addiction(0.0)
+end
+
+function set_start_karma()
+local karma = starvation.get_karma()
+rnd = math.random(1, 5)
+if rnd == 1 then 
+starvation.set_karma(0.35)
+end
+if rnd == 2 then 
+starvation.set_karma(0.45)
+end
+if rnd == 3 then 
+starvation.set_karma(0.55)
+end
+if rnd == 4 then 
+starvation.set_karma(0.65)
+end
+if rnd == 5 then 
+starvation.set_karma(0.75)
+end
+end
+
+
+function glowworm_effect()
+local pos = db.actor:position()
+local karma = starvation.get_karma()
+local murder = starvation.get_murder()
+-- local fx_particle = "anomaly\\_anomal-03-full"
+-- fx_particle = particles_object(fx_particle)
+-- fx_particle:play_at_pos(pos)
+starvation.set_karma(1.0)
+if murder>0.02 then starvation.set_murder(0) end
+glowworm_level_respawn()
+end
+
+function glowworm_level_respawn()
+	local level_name = level.name()
+		if level_name == "l01_escape" then
+			alife():create("esc_glowworm", vector():set (67.84,-0.26,364.84), 358192, 196)
+		elseif level_name == "l02_garbage" then
+			alife():create("garb_glowworm", vector():set (240.33,-2.05,-146.57), 363675, 404)
+		elseif level_name == "l03_agroprom" then
+			alife():create("agr_glowworm", vector():set (64.20,15.53,155.17), 300849, 510)	
+		elseif level_name == "l04_darkvalley" then
+			alife():create("dar_glowworm", vector():set (16.89,-2.50,-133.82), 194193, 871)
+		elseif level_name == "l07_military" then
+			
+		elseif level_name == "l08_yantar" then
+			
+		end
+end
+
+
+-- Зуда: --------------------------------------------------------------------------------------------------------
+function zuda_effect()
+    for k, v in pairs (db.storage) do
+        local stalker = level.object_by_id(k)
+        if (stalker and IsStalker(stalker)) then
+            if stalker:position():distance_to(db.actor:position()) < 30 then
+                    react = sound_object("characters_voice\\human_01\\stalker\\fight\\hit\\hit_"..tostring(math.random(1,10)))  
+                    react:play_at_pos(stalker, stalker:position(), sound_object.s2d)
+                    react.volume = 1.0
+					ogsm_mutants.hit_creature(stalker)
+            end
+        end
+    end
+end
+
+
+-- Череп контролёра --------------------------------------------------------------------------------------------------------------
+
+function kontroller_scull_effect()
+local psy = db.actor.psy_health
+	if inventory.belt["master_art"] and psy <= 0.5 then
+	db.actor.psy_health = 1.0
+	end
+end
+
+-- Аномальный череп -----------------------------------------------------------------------------------------------------------
+function deadmans_head_exchange()
+	if db.actor:object("deadman_head") ~= nil then
+	amk.remove_item(db.actor:object("deadman_head"))
+	amk.spawn_item_in_inv("power_scull")
+	end
+end
+
+
+
+-- Повышение снайперского навыка: ----------------------------------------------------------------------------------------------
+
+function sniper_shooting()
+local sniping = starvation.get_sniping()
+	if sniping < 1.0 then
+	 	starvation.add_sniping(0.05)
+	end
+	if db.actor:object("wonder_doll") ~= nil then
+		soundtrack.wonderdoll_snipershoot_replik()
+		xr_effects.give_dolltip1()
+	end
+end
+
+
+-- Убийства (людей) вплотную из дробового оружия: ----------------------------------------------------------------------------------------------
+
+function buck_shooting()
+local buckshoot = starvation.get_buckshoot()
+	if buckshoot < 1.0 then
+	 	starvation.add_buckshoot(0.2)
+	end
+	if db.actor:object("wonder_doll") ~= nil then
+	soundtrack.wonderdoll_buckshoot_replik()
+	xr_effects.give_dolltip1()
+	end
+end
+
+-- Скриптовые артефакты: ------------------------------------------------------------------------------------------------
+
+-- "Изумруд" ----------------------
+function af_emerald_effect()
+local addiction = starvation.get_addiction()
+	if ( inventory.belt["af_emerald"] and addiction > 0 ) then
+	starvation.add_addiction(-0.00005)
+	end
+end
+
+-- "Цветок" -----------------------
+function af_flower_effect()
+local hunger = starvation.get_hunger()
+	if ( inventory.belt["af_flower"] and hunger<0.95 ) then
+	starvation.add_hunger(0.0000005)
+	end
+end
+
+-- "Репей" ------------------------
+function af_bur_effect()
+local thirst = starvation.get_thirst()
+	if ( inventory.belt["af_bur"] and thirst<0.95 ) then
+	starvation.add_thirst(0.0000005)
+	end
+end
+
+-- "Паук" -------------------------
+function af_spider_effect()
+local karma = starvation.get_karma()
+	if ( inventory.belt["af_spider"] and karma>0.6 ) then
+	addon.armor_art_healing()
+	end
+end
+
+function armor_art_healing()
+	local item_s6 = db.actor:item_in_slot(6)
+
+	if item_s6 ~= nil then
+	cond6 = item_s6:condition()
+		if cond6 < 0.999 and cond6 > 0.10 then
+			item_s6:set_condition(cond6+0.00003)
+		end
+	end
+end
+
+function armor_art_healing2()
+	local item_s6 = db.actor:item_in_slot(6)
+	if item_s6 ~= nil then
+	cond6 = item_s6:condition()
+		if cond6 < 0.999 and cond6 > 0.10 then
+			item_s6:set_condition(cond6+0.0002)
+		end
+	end
+end
+
+-- "Пемза" ------------------------------
+function af_pumice_effect()
+local karma = starvation.get_karma()
+	if ( inventory.belt["af_pumice"] and karma>0.6 ) then
+	addon.weapon1art_healing()
+	addon.weapon2art_healing()
+	end
+end
+
+function weapon1art_healing()
+	local item_s2 = db.actor:item_in_slot(2)
+
+	if item_s2 ~= nil then
+	cond2 = item_s2:condition()
+		if cond2 < 0.999 and cond2 > 0.10 then
+			item_s2:set_condition(cond2+0.00003)
+		end
+	end
+end
+
+function weapon2art_healing()
+	local item_s3 = db.actor:item_in_slot(3)
+
+	if item_s3 ~= nil then
+	cond3 = item_s3:condition()
+		if cond3 < 0.999 and cond3 > 0.10 then
+			item_s3:set_condition(cond3+0.00002)
+		end
+	end
+end
+
+
+function weapon1art_healing2()
+	local item_s2 = db.actor:item_in_slot(2)
+
+	if item_s2 ~= nil then
+	cond2 = item_s2:condition()
+		if cond2 < 0.999 and cond2 > 0.10 then
+			item_s2:set_condition(cond2+0.0002)
+		end
+	end
+end
+
+function weapon2art_healing2()
+	local item_s3 = db.actor:item_in_slot(3)
+
+	if item_s3 ~= nil then
+	cond3 = item_s3:condition()
+		if cond3 < 0.999 and cond3 > 0.10 then
+			item_s3:set_condition(cond3+0.0002)
+		end
+	end
+end
+
+-- "Лампочка Ильича" --------------------------
+
+function af_lamp_effect()
+	if inventory.belt["af_lamp"] then
+	local psy = db.actor.psy_health
+	db.actor.psy_health = psy + 0.000006
+	end
+end
+
+-- "Чёртов палец" ----------------------------
+
+function af_fist_effect()
+local karma = starvation.get_karma()
+	if ( inventory.belt["af_fist"] and karma<0.5 ) then
+	starvation.set_karma(0.5)
+	starvation.add_hunger(-0.01)
+	end
+end
+
+-- "Батон" -----------------------------------
+
+function af_baton_effect()
+local karma = starvation.get_karma()
+	if ( inventory.belt["af_baton"] and karma>0.5 ) then
+	starvation.add_hunger(0.001)
+	end
+end
+
+-- "Маска" -----------------------------------
+
+function af_deadmask_effect()
+local level_name = level.name()
+if level_name == "l01_escape" then
+	if inventory.belt["af_deadmask"] then 
+		if db.actor:dont_has_info("deadmask_used") then
+			db.actor:give_info_portion ("deadmask_used")
+		end
+	end
+end
+end
+
+-- "Череп контролёра" -----------------------
+
+function af_controler_scull_effect()
+if ( db.actor:object("master_art") ~= nil  and db.actor:dont_has_info("kamp_controler_spawn") ) then
+	db.actor:give_info_portion ("kamp_controler_spawn")
+end
+addon.kontroller_scull_effect()
+end
+
+-- Артефакт "огонёк": ----------------------
+
+function af_homefire_effect()
+	if ( inventory.belt["af_homefire"] and db.actor:alive() and xr_conditions.actor_in_camp_zone() == true ) then
+		local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = 0.000025
+		end
+	end
+end
+
+-- Артефакт "порча": ----------------------
+
+function af_waste_effect()
+	if ( inventory.belt["af_waste"] and db.actor:alive() and xr_conditions.is_night_time() == true ) then
+		local hlth = db.actor.health
+		if hlth < 1 then
+			db.actor.health = 0.000025
+		end
+	elseif ( inventory.belt["af_waste"] and db.actor:alive() and xr_conditions.is_night_time() ~= true ) then
+		local hlth = db.actor.health
+		if hlth > 0.1 then
+			db.actor.health = -0.000015
+		end
+	end
+end
+
+---------------------------------------------------
+function wonderdoll_blowout_alarm()
+	if db.actor:object("wonder_doll") ~= nil then
+	soundtrack.wonderdoll_sucess_tip21()
+	xr_effects.give_dolltip1()
+	end
+end
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+

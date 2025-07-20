@@ -1,0 +1,170 @@
+belt = {}
+belt_ids = {}
+inventory_open = false
+
+function update()
+	belt = {}
+	belt_ids = {}
+	db.actor:iterate_belt(function(item)
+			insert_to_table(belt, item:section())
+			insert_to_table(belt_ids, item:id())
+	end)
+	
+	--Сюда запихиваем проверку на уникальные вещи
+	is_a_single_item()
+end
+
+-- Убирание с пояса уникальных одиночных вещей
+function is_a_single_item()
+	local sections = {
+		["autodoctor"] = 1,
+		["bioradar"] = 1,
+		["detector_elite"] = 1,
+		["detector_advances"] = 1,
+		["detector_simple"] = 1,
+		["detector_mine_finder"] = 1,
+		["antigas"] = 1,
+		["army_helmet"] = 1,
+		["sciense_helmet"] = 1,
+		["army_gloves"] = 1,
+		["stalker_gloves"] = 1,
+		["army_boots"] = 1,
+		["stalker_boots"] = 1,
+		["anomal_gloves"] = 1,
+	}
+
+	for k, v in pairs(belt_ids) do
+		local obj = level.object_by_id(k)
+		local sect = obj:section()
+		if sections[sect] then
+			if sections[sect] == 1 then
+				sections[sect] = 0
+			else
+				db.actor:move_to_ruck(obj)
+				return
+			end
+		end
+	end
+	
+	local excluded = {
+		["antigas"] = { -- что нужно снять
+			["army_helmet"] = true, -- при наличии одной из этих секций
+			["sciense_helmet"] = true
+		},
+		
+		["army_helmet"] = {
+			["sciense_helmet"] = true
+		},
+		
+		["army_gloves"] = {
+			["stalker_gloves"] = true,
+			["anomal_gloves"] = true
+		},
+		
+		["stalker_gloves"] = {
+			["anomal_gloves"] = true
+		},
+		
+		["army_boots"] = {
+			["stalker_boots"] = true
+		},
+	}
+	
+	local function drop_by_section(sect) --log1("drop_bs:"..sect)
+		for k, v in pairs(belt_ids) do
+			local obj = level.object_by_id(k)
+			local obj_sect = obj:section()
+			if obj_sect == sect then
+				db.actor:move_to_ruck(obj)
+				return
+			end
+		end
+	end
+	
+	for s, t in pairs (excluded) do --log1("excl:"..s)
+		if belt[s] then
+			for s2, _ in pairs (t) do --log1("excl2:"..s2)
+				if belt[s2] then
+					drop_by_section(s)
+					return 
+				end
+			end
+		end
+	end
+	
+end
+
+-- Добавление в таблицу
+function insert_to_table(tbl, section)
+	if tbl[section] == nil then
+		tbl[section] = 1
+	else
+		tbl[section] = tbl[section] + 1
+	end
+end
+
+-- Открытие/закрытие инвентаря
+function on_inventory_info(info_id)
+	if info_id == "ui_inventory" then
+		inventory_open = true
+	elseif info_id == "ui_inventory_hide" then
+		inventory_open = false
+	end
+end
+
+-- Порча еды
+function spoilage_food()
+	if db.actor.radiation>0.7 and (db.actor:object("salo") or db.actor:object("kolbasa") or db.actor:object("kefir")) then
+       db.actor:iterate_inventory(function (dummy,item)  
+                                if item:section()=="salo" then
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("salo_bad")
+                                elseif item:section()=="kolbasa" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("kolbasa_bad")
+								elseif item:section()=="kefir" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("kefir_bad")
+                                end 
+                                end, nil)
+    end
+
+    if db.actor.radiation>0.75 and (db.actor:object("bread") or db.actor:object("kartoshka") or db.actor:object("conserva2")) then
+       db.actor:iterate_inventory(function (dummy,item)  
+                                if item:section()=="bread" then
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("bread_bad")
+                                elseif item:section()=="kartoshka" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("kartoshka_bad")
+							    elseif item:section()=="conserva2" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("conserva2_bad")
+                                end 
+                                end, nil)
+    end
+	
+	if db.actor.radiation>0.77 and (db.actor:object("syrok") or db.actor:object("conserva")) then
+       db.actor:iterate_inventory(function (dummy,item)  
+                                if item:section()=="syrok" then
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("syrok_bad")
+                                elseif item:section()=="conserva" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("conserva_bad")
+                                end 
+                                end, nil)
+    end
+	
+	if db.actor.radiation>0.8 and (db.actor:object("mre") or db.actor:object("irp-b")) then
+       db.actor:iterate_inventory(function (dummy,item)  
+                                if item:section()=="mre" then
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("mre_bad")
+                                elseif item:section()=="irp-b" then 
+                                      amk.remove_item(item)  
+                                      amk.spawn_item_in_inv("irp-b_bad")
+                                end 
+                                end, nil)
+    end
+end

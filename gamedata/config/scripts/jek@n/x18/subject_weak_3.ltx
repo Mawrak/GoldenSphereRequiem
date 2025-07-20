@@ -1,0 +1,141 @@
+; Десятый (занимался электроникой, но щас сидит в тюрьме, диссидент)
+
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+on_death = death
+trade = misc\trade_nothing.ltx
+
+[walker@start]
+path_walk = subject_weak_3_walk1
+path_look = subject_weak_3_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable =disable_trading%
+
+[walker@1]
+path_walk = subject_weak_3_walk1
+path_look = subject_weak_3_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+;on_info = {+subjects_goto_pray} walker@pray
+on_info = {+subject4_dead} walker@2
+
+
+; Молитва(этот не молится, потому что в тюрьме):
+[walker@pray]
+path_walk = subject_weak_3_walk_pray
+path_look = subjects_look_pray
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-subjects_goto_pray} walker@2
+
+
+; Бунт:
+[walker@2]
+path_walk = subject_weak_3_walk2
+path_look = subject_weak_3_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+x18_door1_open} walker@3
+
+[walker@3]
+path_walk = subject_weak_3_walk3
+path_look = subject_weak_3_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_signal       = arrived | walker@4 %+subj3_on1level%
+
+[walker@4]
+path_walk = subject_weak_3_walk3
+path_look = subject_weak_3_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+subject_strong1_dead} walker@5
+
+[walker@5]
+path_walk = subject_weak_3_walk4
+path_look = subject_weak_3_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_signal       = arrived | walker@6 %+subj3_behind_codedoor2%
+
+[walker@6]
+path_walk = subject_weak_3_walk4
+path_look = subject_weak_3_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+x18_subj3_details_task_done} walker@7
+
+[walker@7]
+path_walk = subject_weak_3_walk4
+path_look = subject_weak_3_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_timer      = 50000 | walker@8 %=play_snd_from_obj(8311:monsters\controller_act\controller_panic_1) +x18_codedoor2_open%
+
+[walker@8]
+path_walk = subject_weak_3_walk5
+path_look = subject_weak_3_look5
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+x18_doctor_final} nil
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject3_dead%

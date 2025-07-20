@@ -1,0 +1,12 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+goldsphere_blow} sr_idle@2 %=disable_ui =run_postprocess(agr_u_fade) +end_game%
+
+[sr_idle@2]
+on_timer = 3000|nil %=game_over1%
+
+
+
+

@@ -1,0 +1,97 @@
+; охранник территории:
+
+[smart_terrains]
+none = true
+
+[logic]
+active = {+yan_sold_comander_reward} mob_camp@kill, mob_camp@1
+on_death = mob_death
+
+; Нормальное патрулирование:
+[mob_camp@1]
+path_home = yan_burer_sold11_walk1
+path_look = yan_burer_sold11_look1
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 20 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_info = {+yan_zavod_burers_search} mob_camp@4
+on_timer = 12000 | mob_camp@2
+
+[mob_camp@2]
+path_home = yan_burer_sold11_walk2
+path_look = yan_burer_sold11_look2
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 20 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_info = {+yan_zavod_burers_search} mob_camp@4
+on_timer = 12000 | mob_camp@3
+
+[mob_camp@3]
+path_home = yan_burer_sold11_walk3
+path_look = yan_burer_sold11_look3
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 20 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_info = {+yan_zavod_burers_search} mob_camp@4
+on_timer = 12000 | mob_camp@1
+
+
+
+; Возбуждённое патрулирование:
+[mob_camp@4]
+path_home = yan_burer_sold11_walk1
+path_look = yan_burer_sold11_look1
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 60 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_timer = 12000 | mob_camp@5
+
+[mob_camp@5]
+path_home = yan_burer_sold11_walk2
+path_look = yan_burer_sold11_look2
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 60 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_timer = 12000 | mob_camp@6
+
+[mob_camp@6]
+path_home = yan_burer_sold11_walk3
+path_look = yan_burer_sold11_look3
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_actor_dist_le = 60 | mob_remark@telekinetic %=yan_zavod_guard_burer3see_actor =play_snd_from_obj(8693:monsters\burer\burer_gravi_attack_0)%
+on_timer = 12000 | mob_camp@4
+
+
+
+[mob_camp@kill]
+path_home = yan_burer_sold11_walk3
+path_look = yan_burer_sold11_look3
+home_min_radius  = 0
+home_max_radius = 0
+npc_friendly = true
+on_timer = 1|%=kill%
+
+
+
+; Атака:
+[mob_remark@telekinetic]
+anim = stand_tele_0
+braindead = true
+target = 37
+on_actor_dist_ge = 55 | mob_camp@1 %-yan_zavod_burers_see_actor%
+
+
+
+[mob_death]
+on_info = %+yan_burer_sold11_dead =yan_burer_sold11dead%
+
+
+
+

@@ -1,0 +1,28 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_camp@0
+on_death = mob_death
+
+[mob_camp@0]
+path_home = yan_burer_sold1_walk1
+path_look = yan_burer_sold1_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_timer = 1 | mob_camp@1 %=make_invulnerable%
+
+[mob_camp@1]
+path_home = yan_burer_sold1_walk1
+path_look = yan_burer_sold1_look1
+home_min_radius  = 0
+home_max_radius = 0
+friendly = true
+on_info = {+yan_saharov_escape} %=delme2%
+
+
+
+
+[mob_death]
+on_info = %+yan_burer_sold1_dead%

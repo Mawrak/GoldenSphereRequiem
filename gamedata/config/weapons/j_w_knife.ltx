@@ -1,0 +1,328 @@
+; Охотничий нож
+;--------------------------------------
+[wpn_knife]:identity_immunities
+GroupControlSection			= spawn_group
+discovery_dependency 		= 
+$spawn              		= "weapons\knife"
+$npc                		= off
+$prefetch 		    		= 8
+scheduled           		= off
+cform						= skeleton
+description					= enc_weapons_wpn-knife1_descr
+min_radius 			= 0
+max_radius 			= 2
+
+ef_main_weapon_type		= 0
+ef_weapon_type				= 1
+
+class						= WP_KNIFE
+
+visual				= weapons\knife\wpn_knife.ogf
+inv_name					= st_knife
+
+inv_name_short				= enc_weapons_wpn-knife1
+inv_weight		= 0.2
+inv_grid_width				= 2
+inv_grid_height				= 1
+inv_grid_x					= 8
+inv_grid_y					= 24
+
+kill_msg_x					= 197
+kill_msg_y					= 177
+kill_msg_width				= 53
+kill_msg_height				= 16
+
+show_ammo					= false
+
+slot						= 0
+animation_slot				= 5
+single_handed				= 1
+
+hud				= wpn_knife_hud
+	
+cost						= 70
+
+hand_dependence		     	= 1
+
+cam_relax_speed          	= 5.0
+cam_dispersion           	= 0.9
+cam_max_angle		     	= 7
+cam_max_angle_horz			= 5.0
+cam_step_angle_horz			= 0.5
+
+fire_dispersion          	= 0.5
+fire_dispersion_add      	= 5.3
+fire_dispersion_relax    	= 0.6
+fire_dispersion_base	 	= 0.5
+disp_vel_factor		     	= 0.9
+disp_crouch_factor	     	= 0.75
+disp_jump_factor	     	= 7
+fire_dispersion_condition_factor = 0.0
+misfire_probability 		= 0.0
+condition_shot_dec 			= 0.0
+
+direction                	= 0, 0, 1
+shell_point		         	= 0.0, 0.0, 0.0
+fire_point               	= 0.0, 0.1, 0.4
+
+flame_particles			 	= 
+
+rpm_empty_click 	     	= 200
+
+; ttc	
+hit_power                	= 1.5
+hit_impulse		         	= 10
+hit_type				 	= wound
+
+hit_power_2                	= 1.7
+hit_impulse_2	         	= 5
+hit_type_2				 	= wound
+
+fire_distance            	= 1.9
+bullet_speed			 	= 1000;500			;начальная скорость пули
+rpm                      	= 1000;600; end ttc
+
+normal                   	= 0, 1, 0
+
+;ОПРЕДЕЛЕНИЕ РАСПОЛОЖЕНИЯ В ПРОСТРАНСТВЕ ОТНОСИТЕЛЬНО РУКИ ПРИ ВЗГЛЯДЕ СО СТОРОНЫ
+position                 	= -0.013, -0.084, 0.026 
+
+;НА СКОЛЬКО ПОВЕРНУТ САМ ОБЪЕКТ ПРИ ВЗГЛЯДЕ СО СТОРОНЫ
+orientation              	= -50,90,0
+
+startup_ammo             	= 1000
+wm_size                  	= 0.10
+
+light_disabled				= true
+
+is_knife				= true
+
+ammo_elapsed                = 0
+ammo_current		     	= 0
+ammo_mag_size		     	= 0
+ammo_class				 	= ammo_9x39_pab9
+	
+scope_status				= 0
+silencer_status				= 0
+grenade_launcher_status		= 0
+zoom_enabled				= false
+
+weapon_remove_time			= 5000	;время уничтожения оружия (с учетом TimeFactor) для мультиплеера
+
+;------------------------------ O.G.S.E. sound remake -----------------------
+snd_shoot					= weapons\knife\knife_1
+snd_shoot1					= weapons\knife\knife_2
+snd_shoot2					= weapons\knife\knife_3
+;-----------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------
+;-- HUD DESCRIPTION
+;----------------------------------------------------------------------------- 
+[wpn_knife_hud]
+shell_point					= 0.0, 0.0, 0.0
+fire_point          		= 0.05, 0.0, 0.1
+fire_bone           		= wpn_knife_0
+
+orientation         		= 0,0,0
+position            		= 0,0,0
+visual              		= weapons\knife\wpn_knife_hud.ogf
+
+anim_idle					= idle
+anim_draw					= draw
+anim_hide					= hide
+anim_shoot1_start			= shoot1_start
+anim_shoot2_start			= shoot2_start
+anim_shoot1_end				= shoot1_end
+anim_shoot2_end				= shoot2_end
+anim_idle_sprint			= idle_sprint
+
+
+[wpn_knife_up1]:wpn_knife
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+
+;Штык-нож
+[wpn_knife2]:wpn_knife
+$spawn = "weapons\uniq\wpn_knife_new"
+description         = enc_weapons_wpn-knife2_descr
+visual				= weapons\knife\wpn_knife_new.ogf
+inv_name			= enc_weapons_wpn-knife2
+inv_name_short		= enc_weapons_wpn-knife2
+inv_grid_x			= 9
+inv_grid_y			= 20
+inv_grid_width				= 3
+inv_grid_height				= 1
+hud				    = wpn_knife2_hud
+hit_power                	= 1.7
+hit_impulse		         	= 10
+
+hit_power_2                	= 3.0
+hit_impulse_2	         	= 5
+
+fire_distance            	= 2.1
+
+[wpn_knife2_hud]:wpn_knife_hud
+visual              = weapons\knife\wpn_knife_new_hud.ogf
+
+[wpn_knife2_up1]:wpn_knife2
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+
+
+
+;нож Спецназа
+[wpn_knife3]:wpn_knife
+$spawn = "weapons\uniq\wpn_knife_m1"
+description         = enc_weapons_wpn-knife3_descr
+visual				= weapons\knife\wpn_knife_m1.ogf
+inv_name			= enc_weapons_wpn-knife3
+inv_name_short		= enc_weapons_wpn-knife3
+inv_grid_x			= 0
+inv_grid_y			= 24
+hud				    = wpn_knife3_hud
+hit_power                	= 1.8
+hit_impulse		         	= 10
+
+hit_power_2                	= 1.9
+hit_impulse_2	         	= 5
+
+fire_distance            	= 1.7
+
+[wpn_knife3_hud]:wpn_knife_hud
+visual              = weapons\knife\wpn_knife_m1_hud.ogf
+
+
+[wpn_knife3_up1]:wpn_knife3
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+
+;нож КМ2000
+[wpn_knife4]:wpn_knife
+$spawn = "weapons\uniq\wpn_knife_m2"
+description         = enc_weapons_wpn-knife4_descr
+visual				= weapons\knife\wpn_knife_m1.ogf
+inv_name			= enc_weapons_wpn-knife4
+inv_name_short		= enc_weapons_wpn-knife4
+inv_grid_x			= 2
+inv_grid_y			= 24
+hud				    = wpn_knife4_hud
+hit_power                	= 2.2
+hit_impulse		         	= 10
+
+hit_power_2                	= 2.7
+hit_impulse_2	         	= 5
+
+fire_distance            	= 1.9
+
+[wpn_knife4_hud]:wpn_knife_hud
+visual              = weapons\knife\wpn_knife4_hud.ogf
+
+
+[wpn_knife4_up1]:wpn_knife4
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+
+
+; Нож именной
+[wpn_knife5]:wpn_knife
+$spawn = "weapons\uniq\wpn_knife_m2"
+description         = enc_weapons_wpn-knife5_descr
+visual				= weapons\knife\wpn_knife_m1.ogf
+inv_name			= enc_weapons_wpn-knife5
+inv_name_short		= enc_weapons_wpn-knife5
+inv_grid_x			= 6
+inv_grid_y			= 24
+hud				    = wpn_knife5_hud
+hit_power                	= 1.8
+hit_impulse		         	= 10
+
+hit_power_2                	= 2.1
+hit_impulse_2	         	= 5
+
+fire_distance            	= 1.5
+
+[wpn_knife5_hud]:wpn_knife_hud
+visual              = weapons\knife\wpn_knife5_hud.ogf
+
+
+[wpn_knife5_up1]:wpn_knife5
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+;Штык-нож 2
+[wpn_knife6]:wpn_knife
+$spawn = "weapons\uniq\wpn_knife_new"
+description         = enc_weapons_wpn-knife6_descr
+visual				= weapons\knife\wpn_knife_ak.ogf
+inv_name			= enc_weapons_wpn-knife6
+inv_name_short		= enc_weapons_wpn-knife6
+inv_grid_x			= 4
+inv_grid_y			= 24
+hud				    = wpn_knife6_hud
+hit_power                	= 1.9
+hit_impulse		         	= 10
+
+hit_power_2                	= 2.8
+hit_impulse_2	         	= 5
+
+fire_distance            	= 2.1
+
+[wpn_knife6_hud]:wpn_knife_hud
+visual              = weapons\knife\wpn_knife_ak_hud.ogf
+
+
+[wpn_knife6_up1]:wpn_knife6
+hit_power		= 12
+hit_power_2                = 15
+
+
+
+
+;монтировка Фримена - секция упразднена. Перенесено в items.
+[wpn_montirovka]:wpn_knife
+$spawn 				= "devices\quest_items\wpn_montirovka"
+visual				= weapons\montirovka\wpn_montirovka.ogf
+quest_item			= true
+
+description			= enc_weapons_wpn-crowbar_descr
+
+inv_name			= montirovka
+inv_name_short		= montirovka
+inv_weight			= 1.0
+
+inv_grid_width		= 3
+inv_grid_height		= 1
+inv_grid_x			= 20
+inv_grid_y			= 33
+hud				    = wpn_montirovka_hud
+hit_power                	= 2.0
+hit_impulse		         	= 10
+
+hit_power_2                	= 2.5
+hit_impulse_2	         	= 5
+
+fire_distance            	= 1.7
+
+[wpn_montirovka_hud]:wpn_knife_hud
+visual              = weapons\montirovka\wpn_montirovka_hud.ogf
+fire_bone           		= wpn_body
+orientation         		= 0,0,0
+position            		= 0.0,-0.2,0.2
+
+
+
+

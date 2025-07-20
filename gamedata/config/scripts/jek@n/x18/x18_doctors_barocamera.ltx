@@ -1,0 +1,16 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+tips      = x18_doctors_barocamera_use
+on_use    = {-x18_doctors_barocamera_off} %=x18doctors_barocamera =play_snd(characters_voice\scenario\beep1)%
+on_info = {+x18_doctors_barocamera_off} ph_idle@2 %=play_steam_on_me =play_snd_from_obj(8528:ambient\underground\steam_1)%
+
+[ph_idle@2]
+on_timer = 2500 | %=play_blow_on_me =play_snd_from_obj(8528:weapons\rgd5_explode) =spawn_af_shell =delme%
+
+
+

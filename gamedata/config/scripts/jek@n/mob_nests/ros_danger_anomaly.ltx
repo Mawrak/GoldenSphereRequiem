@@ -1,0 +1,40 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@1
+
+[mob_home@1]
+path_home = ros_danger_anomaly_walk1
+home_min_radius = 5
+home_max_radius = 20
+braindead = true
+on_timer = 30000|mob_home@2
+on_actor_dist_le_nvis = 2 | %=telepatic_hit_obj(37:bip01_spine:0.1:250) =run_cam_effector(shell_shock:1982:false)%
+
+[mob_home@2]
+path_home = ros_danger_anomaly_walk2
+home_min_radius = 5
+home_max_radius = 20
+braindead = true
+on_timer = 30000|mob_home@1
+on_actor_dist_le_nvis = 2 | %=telepatic_hit_obj(37:bip01_spine:0.1:250) =run_cam_effector(shell_shock:1982:false)%
+
+
+
+
+[mob_walker]
+path_walk = ros_danger_anomaly_walk1
+path_look = ros_danger_anomaly_walk1
+braindead = true
+on_actor_dist_le_nvis = 2 | %=telepatic_hit_obj(37:bip01_spine:0.1:250) =run_cam_effector(shell_shock:1982:false)%
+
+
+[mob_camp]
+path_home = ros_danger_anomaly_walk1
+path_look = ros_danger_anomaly_walk1
+home_min_radius = 5
+home_max_radius = 10
+
+
+

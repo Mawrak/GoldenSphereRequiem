@@ -1,0 +1,13 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_in_zone = predb_anomaly_spawn_zone6|sr_sound_act %=predb_village_first_entry_dolltip%
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\predb_village_ambient
+on_signal = sound_end|nil
+
+
+
+

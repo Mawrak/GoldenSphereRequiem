@@ -1,0 +1,31 @@
+[logic]
+
+active = sr_idle@1
+
+
+[sr_idle@1]
+
+on_info = {+pri_abdul_goto_sniper} sr_psy_antenna@no_helmet, {+pri_abdul_shron_task} sr_psy_antenna@no_helmet, {+x10_button_switch} sr_timer
+
+[sr_timer]
+type = dec
+start_value = 300000
+on_value = 0 | sr_psy_antenna@no_helmet %+rad_antenna_on%
+string = radar_countdown
+
+;on_info = {+rad_antenna_on} sr_psy_antenna@no_helmet
+
+
+
+[sr_psy_antenna@no_helmet]
+
+eff_intensity = 100
+
+hit_intensity = 100
+
+phantom_prob = 40
+
+min_phantom_idle = 3000
+
+max_phantom_idle = 5000
+

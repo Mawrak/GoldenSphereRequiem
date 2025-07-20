@@ -1,0 +1,8 @@
+[logic]
+active = sr_idle1
+
+[sr_idle1]
+on_actor_inside = {!actor_has_item(af_red_sphere) !actor_has_item(af_green_sphere) !actor_has_item(af_gold_sphere)} sr_idle2 %=garb_to_darkvalley_nopass_zone_effect2%, {=actor_has_item(af_red_sphere) =actor_has_item(af_green_sphere) =actor_has_item(af_gold_sphere)} nil %+garb_to_darkvalley_nopass_zone_off =give_af_guider%
+
+[sr_idle2]
+on_actor_outside = {-garb_to_darkvalley_nopass_zone_off} sr_idle1 %=garb_to_darkvalley_nopass_zone_delete1 =garb_to_darkvalley_nopass_zone_delete2 =garb_to_darkvalley_nopass_zone_delete3 =garb_to_darkvalley_nopass_zone_delete4%, {+garb_to_darkvalley_nopass_zone_off} nil

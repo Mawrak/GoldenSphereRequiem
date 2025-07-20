@@ -1,0 +1,13 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {=nightmobs_spawn_time} sr_particle@1
+
+[sr_particle@1]
+name = static\buble_distort02
+path = predb_hutor_well_point
+mode = 2
+looped = false
+on_info = {!nightmobs_spawn_time} sr_particle@1
+

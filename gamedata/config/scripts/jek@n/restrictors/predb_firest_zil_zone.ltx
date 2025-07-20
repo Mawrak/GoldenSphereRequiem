@@ -1,0 +1,41 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+predb_firest_docks_info} sr_particle@1
+
+[sr_particle@1]
+name = anomaly\a-03-sparks-01-flashy_old00
+path = predb_firest_entice_point_1
+mode = 2
+looped = false
+on_actor_in_zone = predb_firest_entice_zone1|sr_particle@2
+
+[sr_particle@2]
+name = anomaly\a-03-sparks-01-flashy_old00
+path = predb_firest_entice_point_2
+mode = 2
+looped = false
+on_actor_in_zone = predb_firest_entice_zone2|sr_particle@3
+
+[sr_particle@3]
+name = anomaly\a-03-sparks-01-flashy_old00
+path = predb_firest_entice_point_3
+mode = 2
+looped = false
+on_actor_in_zone = predb_firest_entice_zone3|sr_particle@4
+
+[sr_particle@4]
+name = anomaly\a-03-sparks-01-flashy_old00
+path = predb_firest_entice_point_4
+mode = 2
+looped = false
+on_actor_in_zone = predb_firest_entice_zone4|sr_particle@5
+
+[sr_particle@5]
+name = anomaly\a-03-sparks-01-flashy_old00
+path = predb_firest_entice_point_5
+mode = 2
+looped = false
+on_actor_in_zone = predb_firest_entice_zone5|nil %=spawn_predb_firest_teleport2%
+

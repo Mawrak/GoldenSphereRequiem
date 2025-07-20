@@ -1,0 +1,207 @@
+; Тринадцатый - адепт первого уровня.
+
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+trade = misc\trade_nothing.ltx
+combat_ignore = combat_ignore
+on_death = death
+
+[walker@start]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable =disable_trading%
+
+[walker@1]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subject_weak_3_first_talk} walker@2
+
+[walker@2]
+path_walk = subject_weak_4_walk2
+path_look = subject_weak_4_look2
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {+x18toilet_door_opened} walker@3
+
+[walker@3]
+path_walk = subject_weak_4_walk3
+path_look = subject_weak_4_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+meet = no_meet
+on_signal       = arrived | walker@4 %=play_snd_from_obj(8312:monsters\controller_act\controller_attack_3)%
+
+[walker@4]
+path_walk = subject_weak_4_walk3
+path_look = subject_weak_4_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_dist_le = 2 | walker@5 %=subject4_init_dialod%
+
+
+[walker@5]
+path_walk = subject_weak_4_walk3
+path_look = subject_weak_4_look3
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subj4_actor_angry} remark@kill_actor
+on_info2 = {+subj4_goto_room1} walker@6
+
+[remark@kill_actor]
+snd = subject_psy_atack
+anim = caution
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+;on_actor_dist_le = 20 | %=subject_psy_hit%
+on_actor_dist_ge_nvis = 1 | %=subject_psy_hit%
+
+
+[walker@6]
+path_walk = subject_weak_4_walk4
+path_look = subject_weak_4_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+on_actor_dist_ge = 5 | remark@kill_actor %=play_snd_from_obj(8312:monsters\controller_act\controller_attack_5)%
+on_signal       = arrived | walker@7 %+subj4_near_radpit%
+
+; Стоим у радиоактивной ямы:
+[walker@7]
+path_walk = subject_weak_4_walk4
+path_look = subject_weak_4_look4
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_dist_ge_nvis = 5 | remark@kill_actor %=play_snd_from_obj(8312:monsters\controller_act\controller_attack_5)%
+on_actor_in_zone = x18_radpit_zone | walker@8
+
+
+; Стоим на пороге ямы и не выпускаем ГГ:
+[walker@8]
+path_walk = subject_weak_4_walk5
+path_look = subject_weak_4_look5
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+on_actor_dist_le = 2 | remark@kill_actor2 %=play_snd_from_obj(8312:monsters\controller_act\controller_attack_5)%
+on_actor_dist_ge_nvis = 12 | remark@kill_actor %=play_snd_from_obj(8312:monsters\controller_act\controller_attack_5)%
+on_info = {+x18_radpit_off} walker@9
+
+[remark@kill_actor2]
+snd = subject_psy_atack
+anim = caution
+target = actor
+no_move = true
+danger = danger_condition
+combat_ignore_cond = always
+meet = no_meet
+on_actor_dist_le = 2 | %=subject_psy_hit%
+on_actor_dist_ge_nvis = 3 | walker@8
+
+
+[walker@9]
+path_walk = subject_weak_4_walk5
+path_look = subject_weak_4_look5
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subj4_freedom} walker@10
+
+[walker@10]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subjects_goto_pray} walker@pray
+on_info2 = {+x18_remoralization_start} walker@11
+on_info3 = {+x18_rebellion_task_fail} remark@kill_actor %=subj4remoralization_tip2 =play_snd(monsters\controller_act\controller_attack_2)%
+
+
+; Молитва:
+[walker@pray]
+path_walk = subject_weak_3_walk_pray
+path_look = subjects_look_pray
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-subjects_goto_pray} walker@10
+
+
+; Начинаем реморализацию:
+[walker@11]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_in_zone = x18_remoralizator_zone1|walker@12 %=subj4remoralization_tip1 =play_snd(monsters\controller_act\controller_attack_11)%
+
+[walker@12]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_not_in_zone = x18_remoralizator_zone1|remark@kill_actor
+on_info = {+x18_remoralizer_blow} walker@13 %=unmake_invulnerable%
+
+[walker@13]
+path_walk = subject_weak_4_walk1
+path_look = subject_weak_4_look6
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+on_timer      = 10000 | remark@kill_actor %=subj4remoralization_tip2 =play_snd(monsters\controller_act\controller_attack_2)%
+
+
+
+
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject4_dead%

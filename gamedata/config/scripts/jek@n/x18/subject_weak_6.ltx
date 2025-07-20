@@ -1,0 +1,90 @@
+; Седьмой(занимается пищей на кухне)
+
+[smart_terrains]
+none = true
+
+[logic]
+active = walker@start
+combat_ignore = combat_ignore
+trade = misc\trade_nothing.ltx
+on_death = death
+
+[walker@start]
+path_walk = subject_weak_6_walk1
+path_look = subject_weak_6_look1
+show_spot = false
+on_timer      = 1 | walker@1 %=make_invulnerable =disable_trading%
+
+[walker@1]
+path_walk = subject_weak_6_walk1
+path_look = subject_weak_6_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subjects_goto_pray} walker@pray
+on_info2 = {+x18_ratcatcher_task} walker@rat1
+
+
+; Задание на крыс:
+[walker@rat1]
+path_walk = subject_weak_6_walk1
+path_look = subject_weak_6_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_actor_dist_ge_nvis =  15 | walker@2 %+x18_food_rats_spawned =spawn_x18food_rats =x18food_rats_think =play_snd(monsters\controller_act\controller_attack_1)%
+
+
+; После крыс:
+[walker@2]
+path_walk = subject_weak_6_walk1
+path_look = subject_weak_6_look1
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+on_info = {+subjects_goto_pray} walker@pray
+on_info2 = {+x18_doctor_final} nil
+
+
+; Молитва:
+[walker@pray]
+path_walk = subject_weak_6_walk_pray
+path_look = subjects_look_pray
+danger = danger_condition
+combat_ignore_cond = always
+show_spot = false
+meet = no_meet
+def_state_moving1 = sprint_p
+def_state_moving2 = sprint_p
+def_state_moving3 = sprint_p
+on_info = {-subjects_goto_pray} walker@2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[danger_condition]
+ignore_distance = 0
+ignore_distance_corpse = 0
+ignore_distance_grenade = 0
+ignore_distance_hit = 0
+ignore_distance_sound = 0
+danger_inertion_time_hit = 0
+danger_inertion_time_sound = 0
+danger_inertion_time_ricochet = 0
+
+[combat_ignore]
+combat_ignore = always
+
+[death]
+on_info = %+subject6_dead%

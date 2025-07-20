@@ -1,0 +1,15 @@
+[logic]
+active = sr_sound@1
+
+[sr_sound@1]
+snd = addon\evacuation
+position = garb_moving_fly_darkvalley_particle_fog
+on_signal = sound_end | sr_sound@2
+on_info = {+garb_to_darkvalley_nopass_zone_off} nil
+
+[sr_sound@2]
+snd = addon\evacuation
+position = garb_moving_fly_darkvalley_particle_fog
+on_signal = sound_end | sr_sound@1
+on_info = {+garb_to_darkvalley_nopass_zone_off} nil
+

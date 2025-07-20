@@ -1,0 +1,10 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_outside = {-mil_grav_off} %=hit_obj(8804:bone01:0:640)%
+on_info = {=mil_grav_obj4_in_zone4} sr_idle@2
+
+[sr_idle@2]
+on_info = {!mil_grav_obj4_in_zone4} sr_idle@1
+

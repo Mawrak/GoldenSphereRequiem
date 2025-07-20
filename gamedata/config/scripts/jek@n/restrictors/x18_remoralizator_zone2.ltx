@@ -1,0 +1,18 @@
+[logic]
+active = sr_idle@1
+ 
+[sr_idle@1]
+on_actor_inside = {+x18_remoralization_start} sr_timer@1
+
+[sr_timer@1]
+type = dec
+start_value = 10000
+on_value = 0 | sr_timer@2 %+x18_remoral_phase1 =play_snd(anomaly\teleport_incoming)%
+string = x18_remoraliz_countdown1
+
+[sr_timer@2]
+type = dec
+start_value = 5000
+on_value = 0 | nil %+x18_rebellion_task_fail =kill_actor =play_snd(characters_voice\scenario\electroshock) =play_particle_on_path(anomaly2\electra2_blast_01:x18_remoralizator_point) =actor_pervert_to_zombied%
+string = x18_remoraliz_countdown2
+on_info = {+x18_remoralizer_blow} nil

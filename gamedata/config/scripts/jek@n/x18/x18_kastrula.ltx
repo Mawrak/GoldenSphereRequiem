@@ -1,0 +1,21 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+on_info = {+x18_food_rats_reward} ph_idle@2
+
+[ph_idle@2]
+tips     = x18kastrula_use
+on_use    = ph_idle@3 {=actor_has_item(mutant_rat_corp)} %=remove_item(mutant_rat_corp) =play_snd(ambient\x16\x16_brain_run) =disable_ui%
+
+[ph_idle@3]
+on_timer = 6000 | ph_idle@2 %=give_items_to_actor(rat_meet) =enable_ui%
+
+
+
+
+
+

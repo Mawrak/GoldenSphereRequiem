@@ -1,0 +1,20 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+yan_sold_comander_reward} sr_idle@2, {+actor_in_yan_zavod_trap} sr_no_weapon@2, {+yan_zavod_burers_see_actor} sr_no_weapon@1
+
+
+[sr_no_weapon@1]
+on_info = {-yan_zavod_burers_see_actor} sr_idle@1
+
+[sr_no_weapon@2]
+on_info = {-actor_in_yan_zavod_trap} sr_idle@1
+
+
+[sr_idle@2]
+on_actor_inside = {=actor_has_item(wonder_doll) +wonderdoll_first_talk} sr_idle@3 %=send_tip(yan_zavod_radiotion_dollhelp_tip:doll) =play_snd(characters_voice\woman\talk\use\no_weapon_2)%, sr_idle@3
+
+[sr_idle@3]
+on_actor_inside = %=run_postprocess(radiation:1797:false)%
+

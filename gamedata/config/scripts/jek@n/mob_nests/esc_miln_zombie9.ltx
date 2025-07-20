@@ -1,0 +1,19 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_home@norm
+
+[mob_home@norm]
+path_home = esc_miln_nest_center
+home_min_radius = 5
+home_max_radius = 25
+on_actor_dist_le = 5 | mob_home@agress
+
+[mob_home@agress]
+path_home = esc_miln_nest_center
+home_min_radius = 5
+home_max_radius = 100
+on_actor_dist_ge = 35 | mob_home@norm
+
+

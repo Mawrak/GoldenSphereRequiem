@@ -1,0 +1,25 @@
+[logic]
+active = ph_sound@idle
+;on_hit = hit
+
+[ph_sound@idle]
+snd = x18_matugalnik_idle
+on_info = {+subjects_goto_pray} ph_sound@pray
+on_info2 = {+subject4_dead} ph_sound@alarm
+
+[ph_sound@pray]
+snd = x18_matugalnik_pray
+on_timer = 305000 | ph_sound@idle %-subjects_goto_pray%
+
+[ph_sound@alarm]
+snd = x18_matugalnik_alarm
+on_info = {+x18_doctor_final} ph_sound@stop
+
+[ph_sound@stop]
+snd = silence
+on_signal = sound_end|nil
+
+
+
+[hit]
+on_info = nil

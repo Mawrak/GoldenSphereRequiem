@@ -1,0 +1,23 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+pri_avtostation_mob_spawn} sr_idle@2
+
+
+[sr_idle@2]
+on_actor_outside = sr_idle@4 %+pri_avtostaion_mob_delete%
+on_info = {=actor_target_pri_avtostation_mob} sr_idle@3 %+pri_avtostaion_mob_delete%
+
+[sr_idle@3]
+on_actor_outside = sr_idle@5
+on_timer = 3000|sr_idle@2 %=pri_avtostaion_mob_respawn -pri_avtostaion_mob_delete%
+
+
+[sr_idle@4]
+on_info = {+pri_avtostation_mob_dead} nil
+on_actor_inside = sr_idle@2 %-pri_avtostaion_mob_delete =pri_avtostaion_mob_respawn%
+
+[sr_idle@5]
+on_info = {+pri_avtostation_mob_dead} nil
+on_actor_inside = sr_idle@3

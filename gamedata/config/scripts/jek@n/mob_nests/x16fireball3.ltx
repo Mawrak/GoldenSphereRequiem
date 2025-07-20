@@ -1,0 +1,26 @@
+[smart_terrains]
+none = true
+
+[logic]
+active = mob_camp@norm
+
+[mob_camp@norm]
+path_home = x16fireball3_point
+path_look = x16fireball3_point
+home_min_radius  = 2
+home_max_radius = 4
+braindead = true
+on_info = {+x16_burers_visit} %=delme%
+on_actor_dist_le_nvis = 7 | mob_home@agress
+
+[mob_home@agress]
+path_home = x16fireball3_point
+;path_look = x16fireball3_point
+home_min_radius  = 4
+home_max_radius = 8
+braindead = true
+on_info = {+x16_burers_visit} %=delme%
+on_actor_dist_le_nvis = 2 | %=hit_obj(37:bip01_spine:0.1:10) =run_postprocess(fire_hit)%
+on_timer = 10000 | mob_camp@norm
+
+

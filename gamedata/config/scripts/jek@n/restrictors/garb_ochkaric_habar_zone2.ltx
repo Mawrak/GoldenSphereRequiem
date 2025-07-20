@@ -1,0 +1,43 @@
+[logic]
+active = nil
+
+[sr_idle]
+on_info = {+ochkaric_shron_info} sr_particle@white
+
+[sr_particle@white]
+name = anomaly2\group_items\teleport_spark_out_monolit_00
+path = garb_ochkaric_habar_zone_point2
+mode = 2
+looped = false
+on_actor_inside = {~25} sr_particle@green %=play_snd(anomaly\electra_hit_1)%, {~65} sr_particle@blue %+garb_zone2_blue_portion =play_snd(anomaly\electra_hit1)%, sr_particle@red %=play_snd(anomaly\electra_hit_1)%
+on_info = {+garb_colorzones_off} nil
+
+
+[sr_particle@green]
+name = anomaly2\group_items\teleport_spark_out_monolit_01
+path = garb_ochkaric_habar_zone_point2
+mode = 2
+looped = false
+on_info = {-garb_zone1_green_portion -garb_zone2_blue_portion -garb_zone3_red_portion} sr_particle@white
+on_info2 = {+garb_colorzones_off} nil
+
+[sr_particle@blue]
+name = anomaly2\group_items\teleport_spark_out_monolit_02
+path = garb_ochkaric_habar_zone_point2
+mode = 2
+looped = false
+on_info = {-garb_zone1_green_portion -garb_zone2_blue_portion -garb_zone3_red_portion} sr_particle@white
+on_info2 = {+garb_colorzones_off} nil
+
+[sr_particle@red]
+name = anomaly2\group_items\teleport_spark_out_monolit_03
+path = garb_ochkaric_habar_zone_point2
+mode = 2
+looped = false
+on_info = {-garb_zone1_green_portion -garb_zone2_blue_portion -garb_zone3_red_portion} sr_particle@white
+on_info2 = {+garb_colorzones_off} nil
+
+
+
+
+

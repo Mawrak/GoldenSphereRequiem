@@ -1,0 +1,14 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = sr_idle@2 %=predb_firest_vishka_dollhelp%
+ 
+[sr_idle@2]
+on_info = {+predb_firest_vishka_tros_use} sr_cutscene
+ 
+[sr_cutscene]
+point = predb_firest_vishka_tros_point
+look = predb_firest_vishka_tros_point
+cam_effector = predb_firest_vishka_tros_fly
+on_signal = cameff_end|sr_idle@2 %-predb_firest_vishka_tros_use%

@@ -1,0 +1,12 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_outside = {+mil_abdul_goto_radar} sr_idle@2 %+rad_abdul_spawn%
+
+[sr_idle@2]
+on_info = {+x10_button_switch} sr_sound_act
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\antenna_escape_radar
+

@@ -1,0 +1,11 @@
+[logic]
+active = ph_idle@1
+
+[ph_idle@1]
+tips      = x18mashroom_button1_use
+on_info = {+x18_temperature_on +x18_pressure_on +x18_radiation_on} ph_idle@2
+
+[ph_idle@2]
+tips      = x18mashroom_button1_use
+on_use    = ph_idle@1 %-x18_temperature_on =play_snd(ambient\switch_2)%
+on_info = {+x18_mashroom_fail} ph_idle@1

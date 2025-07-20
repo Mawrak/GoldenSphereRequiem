@@ -1,0 +1,13 @@
+[logic]
+active = sr_particle
+
+[sr_particle]
+name = anomaly2\tornado_02
+path = strange_zone_2_point2
+mode = 2
+looped = true
+on_info = {+strangezone2_off} sr_idle
+
+[sr_idle]
+on_info = {-strangezone2_off} sr_particle
+

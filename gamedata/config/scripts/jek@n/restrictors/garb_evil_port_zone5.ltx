@@ -1,0 +1,10 @@
+[logic]
+active = sr_idle
+
+[sr_idle]
+on_actor_dist_le_nvis = 10 | %=hit_obj(37:bip01_spine:0:600) =play_snd_from_obj(8272:ambient\whistling_wind_22)%
+on_actor_inside = %=actor_teleport_at_evilzone_place%
+
+
+
+

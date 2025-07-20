@@ -1,0 +1,7 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+mil_antenna_on} nil
+on_actor_inside = {-mil_antenna_on} %=esc_heli_crash_death%
+

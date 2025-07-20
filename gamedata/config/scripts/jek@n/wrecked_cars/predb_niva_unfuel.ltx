@@ -1,0 +1,13 @@
+[collide]
+ignore_static
+
+[logic]
+active = ph_button@unpressed
+
+[ph_button@unpressed]
+anim_blend  = true
+anim        = lab_primary_switcher_idle
+tooltip     = niva_unfuel_use
+on_press    = {!actor_has_item(mobile_tank_full)} %=send_tip(dont_has_mobile_tank_full:default)%, {=actor_has_item(mobile_tank_full)} %=delete_predb_niva_unfuel =predb_niva_empty_respawn%
+
+

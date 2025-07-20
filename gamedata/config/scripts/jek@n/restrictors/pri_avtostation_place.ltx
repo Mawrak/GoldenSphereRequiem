@@ -1,0 +1,9 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_inside = {+pri_avtostation_task} sr_sound_act %+pri_avtostation_mob_spawn%
+
+[sr_sound_act]
+snd = characters_voice\scenario\jekan\pri_avtostation_fight
+on_info = {+pri_avtostation_mob_dead} nil

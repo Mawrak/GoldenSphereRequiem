@@ -1,0 +1,902 @@
+---------------------- Обработчик монстров для OGSM 2.x -----------------------
+---------------------- Исправления и дополнения для OGSE 0.6.x ----------------
+---------------------- Copyright 2007-2008 DEXXX. -----------------------------
+---------------------- Copyright 2008-2009 QUEST, Kamikazze. ------------------
+
+
+
+old_corpses = {}
+local killed_monsters = {}
+
+local zombie_particle = particles_object("ogsm\\ogsm_zombieblow")
+local zombie_sound1 = sound_object([[anomaly\anomaly_body_tear_1]])
+local zombie_sound2 = sound_object([[weapons\f1_explode_]])
+
+local chimera_particle = particles_object("anomaly2\\electra2_blast_00")
+local chimera_sound = sound_object([[anomaly\bfuzz_blowout]])
+
+local jarka_particle = particles_object("static\\zharka_static")
+local jarka_sound = sound_object([[anomaly\bfuzz_blowout]])
+
+local insect_particle = particles_object("ogsm\\ogsm_flies_00")
+local insect_sound = sound_object([[anomaly\flies]])
+
+local phantom_particle = particles_object("anomaly2\\plasma_generator_death")
+local phantom_sound = sound_object([[monsters\phantom\phantom_snork_death]])
+
+local sound_obj_right = sound_object([[ambient\random\rnd_moan1]])
+local sound_obj_left = sound_object([[ambient\random\rnd_moan2]])
+
+local hand_spawned_flag = false
+
+function safely_destroy_creature(creature)
+	local se_obj = alife():object(creature:id())
+	local blow = hit()
+	old_corpses[creature:id()] = creature:id()
+	blow.direction = vector():set(0,0,0)
+	blow.impulse = 0
+	blow.draftsman = creature
+	blow.power = 200
+	blow.type = hit.explosion
+	creature:hit(blow)
+
+	if creature and not creature:alive() then
+		for k,v in pairs(old_corpses) do
+			if creature:id() == k then
+				local sobj = alife():object(creature:id())
+				if sobj then
+					alife():release(sobj, true)
+					old_corpses[creature:id()] = nil
+				end
+			end
+		end
+	end	
+end
+
+
+function safely_destroy_creature2(creature)
+	local se_obj = alife():object(creature:id())
+	old_corpses[creature:id()] = creature:id()
+	creature:kill(creature)
+
+	if creature then
+		for k,v in pairs(old_corpses) do
+			if creature:id() == k then
+				local sobj = alife():object(creature:id())
+				if sobj then
+					alife():release(sobj, true)
+					old_corpses[creature:id()] = nil
+				end
+			end
+		end
+	end	
+end
+
+
+function destroy_creature(creature)
+	local sobj = alife():object(creature:id())
+		if sobj then
+			alife():release(sobj, true)
+		end
+end
+
+
+function kill_creature(creature)
+	local se_obj = alife():object(creature:id())
+	local blow = hit()
+	blow.direction = vector():set(0,0,0)
+	blow.impulse = 0
+	blow.draftsman = creature
+	blow.power = 200
+	blow.type = hit.explosion
+	if creature:id() ~= db.actor:id() then
+	creature:hit(blow)
+	end
+	if creature and not creature:alive() then
+		for k,v in pairs(old_corpses) do
+			if creature:id() == k and creature:id() ~= db.actor:id() then
+				local sobj = alife():object(creature:id())
+				if sobj then
+				end
+			end
+		end
+	end	
+end
+
+
+function hit_creature(creature)
+	local se_obj = alife():object(creature:id())
+	local blow = hit()
+	blow.direction = vector():set(0,0,0)
+	blow.impulse = 0
+	blow.draftsman = creature
+	blow.power = 3.3
+	blow.type = hit.wound
+	if creature:id() ~= db.actor:id() then
+	creature:hit(blow)
+	end
+	if creature and not creature:alive() then
+		for k,v in pairs(old_corpses) do
+			if creature:id() == k and creature:id() ~= db.actor:id() then
+				local sobj = alife():object(creature:id())
+				if sobj then
+				end
+			end
+		end
+	end	
+end
+
+
+class "MutantManager"
+
+function MutantManager:__init()
+end
+
+function MutantManager:update(param)
+
+self.object = param
+
+-- Взрыв фантома при его приближении к врагу
+
+if (string.find(self.object:section(), "zombie_phantom_2") 
+or string.find(self.object:section(), "flesh_phantom_2") 
+or string.find(self.object:section(), "phantom_krovosos_2") 
+or string.find(self.object:section(), "boar_phantom_2") 
+or string.find(self.object:section(), "phantom_dog_2") 
+or string.find(self.object:section(), "dog_phantom_1") 
+or string.find(self.object:section(), "dog_phantom_2") 
+or string.find(self.object:section(), "dog_phantom_3") 
+or string.find(self.object:section(), "snork_phantom_3") 
+or string.find(self.object:section(), "phantom_snork_4") 
+or string.find(self.object:section(), "phantom_chimera_2") 
+or string.find(self.object:section(), "chimera__phantom_3") 
+or string.find(self.object:section(), "zombie_phantom_invisible")) then
+	if self.object:alive() then
+		local posit = self.object:position()
+		local enemy = self.object:best_enemy()
+		if enemy and posit:distance_to(enemy:position()) < 3 and self.object:see(enemy) then
+			blow_phantom(self.object)
+		end
+	elseif self.object and not self.object:alive() then
+		safely_destroy_creature(self.object)
+		if p_obj and not phantom_particle:playing() then 
+			phantom_particle:play_at_pos(p_obj:position()) 
+		end		
+	end
+end
+
+-- Эффект при приближении к коту баюну
+obj  = self.object
+local id = get_clsid(obj)
+if ( id == clsid.cat_s and self.object:alive() and self.object:see(db.actor) and db.actor:dont_has_info("cat_effect") ) then
+local posit = self.object:position()
+	if posit:distance_to(db.actor:position()) < 10 then
+			cat_sleep(self.object)
+	end
+end
+
+
+-- Эффект при приближении к тушканам и крысам, если надет арт "Перекатиполе"
+if inventory.belt["af_tumbleweed"] then
+obj  = self.object
+local id = get_clsid(obj)
+local posit = self.object:position()
+	if ( id == clsid.tushkano_s and self.object:alive() and posit:distance_to(db.actor:position()) < 7 ) then
+	local h = hit()
+	h.type = hit.wound
+	h.power = 1.0
+	h.impulse = 10
+	h.draftsman = obj 
+	h.direction = vector():set(1,0,0) 
+	self.object:hit(h)
+	--self.object:kill( self.object )
+	end
+end
+
+-- Эффект при приближении к кровососам, если в инвентаре "Икона"
+if db.actor and db.actor:object("mil_icon") ~= nil then
+obj  = self.object
+local id = get_clsid(obj)
+local posit = self.object:position()
+	if ( id == clsid.bloodsucker_s and self.object:alive() and posit:distance_to(db.actor:position()) < 5 ) then
+	local h = hit()
+	h.type = hit.wound
+	h.power = 1.0
+	h.impulse = 10
+	h.draftsman = obj 
+	h.direction = vector():set(1,0,0) 
+	self.object:hit(h)
+	--self.object:kill( self.object )
+	end
+end
+
+
+-- Воздействие "Светлячков" на актора:
+if ( string.find(self.object:section(), "^esc_glowworm") or
+   string.find(self.object:section(), "^garb_glowworm") or
+   string.find(self.object:section(), "^agr_glowworm") or
+   string.find(self.object:section(), "^dar_glowworm") or
+   string.find(self.object:section(), "^bar_glowworm") or
+   string.find(self.object:section(), "^mil_glowworm") ) then
+			local posit = self.object:position()
+			if posit:distance_to(db.actor:position()) < 2 then
+				safely_destroy_creature2(self.object)
+				--amk.remove_item(self.object)
+				addon.glowworm_effect()
+				soundtrack.anomal_laugh()
+				level.add_pp_effector("snd_shock.ppe", 2007, false)
+			end
+end
+
+
+-- Крысоловка:
+if ( string.find(self.object:section(), "^m_rat_e") and self.object:alive() or
+   string.find(self.object:section(), "^rat_weak") and self.object:alive() or
+   string.find(self.object:section(), "^rat_normal") and self.object:alive() or
+   string.find(self.object:section(), "^rat_strong") and self.object:alive() or
+   string.find(self.object:section(), "^rat_plague") and self.object:alive() or
+   string.find(self.object:section(), "^dar_factory_rat1") and self.object:alive() or
+   string.find(self.object:section(), "^dar_factory_rat2") and self.object:alive() or
+   string.find(self.object:section(), "^dar_factory_rat3") and self.object:alive() or
+   string.find(self.object:section(), "^dar_factory_rat4") and self.object:alive() or
+   string.find(self.object:section(), "^esc_willage_rat") and self.object:alive() or
+   string.find(self.object:section(), "^esc_atp_rat1") and self.object:alive() or
+   string.find(self.object:section(), "^esc_atp_rat2") and self.object:alive() or
+   string.find(self.object:section(), "^garb_hangaryard_rat") and self.object:alive() or
+   string.find(self.object:section(), "^agr_nii_rat1") and self.object:alive() or
+   string.find(self.object:section(), "^x18_food_rat") and self.object:alive() ) 
+		and inventory.belt["rat_trap_empty"] 
+		and db.actor:object("rat_trap_full") == nil then
+			local posit = self.object:position()
+			if posit:distance_to(db.actor:position()) < 1 then
+				local snd = xr_sound.get_safe_sound_object([[device\wood_small_close_stop]])
+				local pos = db.actor:position()
+				-- soundtrack.rattrap_click()
+				snd:play_at_pos(db.actor, pos, 0, sound_object.s3d)
+				soundtrack.rat_scream()
+				destroy_creature(self.object)
+				amk.remove_item_from_inventory(db.actor:object("rat_trap_empty"),actor)
+				amk.spawn_item_in_inv("rat_trap_full")
+				news_manager.send_tip(db.actor, "rat_catched", nil, "rat", 5000, nil)
+			end
+end
+
+
+
+-- Атака насекомых при приближении к чумному зомби
+if ( self.object:section()=="zombie_plague" or 
+self.object:section()=="esc_miln_zombie1" ) and self.object:alive() then
+	local posit = self.object:position()
+	if posit:distance_to(db.actor:position()) < 6 then
+		level.add_pp_effector("dead_zone.ppe", 1001, true)
+		level.set_pp_effector_factor(1001, 0.0005)
+		zombie_insect(self.object)
+	end
+else
+	level.remove_pp_effector(1001)
+end
+
+
+-- Атака насекомых при приближении к зомби в Баре:
+if ( self.object:section()=="bar_zombie12" or 
+self.object:section()=="bar_zombie1" or 
+self.object:section()=="bar_zombie2" or 
+self.object:section()=="bar_zombie3" or 
+self.object:section()=="bar_zombie4" or 
+self.object:section()=="bar_zombie5" or 
+self.object:section()=="bar_zombie6" or 
+self.object:section()=="bar_zombie7" or 
+self.object:section()=="bar_zombie8" or 
+self.object:section()=="bar_zombie9" or 
+self.object:section()=="bar_zombie10" or 
+self.object:section()=="bar_zombie11" ) and self.object:alive() and db.actor:dont_has_info("bar_virus_off") then
+	local posit = self.object:position()
+	if posit:distance_to(db.actor:position()) < 5 then
+		level.add_pp_effector("dead_zone.ppe", 1001, true)
+		level.set_pp_effector_factor(1001, 0.0005)
+		zombie_insect(self.object)
+	end
+else
+	level.remove_pp_effector(1001)
+end
+
+
+-- Контроллёр при атаке при приближении менее чем на случайное расстояние от 1 до 20 м с  вероятностью, зависящей от пси здоровья и сил ГГ, генерирует фантомов
+if self.object:clsid()==clsid.controller_s and self.object:alive() then
+		if self.object:see(db.actor) then
+		local posit = self.object:position()
+			
+	 		if posit:distance_to(db.actor:position()) < math.random(1,40) then
+				if not has_alife_info("phatnom_controller") then
+					db.actor:give_info_portion ("phatnom_controller")
+					local hard_phantom_types = {"phantom_snork_4","phantom_chimera_2", "phantom_krovosos_2", "snork_phantom_3"}
+					alife():create(hard_phantom_types[math.random(4)], posit, db.actor:level_vertex_id() , db.actor:game_vertex_id() )
+					start_real_timer(8, "timer_actions.phatnom_controller_action")
+					controller_attack_phantom()
+						local active_item = db.actor:active_item()	
+						if active_item and active_item:section()~= "bolt" and xr_conditions.actor_armed_knife() ~= true then
+							db.actor:drop_item(active_item)
+						end
+				end
+			end
+		end
+end	
+	
+
+-- Кровосос при атаке при приближении менее чем на случайное расстояние от 1 до 2 м с  вероятностью, зависящей от здоровья и сил ГГ, выбивает оружие (кроме --ножа) из рук ГГ.
+		
+if self.object:clsid()==clsid.bloodsucker_s and self.object:alive() and self.object.health>math.random(1,100)/100 then
+	local npc=self.object:get_enemy()
+	if npc then
+	if npc:id()==db.actor:id() and db.actor:see(self.object) and self.object:see(db.actor)   then
+	local posit = self.object:position()
+	if posit:distance_to(db.actor:position()) < math.random(1,2) and math.random(1,100)/100>db.actor.power and math.random(1,100)/100>db.actor.health then
+			       local active_item = db.actor:active_item()
+			         if active_item and active_item:section()~= "bolt" and xr_conditions.actor_armed_knife() ~= true then
+			         db.actor:drop_item(active_item)
+			       end
+			    end
+		        end
+		  end
+	end	
+end
+
+
+function MutantManager:on_death(param)
+self.object = param
+-- Выдача статей энциклопедии при убийстве монстров
+if self.object:who_hit_name()=="single_player" then
+	if db.actor ~= nil then -- вставлено KamikaZze 25/02/2009
+
+		if self.object:section()=="esc_miln_zombie1" then
+			if not has_alife_info("plague_zombies_info") then db.actor:give_info_portion("plague_zombies_info") end
+		end
+		
+	end
+end
+end
+
+-- Взрыв зомби-камикадзе
+function blow_zombie(p_obj)
+if p_obj then
+	local posit = p_obj:position()
+	local enemy = p_obj:best_enemy()
+	local zh = hit()
+	zh.type = hit.explosion
+	zh:bone("pelvis")
+	zh.power = 3
+	zh.impulse = 5
+
+	zombie_particle:play_at_pos(p_obj:position())
+
+	if zombie_sound1 then
+		zombie_sound1:play_at_pos(p_obj, p_obj:position(), 0)
+	end
+	if zombie_sound2 then
+		zombie_sound2:play_at_pos(p_obj, p_obj:position(), 0)
+	end
+
+	if enemy and posit:distance_to(enemy:position()) < 5 then 
+		zh.draftsman = enemy
+		zh.direction = p_obj:position():sub(enemy:position())
+		enemy:hit(zh)
+	end
+
+	if not enemy and posit:distance_to(db.actor:position()) < 5 then
+		zh.draftsman = db.actor
+		zh.direction = p_obj:position():sub(db.actor:position())
+		db.actor:hit(zh)
+	end
+
+	if p_obj:section() == "rad_zombie_rusty" and not hand_spawned_flag then
+		alife():create("af_zombie_hand", p_obj:position(), p_obj:level_vertex_id(), p_obj:game_vertex_id())
+		hand_spawned_flag = true
+	end
+	
+	safely_destroy_creature(p_obj)
+end
+end
+
+
+-- Взрыв фантома
+function blow_phantom(p_obj)
+	if p_obj then
+		local posit = p_obj:position()
+		local enemy = p_obj:best_enemy()
+		
+		local zh = hit()
+		zh.type = hit.telepatic
+		zh:bone("pelvis")
+		zh.power = 0.7
+		zh.impulse = 5
+		
+		local zh_e = hit()
+		zh_e.type = hit.shock
+		zh_e:bone("pelvis")
+		zh_e.power = 0.2
+		zh_e.impulse = 5
+
+	--	phantom_particle:play_at_pos(p_obj:position())
+		if not phantom_particle:playing() then phantom_particle:play_at_pos(p_obj:position()) end		
+		if phantom_sound and not phantom_sound:playing() then phantom_sound:play_at_pos(p_obj, p_obj:position(), 0) end
+
+		if enemy and posit:distance_to(enemy:position()) < 5 then
+			if enemy:id() == db.actor:id() then
+				if not has_alife_info("actor_set_zombied") then
+					zh.draftsman = enemy
+					zh.direction = p_obj:position():sub(enemy:position())
+					enemy:hit(zh)
+				else	
+					zh_e.draftsman = enemy
+					zh_e.direction = p_obj:position():sub(enemy:position())
+					enemy:hit(zh_e)
+				end
+			else
+				zh_e.draftsman = enemy
+				zh_e.direction = p_obj:position():sub(enemy:position())
+				enemy:hit(zh_e)
+			end
+		end
+		safely_destroy_creature(p_obj)
+	end
+end
+
+
+-- Разряд электрохимеры
+function charge_chimera(p_obj)
+if p_obj then
+	local posit = p_obj:position()
+	local enemy = p_obj:best_enemy()
+
+	if not chimera_particle:playing() then chimera_particle:play_at_pos(p_obj:position()) end
+	if chimera_sound and not chimera_sound:playing() then 
+		chimera_sound:play_at_pos(p_obj, p_obj:position(), 0)
+		local zh = hit()
+		zh.draftsman = enemy
+		zh.type = hit.shock
+		zh.direction = p_obj:position():sub(enemy:position())
+		zh:bone("pelvis")
+		zh.power = 0.2
+		zh.impulse = 0.1
+		enemy:hit(zh)
+	end
+end
+end
+
+
+-- Разряд подвижной электры
+function charge_electra_movable(p_obj)
+if p_obj then
+	local posit = p_obj:position()
+	local enemy = p_obj:best_enemy()
+
+	if not chimera_particle:playing() then chimera_particle:play_at_pos(p_obj:position()) end
+	if chimera_sound and not chimera_sound:playing() then 
+		chimera_sound:play_at_pos(p_obj, p_obj:position(), 0)
+		local zh = hit()
+		zh.draftsman = enemy
+		zh.type = hit.shock
+		zh.direction = p_obj:position():sub(enemy:position())
+		zh:bone("pelvis")
+		zh.power = 0.4
+		zh.impulse = 0.2
+		enemy:hit(zh)
+	end
+end
+end
+
+-- Вспышка подвижной жарки
+function charge_jarka_movable(p_obj)
+if p_obj then
+	local posit = p_obj:position()
+	local enemy = p_obj:best_enemy()
+
+	if not jarka_particle:playing() then jarka_particle:play_at_pos(p_obj:position()) end
+	if jarka_sound and not jarka_sound:playing() then 
+		jarka_sound:play_at_pos(p_obj, p_obj:position(), 0)
+		local zh = hit()
+		zh.draftsman = enemy
+		zh.type = hit.shock
+		zh.direction = p_obj:position():sub(enemy:position())
+		zh:bone("pelvis")
+		zh.power = 0.1
+		zh.impulse = 0.2
+		enemy:hit(zh)
+	end
+end
+end
+
+
+-- Атака насекомых чумного зомби
+function zombie_insect(p_obj)
+--if xr_conditions.actor_wears_ecolog_outfit() ~= true and xr_conditions.actor_not_in_af_top_zone() == true then
+if xr_conditions.actor_wears_ecolog_outfit() ~= true and xr_conditions.actor_in_af_top_zone2() ~= true then
+if p_obj then
+	local posit = p_obj:position()
+	local actor = db.actor:position()
+	local zh = hit()
+	zh.draftsman = db.actor
+	zh.type = hit.wound
+	zh.direction = p_obj:position():sub(actor)
+	zh:bone("pelvis")
+	zh.power = 0.01
+	zh.impulse = 0.1
+
+	if insect_sound and not insect_sound:playing() then 
+			insect_sound:play_at_pos(db.actor, actor)
+            addon.sickness()
+		elseif insect_sound then
+			insect_sound:set_position(actor)
+		end
+
+	if insect_sound and not insect_sound:playing() then 
+			insect_sound:play_at_pos(db.actor, actor)
+			db.actor:hit(zh)
+            addon.sickness()
+		elseif insect_sound then
+			insect_sound:set_position(actor)
+		end
+end
+end
+end
+
+
+
+
+
+function dog_attack_phantom()
+	local i = amk.real_rand(1,16)
+	if i==1 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\1]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==2 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\2]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==3 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\3]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==4 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\4]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==5 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\5]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==6 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\6]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==7 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\7]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==8 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\8]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==9 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\9]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==10 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\10]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==11 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\11]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==12 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\12]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==13 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\13]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==14 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\14]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==15 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\15]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==16 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\dog_phantom\16]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+end
+end
+
+
+function controller_attack_phantom()
+	local i = amk.real_rand(1,25)
+	if i==1 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\1]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==2 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\2]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==3 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\3]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==4 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\4]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==5 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\5]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==6 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\6]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==7 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\7]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==8 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\8]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==9 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\9]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==10 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\10]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==11 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\11]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==12 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\12]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==13 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\13]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==14 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\14]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==15 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\15]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==16 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\16]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==17 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\17]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==18 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\18]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==19 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\19]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==20 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\20]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==21 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\21]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==22 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\22]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==21 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\23]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==21 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\24]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+elseif i==21 then 
+		local snd_obj = xr_sound.get_safe_sound_object([[soundtrack\controller\25]])
+		if snd_obj then
+			snd_obj:play_at_pos(db.actor, vector():set(0,0,0), 0, sound_object.s2d)
+		end
+end
+
+end
+
+function cat_sleep(p_obj)
+rnd = math.random(1, 10)
+if rnd == 1 then 
+	level.add_pp_effector("agr_u_fade.ppe", 2007, false)
+	level.add_pp_effector("total_recall.ppe", 2008, false)
+	db.actor:stop_talk()
+	db.actor.power =-0.05
+end
+if rnd == 2 then 
+	--level.add_pp_effector("agr_u_fade.ppe", 2007, false)
+	--level.add_pp_effector("total_recall.ppe", 2008, false)
+	--db.actor:stop_talk()
+	--db.actor.power =-0.05
+end
+if rnd == 3 then 
+	--level.add_pp_effector("agr_u_fade.ppe", 2007, false)
+	--level.add_pp_effector("total_recall.ppe", 2008, false)
+	--db.actor:stop_talk()
+	--db.actor.power =-0.05
+	--soundtrack.actor_need_sleep()
+end
+if rnd == 3 then 
+soundtrack.psy_cat_sounds()
+end
+if rnd == 5 then 
+--soundtrack.psy_cat_sounds()
+end
+if rnd == 6 then 
+soundtrack.psy_cat_sounds()
+end
+if rnd == 7 then 
+--soundtrack.psy_cat_sounds()
+end
+if rnd == 8 then 
+soundtrack.psy_cat_sounds()
+end
+if rnd == 9 then 
+--soundtrack.psy_cat_sounds()
+end
+if rnd == 10 then 
+soundtrack.psy_cat_sounds()
+end
+end
+
+
+
+function dog_effect(p_obj)
+	if not has_alife_info("actor_set_zombied") then
+ 		       local i=math.random(1,55)
+	                      if i==1 then level.add_cam_effector("camera_effects\\hit_back.anm", 999, false, "")
+                                     elseif i==25 then level.add_cam_effector("camera_effects\\hit_front_left.anm", 999, false, "") 
+                                    elseif i==55 then level.add_cam_effector("camera_effects\\hit_front_right.anm", 999, false, "") 
+		end
+	end	
+end
+
+
+
+---------------------- Обработчик монстров для OGSM 2.x -----------------------
+
+------------------------- Copyright 2007-2008 DEXXX ---------------------------
+
+--[[
+
+If you're going to use the whole of this script or its parts in your own creative 
+developments for the S.T.A.L.K.E.R. game, please don't become such a goddamn 
+motherfucker like the notorious author of the ABC Mod - Carbrobro. Leave the 
+copyrights, note the real author(s) and don't claim others' ideas and their 
+realization to be your own ones. It's just simple Modmakers' Ethics. Thank you!
+
+Если вы собираетесь использовать данный скрипт целиком или частично в своих 
+разработках по игре S.T.A.L.K.E.R., пожалуйста не опускайтесь до уровня печально 
+известного автора ABC мода - Carbrobro. Не удаляйте копирайты, указывайте настоящего 
+автора(ов) и не выдавайте чужие идеи и их реализацию за свои. Ведь это элементарная 
+этика модостроителей! Спасибо за понимание.
+
+]]--
+
+
+
+function af_likvidator_use(param)
+self.object = param
+-- Убийство всех монстров вокруг на 35м. если на поясе надет артефакт:
+if ( string.find(self.object:section(), "bloodsucker") and self.object:alive() or
+   string.find(self.object:section(), "^agr_fabric_himera") and self.object:alive() or
+   string.find(self.object:section(), "^garb_tunnel_sos") and self.object:alive() or
+   string.find(self.object:section(), "^esc_miln_zombie") and self.object:alive() or
+   string.find(self.object:section(), "^esc_atp_zombie") and self.object:alive() or
+   string.find(self.object:section(), "^esc_house_boar") and self.object:alive() or
+   string.find(self.object:section(), "^garb_hangar_burer") and self.object:alive() or
+   string.find(self.object:section(), "^esc_farm_attak_boar") and self.object:alive() or
+   string.find(self.object:section(), "^garb_forest_pseudodog") and self.object:alive() or
+   string.find(self.object:section(), "^izlom_garb_ataker") and self.object:alive() or
+   string.find(self.object:section(), "^boar_garb_ataker") and self.object:alive() or
+   string.find(self.object:section(), "^pseudo_garb_ataker") and self.object:alive() or
+   string.find(self.object:section(), "^esc_sold10_boar") and self.object:alive() or
+   string.find(self.object:section(), "^dar_fabrik_dog") and self.object:alive() or
+   string.find(self.object:section(), "^dar_fabrik_pseudodog") and self.object:alive() or
+   string.find(self.object:section(), "^dar_factory_rat") and self.object:alive() or
+   string.find(self.object:section(), "^dar_zapravka_bloodsucker") and self.object:alive() or
+   string.find(self.object:section(), "^dar_ovrag_pseudodog") and self.object:alive() or
+   string.find(self.object:section(), "^dar_swamp_snork") and self.object:alive() or
+   string.find(self.object:section(), "^dar_btr_chimera") and self.object:alive() or
+   string.find(self.object:section(), "^ovcharka") and self.object:alive() or
+   string.find(self.object:section(), "^dar_trap_tuschano") and self.object:alive() or
+   string.find(self.object:section(), "^werwolf") and self.object:alive() or
+   string.find(self.object:section(), "dog_weak") and self.object:alive() or
+   string.find(self.object:section(), "dog_normal") and self.object:alive() or
+   string.find(self.object:section(), "dog_strong") and self.object:alive() or
+   string.find(self.object:section(), "dog_v_strong") and self.object:alive() or
+   string.find(self.object:section(), "flesh") and self.object:alive() or
+   string.find(self.object:section(), "boar") and self.object:alive() or
+   string.find(self.object:section(), "snork") and self.object:alive() or
+   string.find(self.object:section(), "zombie_weak") and self.object:alive() or
+   string.find(self.object:section(), "zombie_strong") and self.object:alive() or
+   string.find(self.object:section(), "cat") and self.object:alive() or
+   string.find(self.object:section(), "fracture") and self.object:alive() or
+   string.find(self.object:section(), "tushkano") and self.object:alive() or
+   string.find(self.object:section(), "chimera_weak") and self.object:alive() or
+   string.find(self.object:section(), "garb_vorpal_habar_guardian") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob1") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob2") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob3") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob4") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob5") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob6") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob7") and self.object:alive() or
+   string.find(self.object:section(), "agr_fabrik_quest_mob8") and self.object:alive() or
+   string.find(self.object:section(), "esc_road_dog") and self.object:alive() or
+   string.find(self.object:section(), "esc_road_cat") and self.object:alive() or
+   string.find(self.object:section(), "esc_willage_rat") and self.object:alive() or
+   string.find(self.object:section(), "pseudodog") and self.object:alive() ) 
+		and inventory.belt["af_licvidator"] then
+			local posit = self.object:position()
+			if posit:distance_to(db.actor:position()) < 35 then
+			kill_creature(self.object)
+			end
+end
+end

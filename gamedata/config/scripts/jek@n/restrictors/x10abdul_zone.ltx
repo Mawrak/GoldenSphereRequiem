@@ -1,0 +1,18 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_info = {+x10_button_switch} sr_timer
+
+[sr_timer]
+type = dec
+start_value = 130000
+on_value = 0 | nil %=kill_actor%
+string = radar_countdown
+
+
+
+
+
+
+

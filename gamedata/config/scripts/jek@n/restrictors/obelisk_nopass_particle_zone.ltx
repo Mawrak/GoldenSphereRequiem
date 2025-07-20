@@ -1,0 +1,32 @@
+[logic]
+active = nil
+
+
+[sr_particle@1]
+name = anomaly2\gravi_anomaly_00
+path = obelisk_particle_point1
+mode = 2
+looped = false
+on_timer = 2000 | sr_particle@2
+
+[sr_particle@2]
+name = anomaly2\gravi_anomaly_00
+path = obelisk_particle_point2
+mode = 2
+looped = false
+on_timer = 2000 | sr_particle@3
+
+[sr_particle@3]
+name = anomaly2\gravi_anomaly_00
+path = obelisk_particle_point3
+mode = 2
+looped = false
+on_timer = 2000 | sr_particle@4
+
+[sr_particle@4]
+name = anomaly2\teleport_tear
+path = obelisk_particle_point4
+mode = 2
+looped = false
+on_timer = 2000 | sr_particle@1
+

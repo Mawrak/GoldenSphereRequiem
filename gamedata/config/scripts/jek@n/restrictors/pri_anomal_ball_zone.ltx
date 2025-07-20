@@ -1,0 +1,11 @@
+[logic]
+active = sr_idle@1
+
+[sr_idle@1]
+on_actor_outside = sr_idle@2 %=hit_obj(8906:bone1:0:70)%
+
+[sr_idle@2]
+on_info = {=actor_has_item(pri_medal) =actor_has_item(pri_anomal_ball)} nil %=remove_item(pri_anomal_ball) =play_snd(soundtrack\horror_time\48) =spawn_pri_ball1%
+on_timer = 5000|sr_idle@1
+
+
