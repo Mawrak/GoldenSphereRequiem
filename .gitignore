@@ -1,5 +1,4 @@
 scripts_cop_logic_fix/
-123123131/
 _appdata_/logs/
 _appdata_/savedgames/
 _appdata_/screenshots/
@@ -34,3 +33,4 @@ x.opt
 z.opt
 vorbisfile.dll
 TODO.txt
+art_fix.webp
