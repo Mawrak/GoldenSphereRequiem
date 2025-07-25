@@ -8,6 +8,6 @@ half	L = NH.w * dot	(Ldynamic_dir, (half3)NH) + EPS;
 #ifdef USE_R2_STATIC_SUN
 return  half4	(L,L,L,L);
 #else
-return  half4	(1,1,1,1);
+return  half4	(L,L,L,L);//(1,1,1,1);
 #endif
 }

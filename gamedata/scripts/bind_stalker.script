@@ -60,6 +60,31 @@ function actor_binder:net_spawn(data)
     if db.actor:dont_has_info("game_start") then --start spawn
 		timer_actions.start_spawn()
 	end
+    
+    
+    
+    
+    
+    
+    local console=get_console()
+    
+    
+    console:execute("r2_sun_lumscale 1.0")
+    console:execute("r2_sun_lumscale_amb 0.3")
+    console:execute("r2_sun_lumscale_hemi 1.0")
+    console:execute("r2_sun_near 25.0")
+    console:execute("r2_sun_tsm off")
+    
+    
+    console:execute("r2_tonemap on")
+    console:execute("r2_tonemap_adaptation 1.0")
+    console:execute("r2_tonemap_amount 0.5")
+    console:execute("r2_tonemap_lowlum 0.001")
+    console:execute("r2_tonemap_middlegray 0.25")
+    
+    
+    console:execute("cam_inert 0.1")
+   
 
 	return true
 end
