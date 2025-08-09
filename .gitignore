@@ -52,3 +52,5 @@ instscript.vdf
 help.htm
 gamesite.url
 FirewallInstallHelper.dll
+_appdata_/steam_autocloud.vdf
+*.mdmp
