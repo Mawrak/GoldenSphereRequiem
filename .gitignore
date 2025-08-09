@@ -4,6 +4,7 @@ _appdata_/savedgames/
 _appdata_/screenshots/
 _appdata_/user - Copy.ltx
 bin1/
+bin/
 bin_vanilla_old/
 engine.log
 gamedata.db0
@@ -34,3 +35,20 @@ z.opt
 vorbisfile.dll
 TODO.txt
 art_fix.webp
+xrPreLaunch.exe
+steam_appid.txt
+StalkerUserManual.pdf
+stalker.ico
+setup-bp.exe
+register.url
+ReadMe.txt
+publisher.url
+Patch-any-5.txt
+Patch-0-3.txt
+p5.txt
+p3.txt
+License.txt
+instscript.vdf
+help.htm
+gamesite.url
+FirewallInstallHelper.dll
