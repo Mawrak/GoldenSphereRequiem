@@ -7,6 +7,13 @@ function WeatherManager:__init()
 end
 
 function WeatherManager:reset()
+	self:reset_2()
+    
+    
+	self:select_weather(true)
+end
+
+function WeatherManager:reset_2()
 	--printf					("WeatherManager:WeatherManager():Reset()")
 	-- Загрузить кондлист с погодой.
 	local ini = ini_file("game.ltx")
@@ -20,18 +27,55 @@ function WeatherManager:reset()
 		level.remove_pp_effector(999)
 	end	
 
-	if weather == "default" then
-		-- сетим дефолтовую погоду
-		self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "default")
-	else		
-		self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", weather)
-	end	
-	self:select_weather(true)
+    --in xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear") only the last parameter does anything, first should be kept as actor, the other two are irrelevant as far as I can tell 
+    --Mawrak
+    
+    --third day is the starting day
+    
+    if device():is_r2_active() then
+        if level.name() == "l01_escape" then
+            local day = level.get_time_days()
+            local day_check = getWeatherDay(day)
+            
+            if day_check == 1 then
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "cloudy_light_rain")
+            elseif day_check == 2 then
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "cloudy_light")
+            else
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear_alt")
+            end
+            
+        else
+            self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", weather)
+        end
+    else
+        if level.name() == "l01_escape" then
+            local day = level.get_time_days()
+            local day_check = getWeatherDay(day)
+            
+            if day_check == 1 then
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "cloudy_light_rain")
+            elseif day_check == 2 then
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear_alt")
+            else
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear")
+            end
+            
+        else
+            self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", weather)
+        end
+    end
+    
+    
+
+    
 end
+
 
 function WeatherManager:select_weather(now)
 	self.weather_change_day = level.get_time_days()
 	self.update_level = level.name()
+    self:reset_2()
 	local weather = xr_logic.pick_section_from_condlist(db.actor, db.actor, self.weather_list)
 	printf("WEATHER: '%s' now '%s'", weather, tostring(now))
 	level.set_weather(weather,now);
@@ -55,9 +99,21 @@ function WeatherManager:update()
 			self:select_weather(true)			
 		end
 		
-		if self.weather_change_day ~= level.get_time_days() then
-			self:select_weather(false)
-		end
+		
 		self.update_time = self.update_time + 10000
 	end
+    if self.weather_change_day ~= level.get_time_days() then
+		self:select_weather(true)
+	end
+end
+
+function getWeatherDay(day)
+    local remainder = (day - 1) % 3
+    if remainder == 0 then
+        return 1
+    elseif remainder == 1 then
+        return 2
+    else
+        return 3
+    end
 end
