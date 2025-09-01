@@ -42,7 +42,7 @@ function WeatherManager:reset_2()
             elseif day_check == 2 then
                 self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "cloudy_light")
             else
-                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear_alt")
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "vivid")
             end
             
         else
@@ -54,7 +54,7 @@ function WeatherManager:reset_2()
             local day_check = getWeatherDay(day)
             
             if day_check == 1 then
-                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "cloudy_light_rain")
+                self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "remake")
             elseif day_check == 2 then
                 self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", "clear_alt")
             else
