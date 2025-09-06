@@ -55,3 +55,4 @@ gamesite.url
 FirewallInstallHelper.dll
 _appdata_/steam_autocloud.vdf
 *.mdmp
+gamedata/textures/temp/*.dds

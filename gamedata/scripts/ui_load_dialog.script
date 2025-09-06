@@ -132,6 +132,18 @@ function file_exist(fname)
 	end	
 end
 
+function file_exist_screenshot(fname)
+	local f = getFS();
+	local flist = f:file_list_open_ex("$game_textures_temp$",bit_or(FS.FS_ListFiles,FS.FS_RootOnly) , fname)
+	local f_cnt = flist:Size()
+	
+	if f_cnt > 0 then
+		return true
+	else
+		return false
+	end	
+end
+
 function delete_save_game(filename)
 
 	local save_file		= filename .. ".sav"
@@ -144,6 +156,12 @@ function delete_save_game(filename)
 	if file_exist(dds_file) then
 		f:file_delete("$game_saves$", dds_file)
 	end
+    
+    --if ui_save_temp_name then
+    --    if file_exist_screenshot(ui_save_temp_name..".dds") then
+    --       f:file_delete("$game_textures_temp$",ui_save_temp_name..".dds")
+    --    end
+    --end
 
 end
 
@@ -194,6 +212,8 @@ function file_data(fname)
 	end	
 end
 
+
+
 function load_dialog:OnListItemClicked()
 	local list_box		= self:GetListWnd("list_window")
 	
@@ -222,7 +242,49 @@ function load_dialog:OnListItemClicked()
 	end
 	
 	if file_exist(item_text .. ".dds") then
-		picture:InitTexture(item_text)
+        local fs = getFS();
+    
+        local random_suffix = tostring(math.random(10000, 99999))
+        
+        if ui_save_temp_name then
+            if file_exist_screenshot(ui_save_temp_name..".dds") then
+                fs:file_delete("$game_textures_temp$",ui_save_temp_name..".dds")
+            end
+            
+            local flist = fs:file_list_open_ex("$game_textures_temp$",bit_or(FS.FS_ListFiles,FS.FS_RootOnly),"*.dds")
+            
+            
+            local f_cnt = flist:Size()
+
+            for	it=0, f_cnt-1 	do
+            
+                local file		=	flist:GetAt(it)
+                local file_name = file:NameFull()
+                fs:file_delete("$game_textures_temp$",file_name)
+            end 
+            
+        end
+        ui_save_temp_name = item_text .. "_temp" .. random_suffix
+        
+        
+        
+        
+        
+        
+        local sav1 = fs:update_path("$game_saves$",item_text..".dds")
+        local sav2 = fs:update_path("$game_textures_temp$",ui_save_temp_name..".dds")
+        
+        
+        
+        
+        fs:file_copy(sav1, sav2)
+        if file_exist_screenshot(ui_save_temp_name .. ".dds") then
+            picture:InitTexture("temp\\"..ui_save_temp_name)
+            --fs:file_delete("$game_textures_temp$",ui_save_temp_name..".dds")
+        else
+            picture:InitTexture("ui\\ui_noise")
+        end
+
 	else
 		picture:InitTexture("ui\\ui_noise")
 	end
