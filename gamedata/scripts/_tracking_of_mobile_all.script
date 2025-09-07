@@ -1138,9 +1138,12 @@ t['ibuprophen'] = function()
 	end
 	db.actor:disable_info_portion("pain")
 	soundtrack.ibuprophen_used()
-	if timer_exists("pain_timer") then
-		get_timer("pain_timer"):remove()
-	end
+    
+    --temp --mawrak
+    
+	--if timer_exists("pain_timer") then
+	--	get_timer("pain_timer"):remove()
+	--end
 end
 
 t['flare_1'] = function()
