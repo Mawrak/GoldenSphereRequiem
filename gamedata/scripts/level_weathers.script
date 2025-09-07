@@ -91,6 +91,9 @@ function WeatherManager:save(F)
 	F:w_u32					(self.update_time);
 end
 
+
+
+
 function WeatherManager:update()
 	if self.update_time <= time_global() then
 		printf("weather_update day [%s]", level.get_time_days())
@@ -105,6 +108,12 @@ function WeatherManager:update()
     if self.weather_change_day ~= level.get_time_days() then
 		self:select_weather(true)
 	end
+    
+    if rain_fix == nil then
+		self:select_weather(true)
+        rain_fix = 1
+	end
+    
 end
 
 function getWeatherDay(day)

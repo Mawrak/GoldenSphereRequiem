@@ -68,7 +68,7 @@ function actor_binder:net_spawn(data)
     
     local console=get_console()
     
-    console:execute("sv_setweather fake")
+    console:execute("sv_setweather indoor")
     
     console:execute("r2_sun_lumscale 1.0")
     console:execute("r2_sun_lumscale_amb 0.3")
