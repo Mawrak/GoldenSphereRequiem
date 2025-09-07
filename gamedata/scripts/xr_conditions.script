@@ -1508,9 +1508,11 @@ end
 
 function actor_armed_knife()
 	if db.actor and db.actor:alive() and db.actor:active_item()
-		and string.find(db.actor:active_item():section(),"^wpn_knife") then
+		and string.find(db.actor:active_item():section(),"knife") then
 		return true
 	end
+    
+    
 	return false
 end
 

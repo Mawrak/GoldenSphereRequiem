@@ -1150,24 +1150,6 @@ t['flare_2'] = function()
 	addon.flare2_use()
 end
 
-t['knife_1'] = function()
-	addon.knife1_use()
-end
-t['knife_2'] = function()
-	addon.knife2_use()
-end
-t['knife_3'] = function()
-	addon.knife3_use()
-end
-t['knife_4'] = function()
-	addon.knife4_use()
-end
-t['knife_5'] = function()
-	addon.knife5_use()
-end
-t['knife_6'] = function()
-	addon.knife6_use()
-end
 t['montirovka'] = function()
 	addon.montirovka_use()
 	soundtrack.montirovka_use()
@@ -1188,13 +1170,6 @@ local addiction = starvation.get_addiction()
 end
 
 
-t['binocl_army'] = function()
-	addon.binocl1_use()
-end
-
-t['binocl_civil'] = function()
-	addon.binocl2_use()
-end
 
 
 t['mobile_changer_33'] = function()

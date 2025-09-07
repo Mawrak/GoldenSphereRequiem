@@ -189,7 +189,7 @@ is_torch				= true
 
 ;вещью нельзя торговать
 can_trade			= true
-quest_item			= true
+quest_item			= false
 
 position			= 0.35,0.25,0.0
 light_trace_bone	= cone_bone
@@ -237,7 +237,25 @@ attach_angle_offset		= 0, -3.14, 1.6
 attach_position_offset	= 0.115, 0.00, 0.07
 attach_bone_name		= bip01_head
 auto_attach			= false
-quest_item			= true
+quest_item			= false
+
+
+
+
+
+
+
+
+
+
+[flare_1]:device_torch
+
+
+[flare_2]:device_torch2
+
+
+
+
 
 
 
@@ -805,115 +823,6 @@ inv_grid_y		= 35
 
 
 
-[knife_1]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_1"
-visual				= weapons\knife\wpn_knife_old.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife1_descr
-cost				= 5000
-inv_name			= inv_name_knife_1
-inv_name_short			= inv_name_knife_1
-inv_weight			= 0.3
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x		= 8
-inv_grid_y		= 24
-
-[knife_2]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_2"
-visual				= weapons\knife\wpn_knife_new.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife2_descr
-cost				= 8000
-inv_name			= inv_name_knife_2
-inv_name_short			= inv_name_knife_2
-inv_weight			= 0.4
-inv_grid_width		= 3
-inv_grid_height		= 1
-inv_grid_x		= 9
-inv_grid_y		= 20
-
-[knife_3]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_3"
-visual				= weapons\knife\wpn_knife_m1.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife3_descr
-cost				= 10000
-inv_name			= inv_name_knife_3
-inv_name_short			= inv_name_knife_3
-inv_weight			= 0.35
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x		= 0
-inv_grid_y		= 24
-
-[knife_4]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_4"
-visual				= weapons\knife\wpn_knife_m1.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife4_descr
-cost				= 30000
-inv_name			= inv_name_knife_4
-inv_name_short			= inv_name_knife_4
-inv_weight			= 0.3
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x		= 2
-inv_grid_y		= 24
-
-[knife_5]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_5"
-visual				= weapons\knife\wpn_knife_m1.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife5_descr
-cost				= 6000
-inv_name			= inv_name_knife_5
-inv_name_short			= inv_name_knife_5
-inv_weight			= 0.3
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x		= 6
-inv_grid_y		= 24
-
-
-[knife_6]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\knife_6"
-visual				= weapons\knife\wpn_knife_ak.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= enc_weapons_wpn-knife6_descr
-cost				= 7000
-inv_name			= inv_name_knife_6
-inv_name_short			= inv_name_knife_6
-inv_weight			= 0.3
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x		= 4
-inv_grid_y		= 24
-
 
 [montirovka]:antir_f
 GroupControlSection		= spawn_group
@@ -936,41 +845,6 @@ eat_portions_num	= 1000000
 
 
 
-[flare_1]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\flare_1"
-visual				= physics\light\light_torch.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= flare_1_descr
-cost				= 100
-inv_name			= flare_1
-inv_name_short		= flare_1
-inv_weight			= 0.3
-inv_grid_width		= 1
-inv_grid_height		= 1
-inv_grid_x			= 20
-inv_grid_y			= 39
-
-[flare_2]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\flare_2"
-visual				= equipments\light_night.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= flare_2_descr
-cost				= 900
-inv_name			= flare_2
-inv_name_short		= flare_2
-inv_weight			= 0.5
-inv_grid_width		= 2
-inv_grid_height		= 1
-inv_grid_x			= 9
-inv_grid_y			= 25
 
 
 
@@ -1454,42 +1328,6 @@ inv_grid_y		= 7
 eat_portions_num	= 1000000
 
 
-[binocl_army]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\binocl_army"
-visual				= weapons\binoculars\wpn_binoculars.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= binocl_army_descr
-cost				= 5000
-inv_name			= binocl_army_name
-inv_name_short			= binocl_army_name
-inv_weight			= 1.2
-inv_grid_width			= 2
-inv_grid_height			= 1
-inv_grid_x			= 9
-inv_grid_y			= 9
-
-
-[binocl_civil]:antir_f
-GroupControlSection		= spawn_group
-discovery_dependency		=
-$spawn				= "devices\binocl_civil"
-visual				= weapons\binoculars\wpn_binoculars.ogf
-$prefetch			= 32
-cform				= skeleton
-radius				= 1
-description			= binocl_civil_descr
-cost				= 1000
-inv_name			= binocl_civil_name
-inv_name_short			= binocl_civil_name
-inv_weight			= 1.0
-inv_grid_width			= 2
-inv_grid_height			= 1
-inv_grid_x			= 7
-inv_grid_y			= 8
 
 
 [wrecked_pkm]:identity_immunities
