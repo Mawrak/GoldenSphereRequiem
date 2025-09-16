@@ -2,7 +2,7 @@
 ;--реальное разделение на группы репутаций на шкалы
 rating			= novice, 300, experienced, 600, veteran, 900, master
 monster_rating	= weak, 400, normal, 800, strong
-reputation		= terrible, -1000, very_bad, -250, bad, -50, neutral, 50, good, 250, very_good, 1000, excellent
+reputation		= terrible, -1000, very_bad, -250, bad, -50, neutral, 50, good, 250, very_good, 1000, excellent; terrible, 10, very_bad, 30, bad, 45, neutral, 55, good, 70, very_good, 90, excellent
 
 ;--шкалы для вывода названий вместо чисел 
 ;--рейтингов, репутаций и благосклонности в интерфейсе
@@ -80,13 +80,13 @@ master            =     0,         0,       20,       70
 [reputation_relations]
 ;--               terrible | very_bad | bad | neutral | good | very_good | excellent
 ;===================================================================================
-terrible        =    -250,   -100,     -50,    -20,       0,       0,         0
-very_bad        =    -100,    -50,     -20,      0,       0,       0,         0
-bad             =     -50,    -20,       0,      0,       0,       0,         0
-neutral         =     -20,      0,       0,      0,       0,       0,        80
-good            =       0,      0,       0,      0,       0,      80,       150
-very_good       =       0,      0,       0,      0,      80,     150,       250
-excellent       =       0,      0,       0,     80,     150,     250,       450
+terrible        =    0,   0,     0,    0,       0,       0,         0
+very_bad        =    0,    0,     0,      0,       0,       0,         0
+bad             =     0,    0,       0,      0,       0,       0,         0
+neutral         =     0,      0,       0,      0,       0,       0,        0
+good            =       0,      0,       0,      0,       0,      0,       0
+very_good       =       0,      0,       0,      0,      0,     0,       0
+excellent       =       0,      0,       0,     0,     0,     0,       0
 
 
 
@@ -102,27 +102,27 @@ excellent       =       0,      0,       0,     80,     150,     250,       450
 actor		=		0.0
 actor_dolg	=		0.0
 actor_freedom =     0.0
-stalker		=		0.1
-monolith	=		0.2
-military	=		0.2
-killer		=		0.2
-ecolog		=		0.4
-dolg		=		0.4
-freedom		=		0.4
-bandit		=		0.1
-zombied		=		0.1
-trader		=		0.2
+stalker		=		0.0
+monolith	=		0.0
+military	=		0.0
+killer		=		0.0
+ecolog		=		0.0
+dolg		=		0.0
+freedom		=		0.0
+bandit		=		0.0
+zombied		=		0.0
+trader		=		0.0
 stranger	=		0.0
 arena_enemy =	                0.0
 actor_zombied	=		0.0
-csky      	=		0.2 
+csky      	=		0.0 
 actor_prebandit      	=		0.0
-iskatel		=		0.4
-hunter		=		0.4
-stalker_killer		=		0.4
-sila		=		0.5
+iskatel		=		0.0
+hunter		=		0.0
+stalker_killer		=		0.0
+sila		=		0.0
 legend		=		0.0
-stalker_army		=		0.4
+stalker_army		=		0.0
 stalker_stalker		=		0.0
 stalker_bandit		=		0.0
 headhunter		=		0.0
@@ -157,13 +157,13 @@ danger_friend_attack_goodwill    = -50
 danger_neutral_attack_goodwill   = -50
 danger_enemy_attack_goodwill     =  3
 
-free_friend_attack_reputation    = -100
-free_neutral_attack_reputation   = -20
-free_enemy_attack_reputation     =  5
+free_friend_attack_reputation    = 0;-100
+free_neutral_attack_reputation   = 0;-20
+free_enemy_attack_reputation     = 0; 5
 
-danger_friend_attack_reputation  = -20
-danger_neutral_attack_reputation = -10
-danger_enemy_attack_reputation   =  1
+danger_friend_attack_reputation  = 0;-20
+danger_neutral_attack_reputation = 0;-10
+danger_enemy_attack_reputation   = 0;1
 ;--------------------------------------------------
 ;--(с) мин. время через которое снова будет зарегистрировано 
 ;--сообщение об атаке на персонажа, и соответственно вычтеся attack_goodwill и attack_reputation
@@ -178,9 +178,9 @@ community_member_kill_goodwill = -200
 ;убийство члена группировки отражается на отношении
 ;группировки (умножается на communities_sympathy)
 
-friend_kill_reputation		=  -400
-neutral_kill_reputation		=  -100
-enemy_kill_reputation		=   5
+friend_kill_reputation		=  0;-400
+neutral_kill_reputation		=  0;-100
+enemy_kill_reputation		=   0;5
 
 ;
 ; помощь актера персонажу во время боя
@@ -191,8 +191,8 @@ friend_fight_help_goodwill   =  200
 neutral_fight_help_goodwill  =  350 
 enemy_fight_help_goodwill    =  0
 
-friend_fight_help_reputation      = 10
-neutral_fight_help_reputation     = 50
+friend_fight_help_reputation      = 0;10
+neutral_fight_help_reputation     = 0;50
 enemy_fight_help_reputation	  =  0
 
 ;свойства, которые изменяются у сталкеров в 
