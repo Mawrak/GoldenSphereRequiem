@@ -31,6 +31,10 @@ function opt_video_adv:InitControls(x, y, xml, handler)
 	_st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
 	xml:InitStatic								("video_adv:cap_geometry_lod",			_st)
 	xml:InitTrackBar							("video_adv:track_geometry_lod",		_st)
+    
+    _st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
+	xml:InitStatic								("video_adv:cap_grass",					_st)
+	xml:InitTrackBar			                ("video_adv:track_grass",				_st)
 
 	_st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
 	xml:InitStatic								("video_adv:cap_detail_density",		_st)
@@ -88,8 +92,5 @@ function opt_video_adv:InitControls(x, y, xml, handler)
 
 	btn		= xml:Init3tButton					("video_adv:btn_to_simply",	self)	
 	handler:Register							(btn, "btn_simply_graphic")	
-    
-    _st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
-	xml:InitStatic								("video_adv:cap_grass",					_st)
-	xml:InitTrackBar			                ("video_adv:track_grass",				_st)
+
 end
