@@ -11,7 +11,7 @@
 	</string>
     
     <string id="ui_mm_grass">
-		<text>Дистанция травы</text>
+		<text>Дистанция отрисовки травы</text>
 	</string>
 	
 </string_table>
