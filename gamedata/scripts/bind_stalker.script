@@ -85,6 +85,8 @@ function actor_binder:net_spawn(data)
     
     
     console:execute("cam_inert 0.1")
+    
+    console:execute("fake_gi 1.0")
    
 
 	return true
