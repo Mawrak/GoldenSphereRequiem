@@ -7,7 +7,11 @@
 	
     
     <string id="ui_mm_smap">
-		<text>Карта теней</text>
+		<text>Размер карты теней</text>
+	</string>
+    
+    <string id="ui_mm_grass">
+		<text>Дистанция травы</text>
 	</string>
 	
 </string_table>
