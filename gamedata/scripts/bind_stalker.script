@@ -88,7 +88,7 @@ function actor_binder:net_spawn(data)
     console:execute("r2_tonemap_middlegray 0.25")
     
     
-    console:execute("cam_inert 0.1")
+    --console:execute("cam_inert 0.1")
     
     console:execute("fake_gi 1.0")
    
