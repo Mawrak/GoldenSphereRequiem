@@ -1147,10 +1147,10 @@ t['ibuprophen'] = function()
 end
 
 t['flare_1'] = function()
-	addon.flare1_use()
+	--addon.flare1_use()
 end
 t['flare_2'] = function()
-	addon.flare2_use()
+	--addon.flare2_use()
 end
 
 t['montirovka'] = function()

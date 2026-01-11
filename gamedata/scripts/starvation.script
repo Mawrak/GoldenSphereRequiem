@@ -1,3 +1,18 @@
+--Список слотов:
+--[Слот_1]=[пистолеты]
+--[Слот_2]=[автоматы]
+--[Слот_3]=[гранаты]
+--[Слот_4]=[бинокль]
+--[Слот_5]=[болт]
+--[Слот_6]=[бронекостюм]
+--[Слот_7]=[пда]
+--[Слот_8]=[детектор]
+--[Слот_9]=[фонарик]
+
+
+--local upd = db.actor:object("device_pda")
+
+
 ----- жажда и голод (from Charsi)
 
 local thirst = 0 -- жажда;
@@ -13,12 +28,51 @@ local murder = 0 -- убийства людей;
 
 -- не одет костюм зомбированого
 function on_update1()
-	change_values(0.000009,0.000007,0.0,0.0,0.0,0.0,0.0)
+	change_values(0.03,0.02)
 end
 
 -- одет костюм зомбированого
 function on_update2()
-	change_values(0.000005,0.000005,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
+	change_values(0.02,0.01)
+end
+
+
+local strv_time = 0
+
+function starvation_update()
+
+    if thirst_global then
+        if ( thirst_global <= 0.2 and db.actor.health > 0.5 ) then 
+            db.actor.health = -0.01
+        elseif
+            ( thirst_global <= 0.5 and db.actor.health > 0.75 ) then 
+            db.actor.health = -0.01
+        end
+    end
+    
+    
+    if hunger_global then
+        if ( hunger_global <= 0.2 and db.actor.power > 0.5 ) then 
+            db.actor.power = -0.01
+        elseif
+            ( hunger_global <= 0.5 and db.actor.power > 0.75 ) then 
+            db.actor.power = -0.01
+        end
+    end
+    
+    
+	local tg = time_global()
+	if tg > strv_time then
+        strv_time = tg + 90000
+        if xr_conditions.actor_wears_madmans_outfit() then
+            on_update2()
+        else
+            on_update1()
+        end
+        
+	end
+    
+    
 end
 
 
@@ -42,37 +96,75 @@ function on_game_save()
 	amk.save_variable("murder1",murder)
 end
 
-
 function get_thirst() -- читаем из другого скрипта
-	return thirst
+
+    --PDA
+    
+    local upd = db.actor:item_in_slot(7)
+    local con = upd:condition()
+
+    return con
+	--return thirst
 end
 function set_thirst(val) -- изменяем
-	thirst = val
+
+     --PDA
+    
+    local upd = db.actor:item_in_slot(7)
+    if upd then
+        upd:set_condition(val)
+    end
+
+	--thirst = val
 end
 function add_thirst(a) -- добавляем(отнимаем) к жажде нужную величину
-	thirst = thirst + a
+    
+    local upd = db.actor:item_in_slot(7)
+    local con = upd:condition()
+    
+    upd:set_condition(con+a)
+
+	--thirst = thirst + a
 end
 
 
 function get_hunger() -- читаем из другого скрипта
-	return hunger
+	local upd = db.actor:item_in_slot(8)
+    local con = upd:condition()
+
+    return con
 end
 function set_hunger(val) -- изменяем
-	hunger = val
+    local upd = db.actor:item_in_slot(8)
+    if upd then
+        upd:set_condition(val)
+    end
+
+	--hunger = val
 end
 function add_hunger(a) -- добавляем(отнимаем) к голоду нужную величину
-	hunger = hunger + a
+
+    local upd = db.actor:item_in_slot(8)
+    local con = upd:condition()
+    
+    upd:set_condition(con+a)
+	--hunger = hunger + a
 end
 
 
 function get_karma() -- читаем из другого скрипта
-	return karma
+	--return karma
+    return db.actor:character_reputation()/100
 end
 function set_karma(val) -- изменяем
-	karma = val
+    db.actor:change_character_reputation(-db.actor:character_reputation());
+    db.actor:change_character_reputation(val*100);
+    --db.actor:set_character_reputation(val)
+	--karma = val
 end
 function add_karma(a) -- добавляем(отнимаем) к карме нужную величину
-	karma = karma + a
+    db.actor:change_character_reputation(a*100);
+	--karma = karma + a
 end
 
 
@@ -183,55 +275,101 @@ function on_item_use(obj)
 end
 
 function change_values(dt,dh)	--	совсем сдохнуть от жажды\голода не получится, но мы будем полуживыми.
-	thirst = thirst - dt
-	hunger = hunger - dh
-	if thirst>1 then thirst=1 end
-	if ( thirst<0.0000002 and db.actor.power > 0.2 ) then db.actor.power = - 0.0002 end
-	if hunger>1 then hunger=1 end
-	if ( hunger<0.0000002 and db.actor.health > 0.2 ) then db.actor.health = - 0.0001 end
-	on_chahge()
+
+    local thirst_upd = db.actor:item_in_slot(7)
+    local thirst_con = thirst_upd:condition()
+    
+    thirst_upd:set_condition(thirst_con - dt)
+    
+    thirst_con = thirst_upd:condition()
+	
+    if thirst_con > 1 then
+        thirst_upd:set_condition(1)
+        
+    --thirst=1 
+    --elseif ( thirst_con < 0.2 and db.actor.power > 0.2 ) then 
+    --    db.actor.power = - 0.0002 
+    end
+    
+    
+    --thirst = thirst - dt
+    --if thirst>1 then thirst=1 end
+	--if ( thirst<0.0000002 and db.actor.power > 0.2 ) then db.actor.power = - 0.0002 end
+	
+    
+    
+    --hunger = hunger - dh
+	
+	--if hunger>1 then hunger=1 end
+	--if ( hunger<0.0000002 and db.actor.health > 0.2 ) then db.actor.health = - 0.0001 end
+    
+    
+    
+    
+    
+    
+    local hunger_upd = db.actor:item_in_slot(8)
+    local hunger_con = hunger_upd:condition()
+    
+    hunger_upd:set_condition(hunger_con - dh)
+    
+    hunger_con = hunger_upd:condition()
+	
+    if hunger_con > 1 then
+        hunger_upd:set_condition(1)
+        
+        --thirst=1 
+    --elseif ( hunger_con < 0.2 and db.actor.power > 0.2 ) then 
+    --    db.actor.power = - 0.0002 
+    end
+    
+    
+    thirst_global = thirst_con
+    hunger_global = hunger_con
+    
+    
+    
+    
+    
+    
+    
+	on_chahge(thirst_con,hunger_con)
 end
 
-function on_chahge()
+function on_chahge(thirst_con,hunger_con)
 	-- запускаем эффекты при достижении каких-то значений
-	if thirst>0.7 then
+	if thirst_con>0.7 then
 		get_hud():RemoveCustomStatic("thirst1",true) 
 		get_hud():RemoveCustomStatic("thirst2",true)
 		get_hud():RemoveCustomStatic("thirst3",true)
-	end
-	if thirst<0.7 and thirst>0.5 then
+	elseif thirst_con<=0.7 and thirst_con>0.5 then
 		get_hud():AddCustomStatic("thirst1",true) 
 		get_hud():RemoveCustomStatic("thirst3",true)
 		get_hud():RemoveCustomStatic("thirst2",true)
-	end
-	if thirst<0.5 and thirst>0.3 then 
+	elseif thirst_con<=0.5 and thirst_con>0.2 then 
 		get_hud():AddCustomStatic("thirst2",true)
 		get_hud():RemoveCustomStatic("thirst1",true)
 		get_hud():RemoveCustomStatic("thirst3",true)
-	end
-	if thirst<0.2 then 
+	elseif thirst_con<=0.2 then 
 		get_hud():AddCustomStatic("thirst3",true) 
 		get_hud():RemoveCustomStatic("thirst2",true)
 		get_hud():RemoveCustomStatic("thirst1",true)
 	end
 
 
-	if hunger>0.7 then
+	if hunger_con>0.7 then
 		get_hud():RemoveCustomStatic("hunger1",true) 
 		get_hud():RemoveCustomStatic("hunger2",true)
 		get_hud():RemoveCustomStatic("hunger3",true)
-	end
-	if hunger<0.7 and hunger>0.5 then
+	elseif hunger_con<=0.7 and hunger_con>0.5 then
 		get_hud():AddCustomStatic("hunger1",true) 
 		get_hud():RemoveCustomStatic("hunger3",true)
 		get_hud():RemoveCustomStatic("hunger2",true)
-	end
-	if hunger<0.5 and hunger>0.3 then 
+	elseif hunger_con<=0.5 and hunger_con>0.2 then 
 		get_hud():AddCustomStatic("hunger2",true)
 		get_hud():RemoveCustomStatic("hunger1",true)
 		get_hud():RemoveCustomStatic("hunger3",true)
-	end
-	if hunger<0.2 then 
+	elseif hunger_con<=0.2 then 
 		get_hud():AddCustomStatic("hunger3",true) 
 		get_hud():RemoveCustomStatic("hunger2",true)
 		get_hud():RemoveCustomStatic("hunger1",true)
@@ -239,32 +377,32 @@ function on_chahge()
 
 
 
-	if karma >0.9 then
+	--if karma >0.9 then
 
-	end
-	if karma<0.9 and karma>0.5 then
+	--end
+	--if karma<0.9 and karma>0.5 then
 
-	end
-	if karma<0.5 and karma>0.2 then 
+	--end
+	--if karma<0.5 and karma>0.2 then 
 
-	end
-
-
-
-	if hunger<0.5 and db.actor.health > 0.75 then 
-	db.actor.health = - 0.01
-	end
-	if hunger<0.3 and db.actor.health > 0.6 then 
-	db.actor.health = - 0.015
-	end
+	--end
 
 
-	if thirst<0.5 and db.actor.power > 0.7 then 
-	db.actor.power = - 0.01
-	end
-	if thirst<0.2 and db.actor.power > 0.6 then 
-	db.actor.power = - 0.015
-	end
+
+	--if hunger<0.5 and db.actor.health > 0.75 then 
+	--db.actor.health = - 0.01
+	--end
+	--if hunger<0.3 and db.actor.health > 0.6 then 
+	--db.actor.health = - 0.015
+	--end
+
+
+	--if thirst<0.5 and db.actor.power > 0.7 then 
+	--db.actor.power = - 0.01
+	--end
+	--if thirst<0.2 and db.actor.power > 0.6 then 
+	--db.actor.power = - 0.015
+	--end
 
 
 

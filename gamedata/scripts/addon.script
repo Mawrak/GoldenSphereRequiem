@@ -1903,18 +1903,6 @@ end
 function on_game_save()
 end
 
-local strv_time = 0
-function starvation_update(delta)
-	local tg = time_global()
-	if tg > strv_time then
-	strv_time = tg + 60
-	if xr_conditions.actor_wears_madmans_outfit() then
-		starvation.on_update2()
-	else
-		starvation.on_update1()
-	end
-	end
-end
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -3604,23 +3592,32 @@ starvation.set_addiction(0.0)
 end
 
 function set_start_karma()
-local karma = starvation.get_karma()
-rnd = math.random(1, 5)
-if rnd == 1 then 
-starvation.set_karma(0.35)
-end
-if rnd == 2 then 
-starvation.set_karma(0.45)
-end
-if rnd == 3 then 
-starvation.set_karma(0.55)
-end
-if rnd == 4 then 
-starvation.set_karma(0.65)
-end
-if rnd == 5 then 
-starvation.set_karma(0.75)
-end
+--local karma = starvation.get_karma()
+--rnd = math.random(1, 5)
+--if rnd == 1 then 
+--starvation.set_karma(0.35)
+--end
+--if rnd == 2 then 
+--starvation.set_karma(0.45)
+--end
+--if rnd == 3 then 
+--starvation.set_karma(0.55)
+--end
+--if rnd == 4 then 
+--starvation.set_karma(0.65)
+--end
+--if rnd == 5 then 
+--starvation.set_karma(0.75)
+--end
+--local karma2 = starvation.get_karma()
+--news_manager.send_tip(db.actor, karma2, nil)
+
+--always set karma to neutral at the start
+--why was it even random lmao
+--mawrak
+
+
+starvation.set_karma(0.50)
 end
 
 

@@ -114,6 +114,18 @@ function WeatherManager:update()
         rain_fix = 1
 	end
     
+    --Other Update
+    if db.actor then
+    
+    --Food - Hunger and Thirst
+    
+        if db.actor:item_in_slot(7) and db.actor:item_in_slot(8) then
+            starvation.starvation_update()
+        end
+         
+    end
+
+    
 end
 
 function getWeatherDay(day)

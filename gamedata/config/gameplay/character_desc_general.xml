@@ -10,8 +10,11 @@
 		<team>Actor</team>
 		<supplies>
 			[spawn] \n
+            item_hunger = 1\n
+            //device_torch = 1\n
+            //wpn_mac10 = 1\n
             //af_licvidator_empty = 1\n
-            //device_torch = 10
+            
 
 
 		</supplies>
