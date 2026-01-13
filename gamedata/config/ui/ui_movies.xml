@@ -7,13 +7,14 @@
 		</global_wnd>
 		<play_each_item>1</play_each_item>
 
-		<item type="video">
-			<sound>characters_voice\scenario\video\intro_gsc</sound>
-			<delay>1</delay>
+		<item type="image">
+			<length_sec>1</length_sec>
 			<pause_state>on</pause_state>
-			<video_wnd x="0" y="0" width="1024" height="768" stretch="1">
-				<texture x="0" y="1" width="800" height="358">intro\intro_gsc</texture>
-			</video_wnd>
+			<main_wnd>
+				<auto_static x="0" y="0" width="1024" height="768" stretch="1">
+                    <texture>intro\intro_back</texture>
+                </auto_static>
+			</main_wnd>
 		</item>
 
 	</intro_logo>
