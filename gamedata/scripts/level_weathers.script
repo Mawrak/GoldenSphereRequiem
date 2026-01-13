@@ -92,6 +92,7 @@ function WeatherManager:save(F)
 end
 
 
+local torch_on = false
 
 
 function WeatherManager:update()
@@ -119,10 +120,56 @@ function WeatherManager:update()
     
     --Food - Hunger and Thirst
     
-        if db.actor:item_in_slot(7) and db.actor:item_in_slot(8) then
+    if db.actor:item_in_slot(7) and db.actor:item_in_slot(8) then
             starvation.starvation_update()
         end
          
+    end
+    
+    if db.actor:item_in_slot(9) then
+    
+        if torch then
+            local torch2 = db.actor:item_in_slot(9)
+            if torch:id() ~= torch2:id() then
+                torch_con = nil
+                torch_on = false
+                torch = db.actor:item_in_slot(9)
+            end
+        else
+            torch = db.actor:item_in_slot(9)
+        end
+    
+    
+        
+        
+        
+        
+        if torch_con==nil then
+            torch_con = torch:condition()
+        else
+            if torch_con == torch:condition() and torch_on == true then
+            
+                local snd = sound_object("torch_click")
+                snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
+                
+                torch_on = false
+                --torch_con = torch:condition()
+                
+            elseif torch_con ~= torch:condition() and torch_on == false then
+            
+                local snd = sound_object("torch_click")
+                snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
+                
+                torch_on = true
+                --torch_con = torch:condition()
+            end
+        end
+        torch_con = torch:condition()
+
+    else
+        torch = nil
+        torch_con = nil
+        torch_on = false
     end
 
     
