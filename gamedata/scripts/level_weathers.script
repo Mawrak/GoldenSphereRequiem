@@ -93,15 +93,7 @@ end
 
 
 local torch_on = false
-local menu_on1 = 10
-
-
-
-function menu_on1_func()
-
-    menu_on1 = 0
-
-end
+local menu_on1 = 0
 
 
 function WeatherManager:update()
@@ -140,7 +132,7 @@ function WeatherManager:update()
      
     
     
-    if db.actor:item_in_slot(9) and menu_on1 > 9 then
+    if db.actor:item_in_slot(9) then
     
         if torch then
             local torch2 = db.actor:item_in_slot(9)
@@ -162,32 +154,41 @@ function WeatherManager:update()
             torch_con = torch:condition()
         else
             if torch_con == torch:condition() and torch_on == true then
-            
-                local snd = sound_object("torch_click")
-                snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
-                
-                torch_on = false
+                if menu_on1 > 2 then
+                    local snd = sound_object("torch_click")
+                    snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
+                    
+                    torch_on = false
+                    menu_on1 = 0
+                else
+                    menu_on1=menu_on1+1
+                end
                 --torch_con = torch:condition()
                 
             elseif torch_con ~= torch:condition() and torch_on == false then
-            
-                local snd = sound_object("torch_click")
-                snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
-                
-                torch_on = true
-                --torch_con = torch:condition()
+                if menu_on1 > 2 then
+                    local snd = sound_object("torch_click")
+                    snd:play_no_feedback(db.actor, sound_object.s2d, 0, vector():set(0, 0, 0), 1);
+                    menu_on1=0
+                    torch_on = true
+                    --torch_con = torch:condition()
+                else
+                    menu_on1=menu_on1+1
+                end
+            else
+                menu_on1=0
             end
         end
         torch_con = torch:condition()
 
-    elseif db.actor:item_in_slot(9) and menu_on1 < 10 then
-        menu_on1 = menu_on1+1
     else
-        menu_on1 = 10
         torch = nil
         torch_con = nil
         torch_on = false
+        menu_on1 = 0
     end
+    
+    
 
     
 end
