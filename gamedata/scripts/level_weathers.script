@@ -93,6 +93,15 @@ end
 
 
 local torch_on = false
+local menu_on1 = 10
+
+
+
+function menu_on1_func()
+
+    menu_on1 = 0
+
+end
 
 
 function WeatherManager:update()
@@ -126,7 +135,12 @@ function WeatherManager:update()
          
     end
     
-    if db.actor:item_in_slot(9) then
+    
+    --Torch/Flashlight
+     
+    
+    
+    if db.actor:item_in_slot(9) and menu_on1 > 9 then
     
         if torch then
             local torch2 = db.actor:item_in_slot(9)
@@ -166,7 +180,10 @@ function WeatherManager:update()
         end
         torch_con = torch:condition()
 
+    elseif db.actor:item_in_slot(9) and menu_on1 < 10 then
+        menu_on1 = menu_on1+1
     else
+        menu_on1 = 10
         torch = nil
         torch_con = nil
         torch_on = false
