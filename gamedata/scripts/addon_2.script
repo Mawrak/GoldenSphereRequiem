@@ -16,43 +16,44 @@ end
 
 
 -- Простейший античит от детей: ----------------------------------------------------
+-- cringe :D
 
 function weight_control()
-local weight = system_ini():r_s32("actor_condition","max_walk_weight")
-if ( weight > 80 and db.actor:alive() ) then
-	db.actor:kill(db.actor)
-	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
-end
+--local weight = system_ini():r_s32("actor_condition","max_walk_weight")
+--if ( weight > 80 and db.actor:alive() ) then
+	--db.actor:kill(db.actor)
+	--news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+--end
 end
 
 function jump_control()
-local jump = system_ini():r_s32("actor","jump_speed")
-if ( jump > 7 and db.actor:alive() ) then
-	db.actor:kill(db.actor)
-	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
-end
+--local jump = system_ini():r_s32("actor","jump_speed")
+--if ( jump > 7 and db.actor:alive() ) then
+--	db.actor:kill(db.actor)
+--	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+--end
 end
 
 function weapon_control()
-local wpn1 = system_ini():r_s32("wpn_ak74u","hit_power")
-local wpn2 = system_ini():r_s32("wpn_akm","hit_power")
-local wpn3 = system_ini():r_s32("wpn_aks74","hit_power")
-local wpn4 = system_ini():r_s32("wpn_aps","hit_power")
-local wpn5 = system_ini():r_s32("wpn_aug","hit_power")
-local wpn6 = system_ini():r_s32("wpn_bm16_full","hit_power")
-local wpn7 = system_ini():r_s32("wpn_colt1911","hit_power")
-local wpn8 = system_ini():r_s32("wpn_galil","hit_power")
-local wpn9 = system_ini():r_s32("wpn_ks23","hit_power")
-local wpn10 = system_ini():r_s32("wpn_mosin","hit_power")
-local wpn11 = system_ini():r_s32("wpn_pm","hit_power")
-local wpn12 = system_ini():r_s32("wpn_samopal","hit_power")
-local wpn13 = system_ini():r_s32("wpn_sayga1","hit_power")
-local wpn14 = system_ini():r_s32("wpn_sayga2","hit_power")
-local wpn15 = system_ini():r_s32("wpn_sks","hit_power")
-if ( wpn1 > 0.05 or wpn2 > 0.05 or wpn3 > 0.05 or wpn4 > 0.05 or wpn5 > 0.05 or wpn6 > 0.05 or wpn7 > 0.05 or wpn8 > 0.05 or wpn9 > 0.05 or wpn10 > 0.05 or wpn11 > 0.05 or wpn12 > 0.05 or wpn13 > 0.05 or wpn14 > 0.05 or wpn15 > 0.05 ) and db.actor:alive() then
-	db.actor:kill(db.actor)
-	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
-end
+--local wpn1 = system_ini():r_s32("wpn_ak74u","hit_power")
+--local wpn2 = system_ini():r_s32("wpn_akm","hit_power")
+--local wpn3 = system_ini():r_s32("wpn_aks74","hit_power")
+--local wpn4 = system_ini():r_s32("wpn_aps","hit_power")
+--local wpn5 = system_ini():r_s32("wpn_aug","hit_power")
+--local wpn6 = system_ini():r_s32("wpn_bm16_full","hit_power")
+--local wpn7 = system_ini():r_s32("wpn_colt1911","hit_power")
+--local wpn8 = system_ini():r_s32("wpn_galil","hit_power")
+--local wpn9 = system_ini():r_s32("wpn_ks23","hit_power")
+--local wpn10 = system_ini():r_s32("wpn_mosin","hit_power")
+--local wpn11 = system_ini():r_s32("wpn_pm","hit_power")
+--local wpn12 = system_ini():r_s32("wpn_samopal","hit_power")
+--local wpn13 = system_ini():r_s32("wpn_sayga1","hit_power")
+--local wpn14 = system_ini():r_s32("wpn_sayga2","hit_power")
+--local wpn15 = system_ini():r_s32("wpn_sks","hit_power")
+--if ( wpn1 > 0.05 or wpn2 > 0.05 or wpn3 > 0.05 or wpn4 > 0.05 or wpn5 > 0.05 or wpn6 > 0.05 or wpn7 > 0.05 or wpn8 > 0.05 or wpn9 > 0.05 or wpn10 > 0.05 or wpn11 > 0.05 or wpn12 > 0.05 or wpn13 > 0.05 or wpn14 > 0.05 or wpn15 > 0.05 ) and db.actor:alive() then
+--	db.actor:kill(db.actor)
+--	news_manager.send_tip(db.actor, "anticheat_control_tip", nil, "stalker", 15000, nil)
+--end
 end
 
 -----------------------------------------------------------------------------------
