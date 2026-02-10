@@ -17,27 +17,58 @@ end
 function main_menu:__finalize()
 
 end
-
 function main_menu:InitControls()
-	self:Init(0,0,1024,768)			  
-    local xml = CScriptXmlInit()
-    xml:ParseFile("ui_mm_main.xml")
-     
-     
-    xml:InitStatic("loading", self) 
-     
-    --xml:InitStatic("back_movie", self)
-    xml:InitStatic("background", self)
-    --xml:InitStatic("fire_movie", self)
-    self.shniaga = xml:InitMMShniaga("shniaga_wnd",self);
+
+	self:Init(0,0,1024,768)
+    local fs = getFS()
+    local random_suffix = tostring(math.random(10000, 99999))
+    local temp_xml_name = "ui_mm_main_temp" .. random_suffix .. ".xml"
+    
+    -- Copy the original XML to a temporary file
+    local original_xml_path = fs:update_path("$game_config$", "ui\\ui_mm_main.xml")
+    local temp_xml_path = fs:update_path("$game_config$", "ui\\" .. temp_xml_name)
+    
+    --if fs:file_copy(original_xml_path, temp_xml_path) then
+        fs:file_copy(original_xml_path, temp_xml_path)
+        -- Store the temp file name for cleanup if needed
+        self.temp_xml_name = temp_xml_name
+        
+        local xml = CScriptXmlInit()
+        local temp_name = temp_xml_name
+        xml:ParseFile(temp_name)
+        
+        -- Load controls from temporary file
+        xml:InitStatic("back_movie", self)
+        xml:InitStatic("background", self)
+        xml:InitStatic("fire_movie", self)
+        self.shniaga = xml:InitMMShniaga("shniaga_wnd",self)
+        
+        -- Immediately delete the temporary file after loading
+        fs:file_delete("$game_config$", temp_name)
+        self.temp_xml_name = nil
+    --else
+        -- Fallback to original file if copy fails
+        --local xml = CScriptXmlInit()
+        --xml:ParseFile("ui_mm_main.xml")
+        
+        --xml:InitStatic("back_movie", self)
+        --xml:InitStatic("background", self)
+        --xml:InitStatic("fire_movie", self)
+        --self.shniaga = xml:InitMMShniaga("shniaga_wnd",self)
+    --end
+
 	
 	self.message_box = CUIMessageBoxEx()
 	self:Register(self.message_box, "msg_box")	
 	
-	local _ver = xml:InitStatic		("static_version",self)
-	local mm						= _G.main_menu.get_main_menu()
-	_ver:SetText					("ver. " .. mm:GetGSVer())
-	
+	-- We need to get the xml object again for the version text
+	-- Since we already loaded the controls, we can just get the static directly
+	-- or re-parse if needed. Let's create a minimal xml parser for just the version.
+	local ver_xml = CScriptXmlInit()
+	ver_xml:ParseFile("ui_mm_main.xml")
+	local _ver = ver_xml:InitStatic("static_version", self)
+	local mm = _G.main_menu.get_main_menu()
+	_ver:SetText("ver. " .. mm:GetGSVer())
 end
 
 function main_menu:Show(f)
