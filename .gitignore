@@ -3,6 +3,12 @@ _appdata_/logs/
 _appdata_/savedgames/
 _appdata_/screenshots/
 _appdata_/user - Copy.ltx
+
+_appdata_requiem/logs/
+_appdata_requiem/savedgames/
+_appdata_requiem/screenshots/
+_appdata_requiem/user - Copy.ltx
+
 bin1/
 bin/
 bin_vanilla_old/
@@ -56,3 +62,4 @@ FirewallInstallHelper.dll
 _appdata_/steam_autocloud.vdf
 *.mdmp
 gamedata/textures/temp/*.dds
+fsgame.ltx
