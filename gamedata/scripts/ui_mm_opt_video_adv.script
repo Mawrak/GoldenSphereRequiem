@@ -75,7 +75,7 @@ function opt_video_adv:InitControls(x, y, xml, handler)
     _st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
 	xml:InitStatic								("video_adv:cap_smap",					_st)
 	ctl				= xml:InitTrackBar			("video_adv:track_smap",				_st)
-    handler.m_preconditions[ctl]		= only_2_mode
+    handler.m_preconditions[ctl]		= only_12_mode
     
 	_st				= xml:InitStatic			("video_adv:templ_item",				self.scroll_v)
 	xml:InitStatic								("video_adv:cap_particles_distance",	_st)
