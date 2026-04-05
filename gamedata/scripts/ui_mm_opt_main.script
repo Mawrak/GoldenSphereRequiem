@@ -21,6 +21,8 @@ end
 
 local r2_smapsize_check = "0"
 
+local texture_lod_check = "0"
+
 function options_dialog:InitControls()	
 	self:Init(0,0,1024,768)
 	self:Enable(true)
@@ -81,7 +83,8 @@ function options_dialog:InitControls()
 	self:Register					(self.btn_cancel_download, "btn_cancel_download")
     
     r2_smapsize_check = get_console():get_string('r2_smapsize')
-	
+    
+	texture_lod_check = get_console():get_string('texture_lod')
 end
 
 function options_dialog:UpdateControls()
@@ -211,12 +214,13 @@ function options_dialog:OnBtnAccept()
 	opt:SaveValues("mm_opt_controls")
 	opt:OptionsPostAccept()
     
-    if r2_smapsize_check ~= get_console():get_string('r2_smapsize') then
+    if r2_smapsize_check ~= get_console():get_string('r2_smapsize') or texture_lod_check ~= get_console():get_string('texture_lod') then
     
         self.b_r2_restart_shown			 = true
 		self.message_box:Init			("message_box_restart_game")
 		self:GetHolder():start_stop_menu(self.message_box,true)
         r2_smapsize_check = get_console():get_string('r2_smapsize')
+        texture_lod_check = get_console():get_string('texture_lod')
 
     else
         
