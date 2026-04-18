@@ -279,8 +279,15 @@ function load_dialog:OnListItemClicked()
         
         fs:file_copy(sav1, sav2)
         if file_exist_screenshot(ui_save_temp_name .. ".dds") then
-            picture:InitTexture("temp\\"..ui_save_temp_name)
-            --fs:file_delete("$game_textures_temp$",ui_save_temp_name..".dds")
+        
+        
+            if string.find(item_text, "autosave", 1, true) then
+                picture:InitTexture("ui\\ui_noise")
+            else
+                picture:InitTexture("temp\\"..ui_save_temp_name)
+                --fs:file_delete("$game_textures_temp$",ui_save_temp_name..".dds")
+            end
+            
         else
             picture:InitTexture("ui\\ui_noise")
         end
