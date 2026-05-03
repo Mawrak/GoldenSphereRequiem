@@ -19,9 +19,23 @@ function options_dialog:__finalize()
 
 end
 
+
+
 local r2_smapsize_check = "0"
 
 local texture_lod_check = "0"
+
+local renderer_check = "0"
+
+function update_checks()
+
+    r2_smapsize_check = get_console():get_string('r2_smapsize')
+    
+	texture_lod_check = get_console():get_string('texture_lod')
+    
+    renderer_check = get_console():get_string('renderer')
+
+end
 
 function options_dialog:InitControls()	
 	self:Init(0,0,1024,768)
@@ -85,6 +99,8 @@ function options_dialog:InitControls()
     r2_smapsize_check = get_console():get_string('r2_smapsize')
     
 	texture_lod_check = get_console():get_string('texture_lod')
+    
+    renderer_check = get_console():get_string('renderer')
 end
 
 function options_dialog:UpdateControls()
@@ -172,21 +188,13 @@ function options_dialog:OnPresetChanged()
 	opt:SetCurrentValues		("mm_opt_video")
 	opt:SetCurrentValues		("mm_opt_video_adv")
     
-    
-    self.b_r2_restart_shown			 = true
-    self.message_box:Init			("message_box_restart_game")
-	self:GetHolder():start_stop_menu(self.message_box,true)
+
 end
 
 function options_dialog:OnR2changed()	
 
 	self:UpdateDependControls				()
 	
-	--if false==self.b_r2_restart_shown then
-		self.b_r2_restart_shown			 = true
-		self.message_box:Init			("message_box_restart_game")
-		self:GetHolder():start_stop_menu(self.message_box,true)
-	--end
 	
 end
 
@@ -214,13 +222,15 @@ function options_dialog:OnBtnAccept()
 	opt:SaveValues("mm_opt_controls")
 	opt:OptionsPostAccept()
     
-    if r2_smapsize_check ~= get_console():get_string('r2_smapsize') or texture_lod_check ~= get_console():get_string('texture_lod') then
+    if r2_smapsize_check ~= get_console():get_string('r2_smapsize') or texture_lod_check ~= get_console():get_string('texture_lod') or renderer_check ~= get_console():get_string('renderer') then
     
         self.b_r2_restart_shown			 = true
 		self.message_box:Init			("message_box_restart_game")
 		self:GetHolder():start_stop_menu(self.message_box,true)
+        
         r2_smapsize_check = get_console():get_string('r2_smapsize')
         texture_lod_check = get_console():get_string('texture_lod')
+        renderer_check = get_console():get_string('renderer')
 
     else
         
