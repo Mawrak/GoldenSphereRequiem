@@ -12,7 +12,7 @@ vf o;
 float3 N = unpack_normal	(v.N);
 o.hpos = mul	(m_VP, v.P);
 o.tc0	= unpack_tc_base	(v.uv,v.T.w,v.B.w);
-float3 L_rgb = v.color.xyz*0;
+float3 L_rgb = v.color.xyz;
 float3 L_hemi = v_hemi(N)*v.N.w;
 float3 L_sun = v_sun(N)*v.color.w;
 float3 L_final	= L_rgb + L_hemi + L_sun + L_ambient;
