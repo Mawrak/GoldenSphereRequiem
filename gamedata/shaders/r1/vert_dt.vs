@@ -20,7 +20,7 @@ vf main (v_vert v)
 //	o.tc0		= unpack_tc_base	(v.tc);				// copy tc
 	o.tc1		= o.tc0*dt_params;					// dt tc
 
-	float3 	L_rgb 	= v.color.xyz*0;						// precalculated RGB lighting
+	float3 	L_rgb 	= v.color.xyz;						// precalculated RGB lighting
 	float3 	L_hemi 	= v_hemi(N)*v.N.w;					// hemisphere
 	float3 	L_sun 	= v_sun(N)*v.color.w;					// sun
 	float3 	L_final	= L_rgb + L_hemi + L_sun + L_ambient;
